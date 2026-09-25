@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #050816;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* ScrollControls manages scrolling inside canvas */
+  background-color: #03040c; /* Deep space background */
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.html-overlay {
+  pointer-events: none;
+}
+
+.html-overlay > * {
+  pointer-events: auto;
+}
