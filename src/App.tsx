@@ -1,37 +1,37 @@
 import { Canvas } from '@react-three/fiber';
-import { ScrollControls } from '@react-three/drei';
-import { createXRStore, XR } from '@react-three/xr';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import NeuralStation from './components/canvas/NeuralStation';
+import { CameraControls } from '@react-three/drei';
+import { EffectComposer, Bloom, ChromaticAberration, Scanline } from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
+import { Scene } from './components/Scene';
+import * as THREE from 'three';
 
-const store = createXRStore();
-
-function App() {
+export default function App() {
   return (
-    <div className="w-full h-screen relative bg-[#03040c]">
-      {/* AR Button Overlay */}
-      <div className="absolute bottom-10 right-10 z-50 flex gap-4">
-        <button 
-          onClick={() => store.enterAR()}
-          className="px-6 py-3 bg-cyan-600/50 hover:bg-cyan-500 border border-cyan-400 text-white rounded-full font-bold uppercase tracking-widest backdrop-blur-md transition-all shadow-[0_0_15px_rgba(0,255,255,0.5)] cursor-pointer"
-        >
-          Enter WebXR
-        </button>
-      </div>
+    <div className="w-full h-screen bg-black overflow-hidden relative">
+      <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }}>
+        <color attach="background" args={['#050505']} />
+        
+        <CameraControls 
+          maxPolarAngle={Math.PI / 2 + 0.1} 
+          minDistance={2} 
+          maxDistance={10}
+          makeDefault 
+        />
+        
+        <ambientLight intensity={0.5} />
+        <spotLight position={[5, 10, 5]} angle={0.2} penumbra={1} intensity={2} castShadow />
+        
+        <Scene />
 
-      <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
-        <XR store={store}>
-          <ScrollControls pages={4} damping={0.2}>
-            <NeuralStation />
-          </ScrollControls>
-          
-          <EffectComposer>
-            <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} />
-          </EffectComposer>
-        </XR>
+        <EffectComposer>
+          <Bloom luminanceThreshold={0.2} mipmapBlur intensity={0.8} />
+          <ChromaticAberration 
+            blendFunction={BlendFunction.NORMAL} 
+            offset={new THREE.Vector2(0.002, 0.002)} 
+          />
+          <Scanline blendFunction={BlendFunction.OVERLAY} density={1.2} />
+        </EffectComposer>
       </Canvas>
     </div>
   );
 }
-
-export default App;
