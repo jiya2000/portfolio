@@ -1,39 +1,95 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import * as TWEEN from '@tweenjs/tween.js';
 import { LoadingScreen } from './components/LoadingScreen';
 import { InfoOverlay } from './components/InfoOverlay';
 
 // ─── Camera keyframes ──────────────────────────────────────
 const KEYFRAMES = {
-  loading:  { pos: [-350, 350, 350], foc: [0, -50, 0] },
-  idle:     { pos: [-200, 120, 200], foc: [0, -10, 0] },
-  desk:     { pos: [0, 18, 55],      foc: [0, 5, 0] },
-  monitor:  { pos: [0, 9.5, 20],     foc: [0, 9.5, 0] },
+  loading: { pos: [-350, 350, 350], foc: [0, -50, 0] },
+  idle:    { pos: [-180, 100, 180], foc: [0, 5, 0] },
+  desk:    { pos: [0, 18, 55],      foc: [0, 7, 0] },
+  monitor: { pos: [0, 9.5, 22],     foc: [0, 9.5, 0] },
 };
 
-export default function App() {
-  const cssLayerRef = useRef<HTMLDivElement>(null);
-  const webglLayerRef = useRef<HTMLDivElement>(null);
+// ─── Terminal log lines ─────────────────────────────────────
+const LOGS: { text: string; color?: string; bold?: boolean; bg?: string }[] = [
+  { text: "Initializing Sharma Operating System (SOS)...", color: '#33ff33' },
+  { text: "Booting HCLTech Enterprise Multi-Agent Cloud Platform...", color: '#33ff33' },
+  { text: "--> Connecting to Azure Kubernetes Service...", color: '#ffcc44' },
+  { text: "SUCCESS: Authenticated as aditi.sharma@hcltech.com", color: '#44aaff', bold: true },
+  { text: "" },
+  { text: "Agent [FinOps]    online. Optimizing resource allocation...", color: '#33ff33' },
+  { text: "Agent [Security]  online. Running compliance checks... PASS", color: '#44aaff' },
+  { text: "Agent [Ops]       online. Monitoring telemetry endpoints...", color: '#33ff33' },
+  { text: "" },
+  { text: "═══════════════════════════════════════════", color: '#1a6633' },
+  { text: " CANDIDATE PROFILE: Aditi Sharma", color: '#ffffff', bold: true, bg: '#0a3a0a' },
+  { text: "═══════════════════════════════════════════", color: '#1a6633' },
+  { text: "" },
+  { text: " > Education:  M.Tech CSE (Data Science) — VIT", color: '#ffcc44' },
+  { text: " > CGPA:       9.65 / 10.0", color: '#ffcc44' },
+  { text: " > NDA:        AIR 417", color: '#ffcc44' },
+  { text: " > Arts:       Classical Kathak Dancer", color: '#ffcc44' },
+  { text: "" },
+  { text: "───────────────────────────────────────────", color: '#1a6633' },
+  { text: " EXPERIENCE", color: '#ffffff', bold: true },
+  { text: "───────────────────────────────────────────", color: '#1a6633' },
+  { text: "" },
+  { text: " > HCLTech | SDE — Multi-Agent Cloud Platform", color: '#ffcc44' },
+  { text: "   Designed autonomous K8s agents (FinOps,", color: '#aaaaaa' },
+  { text: "   Security, Ops) on Azure AKS. Built CI/CD", color: '#aaaaaa' },
+  { text: "   pipeline monitoring with real-time alerts.", color: '#aaaaaa' },
+  { text: "" },
+  { text: " > Samsung R&D | SDE — On-Device AI", color: '#ffcc44' },
+  { text: "   Optimized ONNX model inference on Exynos NPU.", color: '#aaaaaa' },
+  { text: "   Reduced latency 34% for vision pipeline.", color: '#aaaaaa' },
+  { text: "" },
+  { text: "───────────────────────────────────────────", color: '#1a6633' },
+  { text: " PROJECTS", color: '#ffffff', bold: true },
+  { text: "───────────────────────────────────────────", color: '#1a6633' },
+  { text: "" },
+  { text: " > ClaimGraphAI — Patent NLP Engine", color: '#ffcc44' },
+  { text: "   Graph-RAG patent claim optimizer.", color: '#aaaaaa' },
+  { text: "   Dependency parsing + prior art detection.", color: '#aaaaaa' },
+  { text: "" },
+  { text: " > Clinical Trial RAG System", color: '#ffcc44' },
+  { text: "   Autonomous doc parsing with 95% retrieval", color: '#aaaaaa' },
+  { text: "   accuracy. Built on LangChain + FAISS.", color: '#aaaaaa' },
+  { text: "" },
+  { text: " > Student Data Analytics Pipeline", color: '#ffcc44' },
+  { text: "   End-to-end ETL + dashboard for 50K+ records.", color: '#aaaaaa' },
+  { text: "" },
+  { text: "═══════════════════════════════════════════", color: '#1a6633' },
+  { text: " System Ready. All agents operational.", color: '#33ff33', bold: true },
+  { text: " Awaiting input...", color: '#33ff33' },
+  { text: "" },
+  { text: " GitHub:   github.com/jiya2000", color: '#44aaff' },
+  { text: " Email:    aditisharma20004@gmail.com", color: '#44aaff' },
+];
 
-  const sceneRef = useRef<THREE.Scene>(new THREE.Scene());
-  const cssSceneRef = useRef<THREE.Scene>(new THREE.Scene());
+export default function App() {
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const cssRendererRef = useRef<CSS3DRenderer | null>(null);
+  const screenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const screenTextureRef = useRef<THREE.CanvasTexture | null>(null);
+  const termLinesRef = useRef<typeof LOGS>([]);
+  const lineIdxRef = useRef(0);
+  const cursorBlinkRef = useRef(0);
+  const scrollOffsetRef = useRef(0);
 
   const currentKeyRef = useRef('loading');
   const posRef = useRef(new THREE.Vector3(...KEYFRAMES.loading.pos as [number, number, number]));
   const focRef = useRef(new THREE.Vector3(...KEYFRAMES.loading.foc as [number, number, number]));
   const mouseRef = useRef({ x: 0, y: 0 });
-  const inMonitorRef = useRef(false);
 
   const [loaded, setLoaded] = useState(false);
   const [showUI, setShowUI] = useState(false);
   const [inMonitor, setInMonitor] = useState(false);
 
-  // ─── Transition helper ────────────────────────────────────
+  // ─── Transition ───────────────────────────────────────────
   const transition = useCallback((key: keyof typeof KEYFRAMES, duration = 1000) => {
     if (currentKeyRef.current === key) return;
     TWEEN.removeAll();
@@ -41,394 +97,270 @@ export default function App() {
     const kf = KEYFRAMES[key];
     new TWEEN.Tween(posRef.current)
       .to({ x: kf.pos[0], y: kf.pos[1], z: kf.pos[2] }, duration)
-      .easing(TWEEN.Easing.Quintic.InOut)
-      .start();
+      .easing(TWEEN.Easing.Quintic.InOut).start();
     new TWEEN.Tween(focRef.current)
       .to({ x: kf.foc[0], y: kf.foc[1], z: kf.foc[2] }, duration)
-      .easing(TWEEN.Easing.Quintic.InOut)
-      .start();
+      .easing(TWEEN.Easing.Quintic.InOut).start();
   }, []);
 
-  // ─── Build scene ──────────────────────────────────────────
+  // ─── Build the entire scene ───────────────────────────────
   useEffect(() => {
-    const scene = sceneRef.current;
-    const cssScene = cssSceneRef.current;
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0a0a12, 0.004);
 
     // Camera
     const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 9000);
     camera.position.copy(posRef.current);
     cameraRef.current = camera;
 
-    // WebGL renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
-    renderer.domElement.style.position = 'absolute';
-    renderer.domElement.style.top = '0';
-    renderer.domElement.style.pointerEvents = 'none';
-    webglLayerRef.current?.appendChild(renderer.domElement);
+    renderer.setClearColor(0x0a0a12);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    canvasContainerRef.current?.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // CSS3D renderer
-    const cssRenderer = new CSS3DRenderer();
-    cssRenderer.setSize(window.innerWidth, window.innerHeight);
-    cssRenderer.domElement.style.position = 'absolute';
-    cssRenderer.domElement.style.top = '0';
-    cssLayerRef.current?.appendChild(cssRenderer.domElement);
-    cssRendererRef.current = cssRenderer;
-
     // ── Lighting ──
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const spot = new THREE.SpotLight(0xfff4e0, 80, 200, 0.4, 0.7);
-    spot.position.set(10, 40, 30);
-    spot.castShadow = true;
-    scene.add(spot);
-    const warm = new THREE.PointLight(0xff9944, 15, 60);
-    warm.position.set(-15, 15, 10);
-    scene.add(warm);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+    scene.add(ambient);
+
+    // Main desk lamp (warm spot)
+    const deskLamp = new THREE.SpotLight(0xfff0d0, 120, 150, 0.5, 0.8, 1.5);
+    deskLamp.position.set(15, 35, 25);
+    deskLamp.target.position.set(0, 0, 0);
+    deskLamp.castShadow = true;
+    deskLamp.shadow.mapSize.set(1024, 1024);
+    scene.add(deskLamp);
+    scene.add(deskLamp.target);
+
+    // Monitor glow (greenish from screen)
+    const monitorGlow = new THREE.PointLight(0x33ff33, 8, 30, 2);
+    monitorGlow.position.set(0, 10, 6);
+    scene.add(monitorGlow);
+
+    // Subtle fill light
+    const fillLight = new THREE.PointLight(0x4488cc, 5, 80);
+    fillLight.position.set(-20, 20, 15);
+    scene.add(fillLight);
 
     // ── Floor ──
-    const floorGeo = new THREE.PlaneGeometry(600, 600);
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1a22, roughness: 0.95 });
+    const floorGeo = new THREE.PlaneGeometry(400, 400);
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x12121a, roughness: 0.95 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.05;
+    floor.receiveShadow = true;
     scene.add(floor);
+
+    // ── Wall ──
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x18182a, roughness: 0.9 });
+    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(400, 200), wallMat);
+    backWall.position.set(0, 100, -60);
+    scene.add(backWall);
 
     // ── Desk ──
     const deskColor = 0x3d2b1f;
-    // Tabletop
-    const topGeo = new THREE.BoxGeometry(50, 0.8, 25);
-    const topMat = new THREE.MeshStandardMaterial({ color: deskColor, roughness: 0.7, metalness: 0.1 });
-    const tabletop = new THREE.Mesh(topGeo, topMat);
-    tabletop.position.set(0, 0, 0);
+    const topMat = new THREE.MeshStandardMaterial({ color: deskColor, roughness: 0.65, metalness: 0.05 });
+    const tabletop = new THREE.Mesh(new THREE.BoxGeometry(50, 0.8, 25), topMat);
+    tabletop.castShadow = true;
+    tabletop.receiveShadow = true;
     scene.add(tabletop);
 
+    // Desk edge trim
+    const edgeMat = new THREE.MeshStandardMaterial({ color: 0x2a1a0f, roughness: 0.5 });
+    const frontEdge = new THREE.Mesh(new THREE.BoxGeometry(50, 1.2, 0.3), edgeMat);
+    frontEdge.position.set(0, -0.1, 12.5);
+    scene.add(frontEdge);
+
     // Legs
-    const legGeo = new THREE.CylinderGeometry(0.4, 0.4, 10, 8);
-    const legMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.8, roughness: 0.3 });
-    const legPositions = [[-23, -5, -10], [23, -5, -10], [-23, -5, 10], [23, -5, 10]];
-    legPositions.forEach(p => {
+    const legMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.9, roughness: 0.2 });
+    const legGeo = new THREE.CylinderGeometry(0.35, 0.35, 10, 8);
+    [[-23, -5, -10], [23, -5, -10], [-23, -5, 10], [23, -5, 10]].forEach(p => {
       const leg = new THREE.Mesh(legGeo, legMat);
       leg.position.set(p[0], p[1], p[2]);
+      leg.castShadow = true;
       scene.add(leg);
     });
 
-    // ── Monitor (CRT Style) ──
+    // ── CRT Monitor ──
     const monGroup = new THREE.Group();
-    monGroup.position.set(0, 0.4, 0);
+    monGroup.position.set(0, 0.4, -2);
 
-    // Back casing (deep)
-    const casingGeo = new THREE.BoxGeometry(18, 14, 12);
-    const casingMat = new THREE.MeshStandardMaterial({ color: 0xd8d0c4, roughness: 0.85 });
-    const casing = new THREE.Mesh(casingGeo, casingMat);
+    // Back casing
+    const casingMat = new THREE.MeshStandardMaterial({ color: 0xd4cbb8, roughness: 0.85, metalness: 0.05 });
+    const casing = new THREE.Mesh(new THREE.BoxGeometry(18, 14, 12), casingMat);
     casing.position.set(0, 7.5, -3);
+    casing.castShadow = true;
     monGroup.add(casing);
 
     // Front bezel
-    const bezelGeo = new THREE.BoxGeometry(17, 13, 0.5);
-    const bezelMat = new THREE.MeshStandardMaterial({ color: 0xc0b8a8, roughness: 0.7 });
-    const bezel = new THREE.Mesh(bezelGeo, bezelMat);
-    bezel.position.set(0, 7.5, 3.2);
+    const bezelMat = new THREE.MeshStandardMaterial({ color: 0xc8bfa8, roughness: 0.7 });
+    const bezel = new THREE.Mesh(new THREE.BoxGeometry(17.5, 13.5, 0.6), bezelMat);
+    bezel.position.set(0, 7.5, 3.1);
     monGroup.add(bezel);
 
-    // Screen inset (black)
-    const screenGeo = new THREE.PlaneGeometry(15.5, 11.5);
-    const screenMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-    const screenMesh = new THREE.Mesh(screenGeo, screenMat);
-    screenMesh.position.set(0, 7.5, 3.46);
+    // Power LED
+    const ledMat = new THREE.MeshBasicMaterial({ color: 0x33ff33 });
+    const led = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), ledMat);
+    led.position.set(7.5, 1.8, 3.4);
+    monGroup.add(led);
+
+    // ── Monitor Screen (CanvasTexture) ──
+    const CANVAS_W = 1024;
+    const CANVAS_H = 768;
+    const screenCanvas = document.createElement('canvas');
+    screenCanvas.width = CANVAS_W;
+    screenCanvas.height = CANVAS_H;
+    screenCanvasRef.current = screenCanvas;
+
+    const screenTexture = new THREE.CanvasTexture(screenCanvas);
+    screenTexture.minFilter = THREE.LinearFilter;
+    screenTexture.magFilter = THREE.LinearFilter;
+    screenTextureRef.current = screenTexture;
+
+    const screenMat = new THREE.MeshBasicMaterial({ map: screenTexture });
+    const screenMesh = new THREE.Mesh(new THREE.PlaneGeometry(15, 11), screenMat);
+    screenMesh.position.set(0, 7.5, 3.42);
     monGroup.add(screenMesh);
 
-    // GL occlusion plane (makes CSS3D hidden behind objects)
-    const glPlaneMat = new THREE.MeshLambertMaterial({
-      side: THREE.DoubleSide,
-      opacity: 0,
-      transparent: true,
-      blending: THREE.NoBlending,
-    });
-    const glPlane = new THREE.Mesh(new THREE.PlaneGeometry(15.5, 11.5), glPlaneMat);
-    glPlane.position.set(0, 7.5, 3.47);
-    monGroup.add(glPlane);
+    // Slight screen bezel inset (dark border)
+    const insetMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+    const inset = new THREE.Mesh(new THREE.PlaneGeometry(15.4, 11.4), insetMat);
+    inset.position.set(0, 7.5, 3.41);
+    monGroup.add(inset);
 
-    // Monitor stand
-    const standGeo = new THREE.CylinderGeometry(2.5, 3.5, 1.2, 16);
-    const standMat = new THREE.MeshStandardMaterial({ color: 0xd8d0c4, roughness: 0.8 });
-    const stand = new THREE.Mesh(standGeo, standMat);
-    stand.position.set(0, 0.2, 0);
-    monGroup.add(stand);
+    // Stand
+    const standMat = new THREE.MeshStandardMaterial({ color: 0xd4cbb8, roughness: 0.8 });
+    const standNeck = new THREE.Mesh(new THREE.CylinderGeometry(1, 1.5, 1.5, 16), standMat);
+    standNeck.position.set(0, 0.35, 0);
+    monGroup.add(standNeck);
+    const standBase = new THREE.Mesh(new THREE.CylinderGeometry(3.5, 4, 0.4, 16), standMat);
+    standBase.position.set(0, -0.4, 0);
+    monGroup.add(standBase);
 
     scene.add(monGroup);
 
-    // ── CSS3D Screen Content (the OS) ──
-    const SCREEN_W = 1024;
-    const SCREEN_H = 768;
-
-    const container = document.createElement('div');
-    container.style.width = SCREEN_W + 'px';
-    container.style.height = SCREEN_H + 'px';
-    container.style.background = '#0a1a1a';
-    container.className = 'jitter';
-
-    // Build HTML OS
-    const osRoot = document.createElement('div');
-    osRoot.id = 'os-root';
-    osRoot.style.cssText = `
-      width: 100%; height: 100%; font-family: 'Share Tech Mono', monospace;
-      color: #33ff33; background: radial-gradient(circle, #0a2020 0%, #000 100%);
-      display: flex; flex-direction: column; overflow: hidden; position: relative;
-      box-shadow: inset 0 0 80px rgba(0,255,100,0.08);
-    `;
-
-    // Scanline overlay inside screen
-    const scanDiv = document.createElement('div');
-    scanDiv.style.cssText = `
-      position:absolute;top:0;left:0;width:100%;height:100%;
-      background: repeating-linear-gradient(0deg,rgba(0,255,0,0.06) 0px,rgba(0,255,0,0.06) 1px,transparent 1px,transparent 3px);
-      pointer-events:none;z-index:999;
-    `;
-    osRoot.appendChild(scanDiv);
-
-    // Desktop icons
-    const iconsDiv = document.createElement('div');
-    iconsDiv.style.cssText = 'padding:20px;display:flex;flex-direction:column;gap:16px;z-index:10;position:relative;';
-    const icons = [
-      { label: 'GitHub', icon: '⌘', url: 'https://github.com/jiya2000' },
-      { label: 'LinkedIn', icon: '▦', url: 'https://linkedin.com/in/aditisharma' },
-      { label: 'Email', icon: '@', action: 'email' },
-    ];
-    icons.forEach(ic => {
-      const btn = document.createElement('button');
-      btn.style.cssText = `
-        display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;color:#33ff33;font-family:inherit;
-      `;
-      btn.innerHTML = `
-        <div style="width:48px;height:48px;border:2px solid #33ff33;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(0,0,0,0.8);border-radius:4px;">${ic.icon}</div>
-        <span style="font-size:11px;background:#000;padding:1px 6px;border:1px solid #1a6633;">${ic.label}</span>
-      `;
-      btn.onclick = () => {
-        if (ic.action === 'email') {
-          window.open('mailto:aditisharma20004@gmail.com');
-        } else if (ic.url) {
-          window.open(ic.url, '_blank');
-        }
-      };
-      iconsDiv.appendChild(btn);
-    });
-    osRoot.appendChild(iconsDiv);
-
-    // Terminal window
-    const termWin = document.createElement('div');
-    termWin.style.cssText = `
-      position:absolute;top:30px;left:180px;width:780px;height:520px;
-      background:rgba(0,0,0,0.95);border:2px solid #33ff33;
-      box-shadow:0 0 30px rgba(0,255,0,0.3);display:flex;flex-direction:column;z-index:20;
-    `;
-    // Title bar
-    const titleBar = document.createElement('div');
-    titleBar.style.cssText = `
-      height:32px;background:#0a3a0a;border-bottom:2px solid #33ff33;display:flex;align-items:center;
-      justify-content:space-between;padding:0 10px;color:#fff;font-size:13px;
-    `;
-    titleBar.innerHTML = '<span>⬛ aditi@portfolio:~$ k8s_agent_monitor.sh</span><span style="cursor:pointer;">✕</span>';
-    termWin.appendChild(titleBar);
-
-    // Terminal body
-    const termBody = document.createElement('div');
-    termBody.style.cssText = 'flex:1;padding:12px;overflow-y:auto;font-size:13px;line-height:1.6;';
-    termWin.appendChild(termBody);
-    osRoot.appendChild(termWin);
-
-    // Taskbar
-    const taskbar = document.createElement('div');
-    taskbar.style.cssText = `
-      height:36px;background:#0a1a0a;border-top:2px solid #33ff33;margin-top:auto;display:flex;
-      align-items:center;padding:0 12px;position:relative;z-index:30;
-    `;
-    taskbar.innerHTML = `
-      <div style="font-weight:bold;font-size:14px;background:#33ff33;color:#000;padding:2px 16px;cursor:pointer;">START</div>
-      <div style="margin-left:auto;color:#33ff33;font-size:12px;">SHARMA_OS v2.0</div>
-    `;
-    osRoot.appendChild(taskbar);
-
-    container.appendChild(osRoot);
-
-    // Create CSS3D object
-    const cssObj = new CSS3DObject(container);
-    const scaleFactor = 15.5 / SCREEN_W;
-    cssObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
-    cssObj.position.set(0, 7.5, 3.48);
-    cssObj.rotation.set(-3 * THREE.MathUtils.DEG2RAD, 0, 0);
-    cssScene.add(cssObj);
-
-    // Terminal typewriter effect
-    const LOGS = [
-      "Initializing Sharma Operating System (SOS)...",
-      "Booting HCLTech Enterprise Multi-Agent Cloud Platform...",
-      "--> Connecting to Azure Kubernetes Service... ",
-      "SUCCESS: Authenticated as aditi.sharma@hcltech.com",
-      "",
-      "Agent [FinOps]    online. Optimizing resource allocation...",
-      "Agent [Security]  online. Running compliance checks... PASS",
-      "Agent [Ops]       online. Monitoring telemetry endpoints...",
-      "",
-      "═══════════════════════════════════════════════════",
-      " CANDIDATE PROFILE: Aditi Sharma",
-      "═══════════════════════════════════════════════════",
-      "",
-      " > Education:  M.Tech CSE (Data Science) — VIT",
-      " > CGPA:       9.65 / 10.0",
-      " > NDA:        AIR 417",
-      " > Arts:       Classical Kathak Dancer",
-      "",
-      "───────────────────────────────────────────────────",
-      " EXPERIENCE",
-      "───────────────────────────────────────────────────",
-      "",
-      " > HCLTech | SDE — Multi-Agent Cloud Platform",
-      "   Designed autonomous K8s agents (FinOps,",
-      "   Security, Ops) on Azure AKS. Built CI/CD",
-      "   pipeline monitoring with real-time alerts.",
-      "",
-      " > Samsung R&D | SDE — On-Device AI",
-      "   Optimized ONNX model inference on Exynos NPU.",
-      "   Reduced latency 34% for vision pipeline.",
-      "",
-      "───────────────────────────────────────────────────",
-      " PROJECTS",
-      "───────────────────────────────────────────────────",
-      "",
-      " > ClaimGraphAI — Patent NLP Engine",
-      "   Graph-RAG patent claim optimizer.",
-      "   Dependency parsing + prior art detection.",
-      "",
-      " > Clinical Trial RAG System",
-      "   Autonomous doc parsing with 95% retrieval",
-      "   accuracy. Built on LangChain + FAISS.",
-      "",
-      " > Student Data Analytics Pipeline",
-      "   End-to-end ETL + dashboard for 50K+ records.",
-      "",
-      "═══════════════════════════════════════════════════",
-      " System Ready. All agents operational.",
-      " Awaiting input...",
-    ];
-
-    let lineIdx = 0;
-    const typeInterval = setInterval(() => {
-      if (lineIdx < LOGS.length) {
-        const line = LOGS[lineIdx];
-        const div = document.createElement('div');
-        if (line.includes('SUCCESS') || line.includes('PASS')) {
-          div.style.color = '#44aaff';
-          div.style.fontWeight = 'bold';
-        } else if (line.includes('═══') || line.includes('───')) {
-          div.style.color = '#1a6633';
-        } else if (line.startsWith(' >') || line.startsWith('-->')) {
-          div.style.color = '#ffcc44';
-        } else if (line.includes('CANDIDATE PROFILE')) {
-          div.style.cssText = 'color:#fff;font-weight:bold;background:#0a3a0a;padding:2px 8px;';
-        }
-        div.textContent = line || '\u00A0';
-        termBody.appendChild(div);
-        termBody.scrollTop = termBody.scrollHeight;
-        lineIdx++;
-      } else {
-        clearInterval(typeInterval);
-        const cursor = document.createElement('div');
-        cursor.className = 'blinking-cursor';
-        cursor.style.cssText = 'width:8px;height:14px;background:#33ff33;margin-top:8px;';
-        termBody.appendChild(cursor);
-      }
-    }, 120);
-
     // ── Keyboard ──
     const kbGroup = new THREE.Group();
-    kbGroup.position.set(0, 0.45, 9);
-    const kbBase = new THREE.Mesh(
-      new THREE.BoxGeometry(14, 0.4, 5),
-      new THREE.MeshStandardMaterial({ color: 0xd8d0c4, roughness: 0.8 })
-    );
+    kbGroup.position.set(0, 0.45, 8);
+    const kbMat = new THREE.MeshStandardMaterial({ color: 0xd4cbb8, roughness: 0.8 });
+    const kbBase = new THREE.Mesh(new THREE.BoxGeometry(14, 0.3, 5), kbMat);
     kbGroup.add(kbBase);
-    // Keys
+    const keyMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.5 });
     for (let row = 0; row < 4; row++) {
-      for (let col = 0; col < 12; col++) {
-        const key = new THREE.Mesh(
-          new THREE.BoxGeometry(0.9, 0.3, 0.9),
-          new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.6 })
-        );
-        key.position.set(-5.5 + col * 1.05, 0.35, -1.5 + row * 1.15);
+      const keysInRow = row === 3 ? 8 : 12;
+      for (let col = 0; col < keysInRow; col++) {
+        const w = row === 3 && col === 4 ? 4 : 0.85;
+        const key = new THREE.Mesh(new THREE.BoxGeometry(w, 0.25, 0.85), keyMat);
+        const xOff = row === 3 ? (col < 4 ? -5.5 + col * 1.05 : (col === 4 ? 0 : 2 + (col - 5) * 1.05)) : -5.5 + col * 1.05;
+        key.position.set(xOff, 0.27, -1.5 + row * 1.15);
         kbGroup.add(key);
       }
     }
     scene.add(kbGroup);
 
     // ── Mouse ──
-    const mouseGeo = new THREE.BoxGeometry(2, 0.6, 3);
-    const mouseMesh = new THREE.Mesh(mouseGeo, new THREE.MeshStandardMaterial({ color: 0xd8d0c4, roughness: 0.8 }));
-    mouseMesh.position.set(12, 0.7, 9);
-    scene.add(mouseMesh);
+    const mouseMat = new THREE.MeshStandardMaterial({ color: 0xd4cbb8, roughness: 0.8 });
+    const mouseBody = new THREE.Mesh(new THREE.BoxGeometry(2, 0.5, 3), mouseMat);
+    mouseBody.position.set(12, 0.65, 8);
+    mouseBody.castShadow = true;
+    scene.add(mouseBody);
+    // Mouse buttons
+    const mbMat = new THREE.MeshStandardMaterial({ color: 0xb8a888, roughness: 0.6 });
+    const mb1 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.1, 1.2), mbMat);
+    mb1.position.set(11.55, 0.95, 7.4);
+    scene.add(mb1);
+    const mb2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.1, 1.2), mbMat);
+    mb2.position.set(12.45, 0.95, 7.4);
+    scene.add(mb2);
 
-    // ── Coffee mug ──
+    // ── Coffee Mug ──
     const mugGroup = new THREE.Group();
-    mugGroup.position.set(-18, 0.4, 6);
-    const mugBody = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.2, 1, 3, 16),
-      new THREE.MeshStandardMaterial({ color: 0xf5f5dc, roughness: 0.7 })
-    );
+    mugGroup.position.set(-18, 0.4, 5);
+    const mugMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.6 });
+    const mugBody = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1, 3, 16), mugMat);
     mugBody.position.y = 1.5;
+    mugBody.castShadow = true;
     mugGroup.add(mugBody);
-    const coffee = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.1, 1.1, 0.1, 16),
-      new THREE.MeshStandardMaterial({ color: 0x3d1c02 })
-    );
+    const coffeeMat = new THREE.MeshStandardMaterial({ color: 0x3d1c02, roughness: 0.3 });
+    const coffee = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 0.1, 16), coffeeMat);
     coffee.position.y = 2.9;
     mugGroup.add(coffee);
-    // Handle
-    const handleGeo = new THREE.TorusGeometry(0.7, 0.15, 8, 12, Math.PI);
-    const handle = new THREE.Mesh(handleGeo, new THREE.MeshStandardMaterial({ color: 0xf5f5dc }));
-    handle.position.set(1.3, 1.8, 0);
-    handle.rotation.z = -Math.PI / 2;
-    mugGroup.add(handle);
+    const handleGeo = new THREE.TorusGeometry(0.65, 0.12, 8, 12, Math.PI);
+    const handleMesh = new THREE.Mesh(handleGeo, mugMat);
+    handleMesh.position.set(1.25, 1.8, 0);
+    handleMesh.rotation.z = -Math.PI / 2;
+    mugGroup.add(handleMesh);
     scene.add(mugGroup);
 
-    // ── Wall behind ──
-    const wallGeo = new THREE.PlaneGeometry(600, 300);
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x1c1c26, roughness: 0.95 });
-    const wall = new THREE.Mesh(wallGeo, wallMat);
-    wall.position.set(0, 150, -80);
-    scene.add(wall);
+    // ── Notepad / Sticky Notes ──
+    const noteMat = new THREE.MeshStandardMaterial({ color: 0xffee88, roughness: 0.9 });
+    const note = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.05, 4), noteMat);
+    note.position.set(-14, 0.42, 7);
+    note.rotation.y = 0.15;
+    scene.add(note);
+    const noteMat2 = new THREE.MeshStandardMaterial({ color: 0x88ddff, roughness: 0.9 });
+    const note2 = new THREE.Mesh(new THREE.BoxGeometry(3, 0.05, 3), noteMat2);
+    note2.position.set(-13, 0.44, 6.5);
+    note2.rotation.y = -0.1;
+    scene.add(note2);
 
-    // ── Mouse interaction for camera ──
+    // ── Pen ──
+    const penMat = new THREE.MeshStandardMaterial({ color: 0x222288, metalness: 0.6, roughness: 0.3 });
+    const pen = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 6, 8), penMat);
+    pen.position.set(-12, 0.5, 9);
+    pen.rotation.z = Math.PI / 2;
+    pen.rotation.y = 0.3;
+    scene.add(pen);
+
+    // ── Book Stack ──
+    const bookColors = [0x8b0000, 0x00008b, 0x006400];
+    bookColors.forEach((c, i) => {
+      const bookMat = new THREE.MeshStandardMaterial({ color: c, roughness: 0.8 });
+      const book = new THREE.Mesh(new THREE.BoxGeometry(5, 0.8, 7), bookMat);
+      book.position.set(20, 0.8 + i * 0.8, -5);
+      book.rotation.y = 0.05 * i;
+      book.castShadow = true;
+      scene.add(book);
+    });
+
+    // ── Raycaster for monitor click detection ──
+    const raycaster = new THREE.Raycaster();
+    const mouseNDC = new THREE.Vector2();
+
+    // ── Mouse events ──
     const onMouseMove = (e: MouseEvent) => {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
-
-      // Check if mouse is in the CSS3D iframe area  
-      const target = e.target as HTMLElement;
-      const isOS = target.closest('#os-root') !== null;
-      
-      if (isOS && !inMonitorRef.current) {
-        inMonitorRef.current = true;
-        setInMonitor(true);
-        transition('monitor', 2000);
-      } else if (!isOS && inMonitorRef.current) {
-        inMonitorRef.current = false;
-        setInMonitor(false);
-        transition('desk');
-      }
     };
 
     const onMouseDown = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isOS = target.closest('#os-root') !== null;
-      if (isOS) return; // let clicks inside OS pass through
-      
+      // Raycast check for monitor
+      mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouseNDC, camera);
+      const hits = raycaster.intersectObject(screenMesh, true);
+
+      if (hits.length > 0) {
+        if (currentKeyRef.current !== 'monitor') {
+          currentKeyRef.current = '';
+          transition('monitor', 2000);
+          setInMonitor(true);
+        }
+        return;
+      }
+
       e.preventDefault();
-      if (currentKeyRef.current === 'idle') {
+      if (currentKeyRef.current === 'monitor') {
+        transition('desk');
+        setInMonitor(false);
+      } else if (currentKeyRef.current === 'idle') {
         transition('desk');
       } else if (currentKeyRef.current === 'desk') {
-        transition('idle');
+        transition('idle', 2000);
       }
     };
 
@@ -440,39 +372,148 @@ export default function App() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      cssRenderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', onResize);
 
+    // ── Terminal Typewriter ──
+    let lastTypeTime = 0;
+    const TYPE_INTERVAL = 120; // ms between lines
+
+    // ── Draw Screen Function ──
+    const drawScreen = (time: number) => {
+      const ctx = screenCanvas.getContext('2d');
+      if (!ctx) return;
+
+      // Background
+      const grad = ctx.createRadialGradient(CANVAS_W / 2, CANVAS_H / 2, 100, CANVAS_W / 2, CANVAS_H / 2, CANVAS_W);
+      grad.addColorStop(0, '#0a1a1a');
+      grad.addColorStop(1, '#000000');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+      // Vignette
+      const vignette = ctx.createRadialGradient(CANVAS_W / 2, CANVAS_H / 2, CANVAS_H * 0.3, CANVAS_W / 2, CANVAS_H / 2, CANVAS_H * 0.8);
+      vignette.addColorStop(0, 'rgba(0,0,0,0)');
+      vignette.addColorStop(1, 'rgba(0,0,0,0.6)');
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+      // Title bar
+      ctx.fillStyle = '#0a3a0a';
+      ctx.fillRect(0, 0, CANVAS_W, 32);
+      ctx.fillStyle = '#33ff33';
+      ctx.font = 'bold 14px "Share Tech Mono", monospace';
+      ctx.fillText('⬛ aditi@portfolio:~$ k8s_agent_monitor.sh', 12, 22);
+      ctx.fillStyle = '#ff4444';
+      ctx.fillText('✕', CANVAS_W - 24, 22);
+
+      // Bottom taskbar
+      ctx.fillStyle = '#0a1a0a';
+      ctx.fillRect(0, CANVAS_H - 32, CANVAS_W, 32);
+      ctx.fillStyle = '#000';
+      ctx.strokeStyle = '#33ff33';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(8, CANVAS_H - 28, 60, 24);
+      ctx.fillStyle = '#33ff33';
+      ctx.font = 'bold 13px "Share Tech Mono", monospace';
+      ctx.fillText('START', 16, CANVAS_H - 11);
+      ctx.fillStyle = '#1a6633';
+      ctx.font = '12px "Share Tech Mono", monospace';
+      ctx.fillText('SHARMA_OS v2.0', CANVAS_W - 160, CANVAS_H - 11);
+
+      // Type new lines
+      if (time - lastTypeTime > TYPE_INTERVAL && lineIdxRef.current < LOGS.length) {
+        termLinesRef.current.push(LOGS[lineIdxRef.current]);
+        lineIdxRef.current++;
+        lastTypeTime = time;
+        // Auto-scroll if too many lines
+        const maxVisible = 32;
+        if (termLinesRef.current.length > maxVisible) {
+          scrollOffsetRef.current = termLinesRef.current.length - maxVisible;
+        }
+      }
+
+      // Draw terminal lines
+      ctx.font = '14px "Share Tech Mono", monospace';
+      const lineHeight = 20;
+      const startY = 52;
+      const visibleLines = termLinesRef.current.slice(scrollOffsetRef.current);
+      visibleLines.forEach((line, i) => {
+        const y = startY + i * lineHeight;
+        if (y > CANVAS_H - 40) return;
+
+        if (line.bg) {
+          ctx.fillStyle = line.bg;
+          ctx.fillRect(12, y - 14, CANVAS_W - 24, lineHeight);
+        }
+        ctx.fillStyle = line.color || '#33ff33';
+        ctx.font = (line.bold ? 'bold ' : '') + '14px "Share Tech Mono", monospace';
+        ctx.fillText(line.text, 20, y);
+      });
+
+      // Blinking cursor
+      cursorBlinkRef.current += 1;
+      if (cursorBlinkRef.current % 40 < 20) {
+        const cursorY = startY + visibleLines.length * lineHeight;
+        if (cursorY < CANVAS_H - 40) {
+          ctx.fillStyle = '#33ff33';
+          ctx.fillRect(20, cursorY - 12, 9, 16);
+        }
+      }
+
+      // Scanlines
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      for (let sy = 0; sy < CANVAS_H; sy += 3) {
+        ctx.fillRect(0, sy, CANVAS_W, 1);
+      }
+
+      // CRT curvature edge darkening
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(0, 0, 8, CANVAS_H);
+      ctx.fillRect(CANVAS_W - 8, 0, 8, CANVAS_H);
+      ctx.fillRect(0, 0, CANVAS_W, 5);
+      ctx.fillRect(0, CANVAS_H - 5, CANVAS_W, 5);
+
+      screenTexture.needsUpdate = true;
+    };
+
     // ── Animation loop ──
     const clock = new THREE.Clock();
-    const animate = () => {
-      requestAnimationFrame(animate);
+    let animId = 0;
+    const animate = (time: number) => {
+      animId = requestAnimationFrame(animate);
       TWEEN.update();
+
+      const elapsed = clock.getElapsedTime();
 
       // Parallax on desk view
       if (currentKeyRef.current === 'desk') {
         const mx = (mouseRef.current.x - window.innerWidth / 2) * 0.003;
         const my = (mouseRef.current.y - window.innerHeight / 2) * 0.002;
-        posRef.current.x += (mx - posRef.current.x) * 0.02;
-        posRef.current.y += (18 - my - posRef.current.y) * 0.02;
+        posRef.current.x += (mx - posRef.current.x) * 0.03;
+        posRef.current.y += (18 - my - posRef.current.y) * 0.03;
       }
 
-      // Gentle idle orbit
+      // Gentle idle float
       if (currentKeyRef.current === 'idle') {
-        const t = clock.getElapsedTime();
-        posRef.current.x = Math.sin(t * 0.08) * KEYFRAMES.idle.pos[0];
+        const idleKf = KEYFRAMES.idle;
+        posRef.current.x = idleKf.pos[0] + Math.sin(elapsed * 0.15) * 30;
+        posRef.current.y = idleKf.pos[1] + Math.sin(elapsed * 0.1) * 8;
       }
+
+      // Pulse monitor glow
+      monitorGlow.intensity = 6 + Math.sin(elapsed * 2) * 2;
 
       camera.position.copy(posRef.current);
       camera.lookAt(focRef.current);
 
+      drawScreen(time);
       renderer.render(scene, camera);
-      cssRenderer.render(cssScene, camera);
     };
-    animate();
+    animate(0);
 
     return () => {
+      cancelAnimationFrame(animId);
       window.removeEventListener('resize', onResize);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mousedown', onMouseDown);
@@ -480,7 +521,7 @@ export default function App() {
     };
   }, [transition]);
 
-  // ─── Loading finished handler ─────────────────────────────
+  // ─── Loading done ─────────────────────────────────────────
   const handleStart = useCallback(() => {
     setLoaded(true);
     setShowUI(true);
@@ -489,10 +530,8 @@ export default function App() {
 
   return (
     <>
-      <div className="scanlines" />
-      <div id="css-layer" ref={cssLayerRef} />
-      <div id="webgl-layer" ref={webglLayerRef} />
-      <div id="ui-layer">
+      <div ref={canvasContainerRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }} />
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
         {showUI && <InfoOverlay visible={!inMonitor} />}
       </div>
       {!loaded && <LoadingScreen onStart={handleStart} />}
