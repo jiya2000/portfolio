@@ -244,11 +244,11 @@ export class VisualVehicle
         headMesh.receiveShadow = true
         head.add(headMesh)
 
-        // Chin & jaw contour
-        const chinGeo = new THREE.ConeGeometry(0.10, 0.14, 12)
+        // Soft rounded chin & jaw contour
+        const chinGeo = new THREE.SphereGeometry(0.08, 14, 12)
+        chinGeo.scale(1.0, 0.85, 0.9)
         const chin = new THREE.Mesh(chinGeo, skinMat)
-        chin.position.set(0, -0.12, 0.06)
-        chin.rotation.x = 0.35
+        chin.position.set(0, -0.11, 0.08)
         head.add(chin)
 
         // Nose bridge & soft tip
@@ -353,67 +353,80 @@ export class VisualVehicle
         rightEar.rotation.z = 0.15
         head.add(rightEar)
 
-        // Realistic Hair Styling (Crown volume, parted bangs, side locks, bouncy ponytail)
-        const hairCrownGeo = new THREE.SphereGeometry(0.23, 18, 16)
-        hairCrownGeo.scale(1.02, 1.06, 1.06)
+        // Realistic Organic Hair Styling (Full volume crown, soft curtain bangs, cascading tresses, side locks)
+        const hairCrownGeo = new THREE.SphereGeometry(0.24, 22, 18)
+        hairCrownGeo.scale(1.02, 1.05, 1.08)
         const hairCrown = new THREE.Mesh(hairCrownGeo, hairMat)
-        hairCrown.position.set(0, 0.05, -0.03)
+        hairCrown.position.set(0, 0.05, -0.025)
         hairCrown.castShadow = true
         head.add(hairCrown)
 
-        // Parted curtain bangs framing forehead
-        const leftBangGeo = new THREE.CylinderGeometry(0.05, 0.08, 0.22, 10)
+        // Back flowing hair group (natural drape that sways gently with movement)
+        const backHair = new THREE.Group()
+        backHair.position.set(0, -0.06, -0.16)
+        head.add(backHair)
+
+        // Upper back volume (natural smooth drape behind skull)
+        const backVolumeGeo = new THREE.CapsuleGeometry(0.12, 0.22, 8, 14)
+        const backVolume = new THREE.Mesh(backVolumeGeo, hairMat)
+        backVolume.rotation.x = 0.22
+        backVolume.castShadow = true
+        backHair.add(backVolume)
+
+        // Cascading smooth back tresses flowing naturally over neck and shoulders
+        const backCenterGeo = new THREE.CapsuleGeometry(0.08, 0.26, 8, 12)
+        const backCenter = new THREE.Mesh(backCenterGeo, hairMat)
+        backCenter.position.set(0, -0.13, -0.02)
+        backCenter.rotation.x = 0.28
+        backCenter.castShadow = true
+        backHair.add(backCenter)
+
+        const backLeftGeo = new THREE.CapsuleGeometry(0.07, 0.24, 8, 12)
+        const backLeft = new THREE.Mesh(backLeftGeo, hairMat)
+        backLeft.position.set(-0.10, -0.11, 0)
+        backLeft.rotation.set(0.25, 0.1, -0.14)
+        backLeft.castShadow = true
+        backHair.add(backLeft)
+
+        const backRightGeo = new THREE.CapsuleGeometry(0.07, 0.24, 8, 12)
+        const backRight = new THREE.Mesh(backRightGeo, hairMat)
+        backRight.position.set(0.10, -0.11, 0)
+        backRight.rotation.set(0.25, -0.1, 0.14)
+        backRight.castShadow = true
+        backHair.add(backRight)
+
+        // Soft curved curtain bangs framing the forehead
+        const leftBangGeo = new THREE.CapsuleGeometry(0.045, 0.16, 8, 12)
         const leftBang = new THREE.Mesh(leftBangGeo, hairMat)
-        leftBang.position.set(-0.09, 0.11, 0.14)
-        leftBang.rotation.set(0.3, 0.2, -0.45)
+        leftBang.position.set(-0.08, 0.11, 0.15)
+        leftBang.rotation.set(0.25, 0.15, -0.42)
         head.add(leftBang)
 
-        const rightBangGeo = new THREE.CylinderGeometry(0.05, 0.08, 0.22, 10)
+        const rightBangGeo = new THREE.CapsuleGeometry(0.045, 0.16, 8, 12)
         const rightBang = new THREE.Mesh(rightBangGeo, hairMat)
-        rightBang.position.set(0.09, 0.11, 0.14)
-        rightBang.rotation.set(0.3, -0.2, 0.45)
+        rightBang.position.set(0.08, 0.11, 0.15)
+        rightBang.rotation.set(0.25, -0.15, 0.42)
         head.add(rightBang)
 
-        // Face-framing side strands
-        const leftLockGeo = new THREE.ConeGeometry(0.045, 0.34, 8)
+        // Center hairline tuft
+        const centerBangGeo = new THREE.CapsuleGeometry(0.035, 0.10, 6, 10)
+        const centerBang = new THREE.Mesh(centerBangGeo, hairMat)
+        centerBang.position.set(0, 0.13, 0.16)
+        centerBang.rotation.x = 0.28
+        head.add(centerBang)
+
+        // Face-framing smooth front locks (curving gently down cheeks and jaw)
+        const leftLockGeo = new THREE.CapsuleGeometry(0.045, 0.30, 8, 12)
         const leftLock = new THREE.Mesh(leftLockGeo, hairMat)
-        leftLock.position.set(-0.18, -0.06, 0.08)
-        leftLock.rotation.z = 0.15
-        leftLock.rotation.x = -0.1
+        leftLock.position.set(-0.17, -0.08, 0.07)
+        leftLock.rotation.set(0.10, 0.08, 0.12)
         head.add(leftLock)
 
-        const rightLockGeo = new THREE.ConeGeometry(0.045, 0.34, 8)
+        const rightLockGeo = new THREE.CapsuleGeometry(0.045, 0.30, 8, 12)
         const rightLock = new THREE.Mesh(rightLockGeo, hairMat)
-        rightLock.position.set(0.18, -0.06, 0.08)
-        rightLock.rotation.z = -0.15
-        rightLock.rotation.x = -0.1
+        rightLock.position.set(0.17, -0.08, 0.07)
+        rightLock.rotation.set(0.10, -0.08, -0.12)
         head.add(rightLock)
-
-        // Ponytail Pivot (at rear crown)
-        const ponytail = new THREE.Group()
-        ponytail.position.set(0, 0.12, -0.22)
-        head.add(ponytail)
-
-        // Hair Tie Ring
-        const hairTieGeo = new THREE.TorusGeometry(0.055, 0.02, 10, 16)
-        const hairTie = new THREE.Mesh(hairTieGeo, hairTieMat)
-        hairTie.rotation.x = Math.PI * 0.5
-        ponytail.add(hairTie)
-
-        // Ponytail segments cascading naturally
-        const pony1Geo = new THREE.ConeGeometry(0.09, 0.35, 10)
-        const pony1 = new THREE.Mesh(pony1Geo, hairMat)
-        pony1.position.set(0, -0.15, -0.07)
-        pony1.rotation.x = -0.5
-        pony1.castShadow = true
-        ponytail.add(pony1)
-
-        const pony2Geo = new THREE.ConeGeometry(0.065, 0.32, 10)
-        const pony2 = new THREE.Mesh(pony2Geo, hairMat)
-        pony2.position.set(0, -0.32, -0.16)
-        pony2.rotation.x = -0.65
-        pony2.castShadow = true
-        ponytail.add(pony2)
 
         // Stylish wireless headphones around neck
         const headphoneBandGeo = new THREE.TorusGeometry(0.16, 0.018, 8, 20, Math.PI * 0.85)
@@ -600,7 +613,8 @@ export class VisualVehicle
             hips: hips,
             torso: torso,
             head: head,
-            ponytail: ponytail,
+            ponytail: backHair,
+            hair: backHair,
             leftArm: leftArm,
             leftForearm: leftForearm,
             rightArm: rightArm,
@@ -754,9 +768,12 @@ export class VisualVehicle
             // Vertical gait bounce
             this.girl.hips.position.y = 0.94 + Math.abs(Math.sin(this.walkPhase * 2)) * 0.04
             
-            // Dynamic ponytail bounce & sway
-            this.girl.ponytail.rotation.x = 0.25 + Math.sin(this.walkPhase * 2) * 0.15 + animSpeed * 0.03
-            this.girl.ponytail.rotation.z = Math.sin(this.walkPhase) * 0.10 + (this.game.player.steering * 0.15)
+            // Dynamic hair bounce & sway
+            if(this.girl.hair)
+            {
+                this.girl.hair.rotation.x = 0.20 + Math.sin(this.walkPhase * 2) * 0.05 + animSpeed * 0.02
+                this.girl.hair.rotation.z = Math.sin(this.walkPhase) * 0.04 + (this.game.player.steering * 0.06)
+            }
         }
         else
         {
@@ -775,9 +792,11 @@ export class VisualVehicle
 
             this.girl.hips.position.y = 0.94
             this.girl.torso.position.y = Math.sin(this.idlePhase) * 0.015
-            this.girl.head.rotation.x = Math.sin(this.idlePhase * 0.7) * 0.02
-            this.girl.ponytail.rotation.x = 0.2 + Math.sin(this.idlePhase) * 0.03
-            this.girl.ponytail.rotation.z *= 0.9
+            if(this.girl.hair)
+            {
+                this.girl.hair.rotation.x = 0.18 + Math.sin(this.idlePhase) * 0.015
+                this.girl.hair.rotation.z *= 0.9
+            }
         }
 
         // Screen position calculation for UI & foliage see-through
