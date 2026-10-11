@@ -60,49 +60,101 @@ export class VisualVehicle
         const girl = new THREE.Group()
         girl.name = 'aditiCharacter'
 
-        // Materials using MeshDefaultMaterial for proper lighting, shadows and fog
+        // Refined realistic color palette & materials
         const skinMat = new MeshDefaultMaterial({
-            colorNode: color('#fcd3be'),
+            colorNode: color('#f5d0bc'), // Natural warm skin
+            hasWater: false
+        })
+        const skinShadowMat = new MeshDefaultMaterial({
+            colorNode: color('#e5bca8'),
             hasWater: false
         })
         const hairMat = new MeshDefaultMaterial({
-            colorNode: color('#231815'),
+            colorNode: color('#221714'), // Deep espresso brunette
             hasWater: false
         })
         const hairTieMat = new MeshDefaultMaterial({
-            colorNode: color('#ff4a4a'),
+            colorNode: color('#e11d48'),
             hasWater: false
         })
-        const jacketMat = new MeshDefaultMaterial({
-            colorNode: color('#4f75ff'), // Vibrant tech cobalt jacket
-            hasWater: false
-        })
-        const jacketTrimMat = new MeshDefaultMaterial({
+        const scleraMat = new MeshDefaultMaterial({
             colorNode: color('#ffffff'),
             hasWater: false
         })
-        const shirtMat = new MeshDefaultMaterial({
-            colorNode: color('#f8f9fc'),
+        const irisMat = new MeshDefaultMaterial({
+            colorNode: color('#3b2219'), // Warm dark amber-brown iris
             hasWater: false
         })
-        const pantsMat = new MeshDefaultMaterial({
-            colorNode: color('#242933'), // Sleek dark pants
+        const pupilMat = new MeshDefaultMaterial({
+            colorNode: color('#0a0a0f'),
             hasWater: false
         })
-        const shoeMat = new MeshDefaultMaterial({
+        const catchlightMat = new MeshDefaultMaterial({
             colorNode: color('#ffffff'),
             hasWater: false
         })
-        const shoeAccentMat = new MeshDefaultMaterial({
-            colorNode: color('#ff4a4a'),
+        const browMat = new MeshDefaultMaterial({
+            colorNode: color('#251a17'),
             hasWater: false
         })
-        const eyeMat = new MeshDefaultMaterial({
-            colorNode: color('#12131a'),
+        const lipMat = new MeshDefaultMaterial({
+            colorNode: color('#cf6e68'), // Soft rose lip tint
             hasWater: false
         })
         const blushMat = new MeshDefaultMaterial({
-            colorNode: color('#ff9e9e'),
+            colorNode: color('#ffb0b0'),
+            hasWater: false
+        })
+        const jacketMat = new MeshDefaultMaterial({
+            colorNode: color('#1e293b'), // Sleek dark slate/navy tech bomber
+            hasWater: false
+        })
+        const jacketTrimMat = new MeshDefaultMaterial({
+            colorNode: color('#94a3b8'), // Metallic chrome zipper & accents
+            hasWater: false
+        })
+        const shirtMat = new MeshDefaultMaterial({
+            colorNode: color('#f8fafc'), // Clean white crew tee
+            hasWater: false
+        })
+        const pantsMat = new MeshDefaultMaterial({
+            colorNode: color('#0f172a'), // Tailored midnight slim trousers
+            hasWater: false
+        })
+        const beltMat = new MeshDefaultMaterial({
+            colorNode: color('#334155'),
+            hasWater: false
+        })
+        const buckleMat = new MeshDefaultMaterial({
+            colorNode: color('#cbd5e1'),
+            hasWater: false
+        })
+        const headphoneMat = new MeshDefaultMaterial({
+            colorNode: color('#475569'), // Metallic graphite headphones
+            hasWater: false
+        })
+        const headphonePadMat = new MeshDefaultMaterial({
+            colorNode: color('#0f172a'),
+            hasWater: false
+        })
+        const watchMat = new MeshDefaultMaterial({
+            colorNode: color('#38bdf8'), // Glowing cyan smartwatch screen
+            hasWater: false
+        })
+        const shoeSoleMat = new MeshDefaultMaterial({
+            colorNode: color('#ffffff'),
+            hasWater: false
+        })
+        const shoeTreadMat = new MeshDefaultMaterial({
+            colorNode: color('#1e293b'),
+            hasWater: false
+        })
+        const shoeUpperMat = new MeshDefaultMaterial({
+            colorNode: color('#e2e8f0'),
+            hasWater: false
+        })
+        const shoeAccentMat = new MeshDefaultMaterial({
+            colorNode: color('#3b82f6'), // Electric blue runner accent
             hasWater: false
         })
 
@@ -112,251 +164,432 @@ export class VisualVehicle
 
         // Hips / Pelvis
         const hips = new THREE.Group()
-        hips.position.y = 0.92
+        hips.position.y = 0.94
         body.add(hips)
 
-        // Torso & Jacket
+        // Pelvis base
+        const pelvisGeo = new THREE.CylinderGeometry(0.20, 0.22, 0.16, 16)
+        const pelvis = new THREE.Mesh(pelvisGeo, pantsMat)
+        pelvis.position.y = -0.06
+        pelvis.castShadow = true
+        pelvis.receiveShadow = true
+        hips.add(pelvis)
+
+        // Waistband & belt
+        const beltGeo = new THREE.CylinderGeometry(0.21, 0.21, 0.04, 16)
+        const belt = new THREE.Mesh(beltGeo, beltMat)
+        belt.position.y = 0.02
+        hips.add(belt)
+
+        const buckleGeo = new THREE.BoxGeometry(0.04, 0.04, 0.02)
+        const buckle = new THREE.Mesh(buckleGeo, buckleMat)
+        buckle.position.set(0, 0.02, 0.215)
+        hips.add(buckle)
+
+        // Torso & Upper Body
         const torso = new THREE.Group()
         hips.add(torso)
 
-        // Lower jacket / waistband
-        const waistGeo = new THREE.CylinderGeometry(0.23, 0.25, 0.22, 12)
+        // Lower torso / waist
+        const waistGeo = new THREE.CylinderGeometry(0.20, 0.21, 0.18, 16)
         const waist = new THREE.Mesh(waistGeo, jacketMat)
-        waist.position.y = 0.11
+        waist.position.y = 0.12
         waist.castShadow = true
         waist.receiveShadow = true
         torso.add(waist)
 
-        // Upper torso / chest jacket
-        const chestGeo = new THREE.CylinderGeometry(0.26, 0.23, 0.34, 12)
+        // Ribbed jacket hem
+        const hemGeo = new THREE.CylinderGeometry(0.212, 0.215, 0.04, 16)
+        const hem = new THREE.Mesh(hemGeo, jacketTrimMat)
+        hem.position.y = 0.04
+        torso.add(hem)
+
+        // Upper torso / chest & tailored jacket
+        const chestGeo = new THREE.CylinderGeometry(0.24, 0.20, 0.32, 16)
         const chest = new THREE.Mesh(chestGeo, jacketMat)
-        chest.position.y = 0.37
+        chest.position.y = 0.34
         chest.castShadow = true
         chest.receiveShadow = true
         torso.add(chest)
 
-        // Inner shirt collar (v-neck detail)
-        const shirtGeo = new THREE.CylinderGeometry(0.16, 0.18, 0.35, 8)
+        // Inner shirt collar opening
+        const shirtGeo = new THREE.CylinderGeometry(0.14, 0.16, 0.30, 12)
         const shirt = new THREE.Mesh(shirtGeo, shirtMat)
-        shirt.position.set(0, 0.38, 0.08)
+        shirt.position.set(0, 0.35, 0.09)
         shirt.scale.set(0.65, 1, 0.35)
         torso.add(shirt)
 
-        // Jacket zipper line
-        const zipperGeo = new THREE.BoxGeometry(0.025, 0.42, 0.04)
+        // Metallic jacket zipper runner
+        const zipperGeo = new THREE.BoxGeometry(0.02, 0.38, 0.03)
         const zipper = new THREE.Mesh(zipperGeo, jacketTrimMat)
-        zipper.position.set(0, 0.32, 0.24)
+        zipper.position.set(0, 0.31, 0.22)
         torso.add(zipper)
 
-        // Neck
-        const neckGeo = new THREE.CylinderGeometry(0.09, 0.1, 0.14, 10)
+        // Proportional slender neck
+        const neckGeo = new THREE.CylinderGeometry(0.075, 0.085, 0.16, 14)
         const neck = new THREE.Mesh(neckGeo, skinMat)
-        neck.position.y = 0.57
+        neck.position.y = 0.55
         torso.add(neck)
 
-        // Head Group
+        // Head Group (sculpted human skull proportions)
         const head = new THREE.Group()
         head.position.y = 0.73
         torso.add(head)
 
-        // Stylized Cute Face
-        const faceGeo = new THREE.SphereGeometry(0.25, 16, 14)
-        faceGeo.scale(0.95, 1.05, 1)
-        const face = new THREE.Mesh(faceGeo, skinMat)
-        face.castShadow = true
-        face.receiveShadow = true
-        head.add(face)
+        // Head mesh - sculpted cranium
+        const headGeo = new THREE.SphereGeometry(0.21, 20, 18)
+        headGeo.scale(0.92, 1.05, 0.98)
+        const headMesh = new THREE.Mesh(headGeo, skinMat)
+        headMesh.castShadow = true
+        headMesh.receiveShadow = true
+        head.add(headMesh)
 
-        // Eyes
-        const eyeGeo = new THREE.SphereGeometry(0.045, 8, 8)
-        eyeGeo.scale(0.7, 1.3, 0.5)
-        
-        const leftEye = new THREE.Mesh(eyeGeo, eyeMat)
-        leftEye.position.set(-0.09, 0.02, 0.23)
-        head.add(leftEye)
+        // Chin & jaw contour
+        const chinGeo = new THREE.ConeGeometry(0.10, 0.14, 12)
+        const chin = new THREE.Mesh(chinGeo, skinMat)
+        chin.position.set(0, -0.12, 0.06)
+        chin.rotation.x = 0.35
+        head.add(chin)
 
-        const rightEye = new THREE.Mesh(eyeGeo, eyeMat)
-        rightEye.position.set(0.09, 0.02, 0.23)
-        head.add(rightEye)
+        // Nose bridge & soft tip
+        const noseBridgeGeo = new THREE.BoxGeometry(0.025, 0.07, 0.04)
+        const noseBridge = new THREE.Mesh(noseBridgeGeo, skinMat)
+        noseBridge.position.set(0, 0.01, 0.20)
+        noseBridge.rotation.x = 0.2
+        head.add(noseBridge)
 
-        // Cheeks (blush)
-        const blushGeo = new THREE.CircleGeometry(0.04, 8)
+        const noseTipGeo = new THREE.SphereGeometry(0.022, 10, 8)
+        const noseTip = new THREE.Mesh(noseTipGeo, skinMat)
+        noseTip.position.set(0, -0.025, 0.215)
+        head.add(noseTip)
+
+        // Contoured Lips
+        const upperLipGeo = new THREE.BoxGeometry(0.055, 0.018, 0.02)
+        const upperLip = new THREE.Mesh(upperLipGeo, lipMat)
+        upperLip.position.set(0, -0.072, 0.195)
+        head.add(upperLip)
+
+        const lowerLipGeo = new THREE.BoxGeometry(0.045, 0.02, 0.022)
+        const lowerLip = new THREE.Mesh(lowerLipGeo, lipMat)
+        lowerLip.position.set(0, -0.092, 0.19)
+        head.add(lowerLip)
+
+        // Realistic Eyes (Sclera + Iris + Pupil + Specular Glint + Eyelash)
+        const createEye = (x, isLeft) =>
+        {
+            const eyeGroup = new THREE.Group()
+            eyeGroup.position.set(x, 0.035, 0.185)
+            eyeGroup.rotation.y = isLeft ? -0.15 : 0.15
+
+            // Sclera (eye white)
+            const scleraGeo = new THREE.SphereGeometry(0.038, 12, 10)
+            scleraGeo.scale(0.9, 0.75, 0.4)
+            const sclera = new THREE.Mesh(scleraGeo, scleraMat)
+            eyeGroup.add(sclera)
+
+            // Iris
+            const irisGeo = new THREE.CircleGeometry(0.022, 12)
+            const iris = new THREE.Mesh(irisGeo, irisMat)
+            iris.position.set(0, 0, 0.018)
+            eyeGroup.add(iris)
+
+            // Pupil
+            const pupilGeo = new THREE.CircleGeometry(0.012, 10)
+            const pupil = new THREE.Mesh(pupilGeo, pupilMat)
+            pupil.position.set(0, 0, 0.019)
+            eyeGroup.add(pupil)
+
+            // Specular Catchlight (vital for realistic lively gaze)
+            const gleamGeo = new THREE.CircleGeometry(0.005, 8)
+            const gleam = new THREE.Mesh(gleamGeo, catchlightMat)
+            gleam.position.set(0.006, 0.006, 0.020)
+            eyeGroup.add(gleam)
+
+            // Upper Eyelash / Lash line contour
+            const lashGeo = new THREE.BoxGeometry(0.065, 0.01, 0.02)
+            const lash = new THREE.Mesh(lashGeo, pupilMat)
+            lash.position.set(0, 0.025, 0.015)
+            lash.rotation.z = isLeft ? -0.08 : 0.08
+            eyeGroup.add(lash)
+
+            // Eyebrow
+            const browGeo = new THREE.BoxGeometry(0.065, 0.012, 0.015)
+            const brow = new THREE.Mesh(browGeo, browMat)
+            brow.position.set(0, 0.055, 0.012)
+            brow.rotation.z = isLeft ? -0.1 : 0.1
+            eyeGroup.add(brow)
+
+            return eyeGroup
+        }
+
+        const leftEyeGroup = createEye(-0.085, true)
+        head.add(leftEyeGroup)
+
+        const rightEyeGroup = createEye(0.085, false)
+        head.add(rightEyeGroup)
+
+        // Soft cheek blush
+        const blushGeo = new THREE.CircleGeometry(0.035, 10)
         const leftBlush = new THREE.Mesh(blushGeo, blushMat)
-        leftBlush.position.set(-0.13, -0.06, 0.23)
-        leftBlush.rotation.y = -0.3
+        leftBlush.position.set(-0.12, -0.04, 0.17)
+        leftBlush.rotation.y = -0.35
         head.add(leftBlush)
 
         const rightBlush = new THREE.Mesh(blushGeo, blushMat)
-        rightBlush.position.set(0.13, -0.06, 0.23)
-        rightBlush.rotation.y = 0.3
+        rightBlush.position.set(0.12, -0.04, 0.17)
+        rightBlush.rotation.y = 0.35
         head.add(rightBlush)
 
-        // Hair - Main volume
-        const hairTopGeo = new THREE.SphereGeometry(0.28, 14, 12)
-        hairTopGeo.scale(1, 1.05, 1.05)
-        const hairTop = new THREE.Mesh(hairTopGeo, hairMat)
-        hairTop.position.set(0, 0.06, -0.04)
-        hairTop.castShadow = true
-        head.add(hairTop)
+        // Ears
+        const earGeo = new THREE.SphereGeometry(0.04, 10, 8)
+        earGeo.scale(0.4, 0.8, 0.5)
+        const leftEar = new THREE.Mesh(earGeo, skinMat)
+        leftEar.position.set(-0.195, 0.01, 0)
+        leftEar.rotation.z = -0.15
+        head.add(leftEar)
 
-        // Bangs / Front hair fringe
-        const bangsGeo = new THREE.CylinderGeometry(0.27, 0.28, 0.18, 12, 1, false, -Math.PI * 0.45, Math.PI * 0.9)
-        const bangs = new THREE.Mesh(bangsGeo, hairMat)
-        bangs.position.set(0, 0.12, 0.06)
-        bangs.rotation.x = 0.2
-        head.add(bangs)
+        const rightEar = new THREE.Mesh(earGeo, skinMat)
+        rightEar.position.set(0.195, 0.01, 0)
+        rightEar.rotation.z = 0.15
+        head.add(rightEar)
 
-        // Side locks
-        const sideLockGeo = new THREE.ConeGeometry(0.055, 0.28, 6)
-        const leftSideLock = new THREE.Mesh(sideLockGeo, hairMat)
-        leftSideLock.position.set(-0.23, -0.06, 0.1)
-        leftSideLock.rotation.z = 0.2
-        head.add(leftSideLock)
+        // Realistic Hair Styling (Crown volume, parted bangs, side locks, bouncy ponytail)
+        const hairCrownGeo = new THREE.SphereGeometry(0.23, 18, 16)
+        hairCrownGeo.scale(1.02, 1.06, 1.06)
+        const hairCrown = new THREE.Mesh(hairCrownGeo, hairMat)
+        hairCrown.position.set(0, 0.05, -0.03)
+        hairCrown.castShadow = true
+        head.add(hairCrown)
 
-        const rightSideLock = new THREE.Mesh(sideLockGeo, hairMat)
-        rightSideLock.position.set(0.23, -0.06, 0.1)
-        rightSideLock.rotation.z = -0.2
-        head.add(rightSideLock)
+        // Parted curtain bangs framing forehead
+        const leftBangGeo = new THREE.CylinderGeometry(0.05, 0.08, 0.22, 10)
+        const leftBang = new THREE.Mesh(leftBangGeo, hairMat)
+        leftBang.position.set(-0.09, 0.11, 0.14)
+        leftBang.rotation.set(0.3, 0.2, -0.45)
+        head.add(leftBang)
 
-        // Ponytail Pivot (at back of head, sways dynamically)
+        const rightBangGeo = new THREE.CylinderGeometry(0.05, 0.08, 0.22, 10)
+        const rightBang = new THREE.Mesh(rightBangGeo, hairMat)
+        rightBang.position.set(0.09, 0.11, 0.14)
+        rightBang.rotation.set(0.3, -0.2, 0.45)
+        head.add(rightBang)
+
+        // Face-framing side strands
+        const leftLockGeo = new THREE.ConeGeometry(0.045, 0.34, 8)
+        const leftLock = new THREE.Mesh(leftLockGeo, hairMat)
+        leftLock.position.set(-0.18, -0.06, 0.08)
+        leftLock.rotation.z = 0.15
+        leftLock.rotation.x = -0.1
+        head.add(leftLock)
+
+        const rightLockGeo = new THREE.ConeGeometry(0.045, 0.34, 8)
+        const rightLock = new THREE.Mesh(rightLockGeo, hairMat)
+        rightLock.position.set(0.18, -0.06, 0.08)
+        rightLock.rotation.z = -0.15
+        rightLock.rotation.x = -0.1
+        head.add(rightLock)
+
+        // Ponytail Pivot (at rear crown)
         const ponytail = new THREE.Group()
-        ponytail.position.set(0, 0.14, -0.25)
+        ponytail.position.set(0, 0.12, -0.22)
         head.add(ponytail)
 
-        // Hair Tie / Ribbon
-        const hairTieGeo = new THREE.TorusGeometry(0.065, 0.025, 8, 12)
+        // Hair Tie Ring
+        const hairTieGeo = new THREE.TorusGeometry(0.055, 0.02, 10, 16)
         const hairTie = new THREE.Mesh(hairTieGeo, hairTieMat)
         hairTie.rotation.x = Math.PI * 0.5
         ponytail.add(hairTie)
 
-        // Ponytail hair segments
-        const ponytailUpperGeo = new THREE.ConeGeometry(0.1, 0.38, 8)
-        const ponytailUpper = new THREE.Mesh(ponytailUpperGeo, hairMat)
-        ponytailUpper.position.set(0, -0.16, -0.08)
-        ponytailUpper.rotation.x = -0.5
-        ponytailUpper.castShadow = true
-        ponytail.add(ponytailUpper)
+        // Ponytail segments cascading naturally
+        const pony1Geo = new THREE.ConeGeometry(0.09, 0.35, 10)
+        const pony1 = new THREE.Mesh(pony1Geo, hairMat)
+        pony1.position.set(0, -0.15, -0.07)
+        pony1.rotation.x = -0.5
+        pony1.castShadow = true
+        ponytail.add(pony1)
 
-        const ponytailTipGeo = new THREE.ConeGeometry(0.065, 0.3, 8)
-        const ponytailTip = new THREE.Mesh(ponytailTipGeo, hairMat)
-        ponytailTip.position.set(0, -0.34, -0.18)
-        ponytailTip.rotation.x = -0.6
-        ponytailTip.castShadow = true
-        ponytail.add(ponytailTip)
+        const pony2Geo = new THREE.ConeGeometry(0.065, 0.32, 10)
+        const pony2 = new THREE.Mesh(pony2Geo, hairMat)
+        pony2.position.set(0, -0.32, -0.16)
+        pony2.rotation.x = -0.65
+        pony2.castShadow = true
+        ponytail.add(pony2)
 
-        // Arms
-        // Left Arm Pivot
-        const leftArm = new THREE.Group()
-        leftArm.position.set(-0.31, 0.45, 0)
-        torso.add(leftArm)
+        // Stylish wireless headphones around neck
+        const headphoneBandGeo = new THREE.TorusGeometry(0.16, 0.018, 8, 20, Math.PI * 0.85)
+        const headphoneBand = new THREE.Mesh(headphoneBandGeo, headphoneMat)
+        headphoneBand.position.set(0, 0.50, 0.04)
+        headphoneBand.rotation.x = Math.PI * 0.65
+        headphoneBand.rotation.z = -Math.PI * 0.42
+        torso.add(headphoneBand)
 
-        const upperArmGeo = new THREE.CylinderGeometry(0.07, 0.06, 0.26, 8)
-        const leftUpperArm = new THREE.Mesh(upperArmGeo, jacketMat)
-        leftUpperArm.position.y = -0.13
-        leftUpperArm.castShadow = true
-        leftArm.add(leftUpperArm)
+        const earcupGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.04, 14)
+        const leftEarcup = new THREE.Mesh(earcupGeo, headphonePadMat)
+        leftEarcup.position.set(-0.16, 0.48, 0.09)
+        leftEarcup.rotation.z = 0.5
+        torso.add(leftEarcup)
 
-        const leftForearm = new THREE.Group()
-        leftForearm.position.y = -0.26
-        leftArm.add(leftForearm)
+        const rightEarcup = new THREE.Mesh(earcupGeo, headphonePadMat)
+        rightEarcup.position.set(0.16, 0.48, 0.09)
+        rightEarcup.rotation.z = -0.5
+        torso.add(rightEarcup)
 
-        const forearmGeo = new THREE.CylinderGeometry(0.06, 0.05, 0.24, 8)
-        const leftLowerArmMesh = new THREE.Mesh(forearmGeo, jacketMat)
-        leftLowerArmMesh.position.y = -0.12
-        leftForearm.add(leftLowerArmMesh)
+        // Arms & Articulated Hands
+        const createArm = (x, isLeft) =>
+        {
+            const armRoot = new THREE.Group()
+            armRoot.position.set(x, 0.44, 0)
+            torso.add(armRoot)
 
-        const handGeo = new THREE.SphereGeometry(0.05, 8, 8)
-        const leftHand = new THREE.Mesh(handGeo, skinMat)
-        leftHand.position.y = -0.23
-        leftForearm.add(leftHand)
+            // Shoulder pad & upper arm
+            const upperArmGeo = new THREE.CylinderGeometry(0.065, 0.055, 0.28, 12)
+            const upperArm = new THREE.Mesh(upperArmGeo, jacketMat)
+            upperArm.position.y = -0.14
+            upperArm.castShadow = true
+            armRoot.add(upperArm)
 
-        // Right Arm Pivot
-        const rightArm = new THREE.Group()
-        rightArm.position.set(0.31, 0.45, 0)
-        torso.add(rightArm)
+            // Elbow / Forearm group
+            const forearm = new THREE.Group()
+            forearm.position.y = -0.28
+            armRoot.add(forearm)
 
-        const rightUpperArm = new THREE.Mesh(upperArmGeo, jacketMat)
-        rightUpperArm.position.y = -0.13
-        rightUpperArm.castShadow = true
-        rightArm.add(rightUpperArm)
+            const lowerArmGeo = new THREE.CylinderGeometry(0.055, 0.045, 0.24, 12)
+            const lowerArm = new THREE.Mesh(lowerArmGeo, jacketMat)
+            lowerArm.position.y = -0.12
+            lowerArm.castShadow = true
+            forearm.add(lowerArm)
 
-        const rightForearm = new THREE.Group()
-        rightForearm.position.y = -0.26
-        rightArm.add(rightForearm)
+            // Wrist cuff
+            const wristGeo = new THREE.CylinderGeometry(0.042, 0.040, 0.04, 12)
+            const wrist = new THREE.Mesh(wristGeo, skinMat)
+            wrist.position.y = -0.24
+            forearm.add(wrist)
 
-        const rightLowerArmMesh = new THREE.Mesh(forearmGeo, jacketMat)
-        rightLowerArmMesh.position.y = -0.12
-        rightForearm.add(rightLowerArmMesh)
+            // Smartwatch on left wrist
+            if(isLeft)
+            {
+                const watchBandGeo = new THREE.CylinderGeometry(0.046, 0.046, 0.03, 12)
+                const watchBand = new THREE.Mesh(watchBandGeo, pantsMat)
+                watchBand.position.y = -0.235
+                forearm.add(watchBand)
 
-        const rightHand = new THREE.Mesh(handGeo, skinMat)
-        rightHand.position.y = -0.23
-        rightForearm.add(rightHand)
+                const watchFaceGeo = new THREE.BoxGeometry(0.03, 0.03, 0.015)
+                const watchFace = new THREE.Mesh(watchFaceGeo, watchMat)
+                watchFace.position.set(-0.042, -0.235, 0)
+                forearm.add(watchFace)
+            }
 
-        // Legs
-        // Left Leg Pivot
-        const leftLeg = new THREE.Group()
-        leftLeg.position.set(-0.12, 0, 0)
-        hips.add(leftLeg)
+            // Realistic articulated hand (Palm + Thumb + Curved Fingers)
+            const handGroup = new THREE.Group()
+            handGroup.position.y = -0.27
+            forearm.add(handGroup)
 
-        const upperLegGeo = new THREE.CylinderGeometry(0.095, 0.075, 0.44, 8)
-        const leftUpperLeg = new THREE.Mesh(upperLegGeo, pantsMat)
-        leftUpperLeg.position.y = -0.22
-        leftUpperLeg.castShadow = true
-        leftLeg.add(leftUpperLeg)
+            const palmGeo = new THREE.BoxGeometry(0.055, 0.065, 0.03)
+            const palm = new THREE.Mesh(palmGeo, skinMat)
+            palm.position.y = -0.03
+            handGroup.add(palm)
 
-        const leftLowerLeg = new THREE.Group()
-        leftLowerLeg.position.y = -0.44
-        leftLeg.add(leftLowerLeg)
+            // Thumb
+            const thumbGeo = new THREE.BoxGeometry(0.02, 0.04, 0.02)
+            const thumb = new THREE.Mesh(thumbGeo, skinMat)
+            thumb.position.set(isLeft ? 0.032 : -0.032, -0.02, 0.01)
+            thumb.rotation.z = isLeft ? -0.4 : 0.4
+            handGroup.add(thumb)
 
-        const lowerLegGeo = new THREE.CylinderGeometry(0.075, 0.065, 0.4, 8)
-        const leftLowerLegMesh = new THREE.Mesh(lowerLegGeo, pantsMat)
-        leftLowerLegMesh.position.y = -0.2
-        leftLowerLegMesh.castShadow = true
-        leftLowerLeg.add(leftLowerLegMesh)
+            // Relaxed fingers
+            const fingersGeo = new THREE.BoxGeometry(0.048, 0.045, 0.025)
+            const fingers = new THREE.Mesh(fingersGeo, skinMat)
+            fingers.position.set(0, -0.075, 0.005)
+            fingers.rotation.x = 0.2
+            handGroup.add(fingers)
 
-        // Sneakers
-        const shoeGeo = new THREE.BoxGeometry(0.13, 0.1, 0.27)
-        const leftShoe = new THREE.Mesh(shoeGeo, shoeMat)
-        leftShoe.position.set(0, -0.37, 0.05)
-        leftShoe.castShadow = true
-        leftLowerLeg.add(leftShoe)
+            return { armRoot, forearm }
+        }
 
-        const shoeAccentGeo = new THREE.BoxGeometry(0.135, 0.03, 0.275)
-        const leftShoeAccent = new THREE.Mesh(shoeAccentGeo, shoeAccentMat)
-        leftShoeAccent.position.set(0, -0.41, 0.05)
-        leftLowerLeg.add(leftShoeAccent)
+        const leftArmObj = createArm(-0.29, true)
+        const rightArmObj = createArm(0.29, false)
 
-        // Right Leg Pivot
-        const rightLeg = new THREE.Group()
-        rightLeg.position.set(0.12, 0, 0)
-        hips.add(rightLeg)
+        const leftArm = leftArmObj.armRoot
+        const leftForearm = leftArmObj.forearm
+        const rightArm = rightArmObj.armRoot
+        const rightForearm = rightArmObj.forearm
 
-        const rightUpperLeg = new THREE.Mesh(upperLegGeo, pantsMat)
-        rightUpperLeg.position.y = -0.22
-        rightUpperLeg.castShadow = true
-        rightLeg.add(rightUpperLeg)
-
-        const rightLowerLeg = new THREE.Group()
-        rightLowerLeg.position.y = -0.44
-        rightLeg.add(rightLowerLeg)
-
-        const rightLowerLegMesh = new THREE.Mesh(lowerLegGeo, pantsMat)
-        rightLowerLegMesh.position.y = -0.2
-        rightLowerLegMesh.castShadow = true
-        rightLowerLeg.add(rightLowerLegMesh)
-
-        const rightShoe = new THREE.Mesh(shoeGeo, shoeMat)
-        rightShoe.position.set(0, -0.37, 0.05)
-        rightShoe.castShadow = true
-        rightLowerLeg.add(rightShoe)
-
-        const rightShoeAccent = new THREE.Mesh(shoeAccentGeo, shoeAccentMat)
-        rightShoeAccent.position.set(0, -0.41, 0.05)
-        rightLowerLeg.add(rightShoeAccent)
-
-        // Initial relaxed arm pose
         leftArm.rotation.z = 0.12
         rightArm.rotation.z = -0.12
+
+        // Legs & Modern Athletic Sneakers
+        const createLeg = (x) =>
+        {
+            const legRoot = new THREE.Group()
+            legRoot.position.set(x, 0, 0)
+            hips.add(legRoot)
+
+            // Upper leg / thigh
+            const thighGeo = new THREE.CylinderGeometry(0.09, 0.07, 0.44, 14)
+            const thigh = new THREE.Mesh(thighGeo, pantsMat)
+            thigh.position.y = -0.22
+            thigh.castShadow = true
+            legRoot.add(thigh)
+
+            // Knee & lower leg
+            const lowerLeg = new THREE.Group()
+            lowerLeg.position.y = -0.44
+            legRoot.add(lowerLeg)
+
+            const calfGeo = new THREE.CylinderGeometry(0.07, 0.055, 0.40, 14)
+            const calf = new THREE.Mesh(calfGeo, pantsMat)
+            calf.position.y = -0.20
+            calf.castShadow = true
+            lowerLeg.add(calf)
+
+            // Sneaker Group
+            const shoeGroup = new THREE.Group()
+            shoeGroup.position.set(0, -0.40, 0.05)
+            lowerLeg.add(shoeGroup)
+
+            // Outsole rubber tread
+            const treadGeo = new THREE.BoxGeometry(0.12, 0.025, 0.28)
+            const tread = new THREE.Mesh(treadGeo, shoeTreadMat)
+            tread.position.y = -0.045
+            shoeGroup.add(tread)
+
+            // Cushioned white midsole
+            const midsoleGeo = new THREE.BoxGeometry(0.125, 0.04, 0.285)
+            const midsole = new THREE.Mesh(midsoleGeo, shoeSoleMat)
+            midsole.position.y = -0.015
+            midsole.castShadow = true
+            shoeGroup.add(midsole)
+
+            // Upper body of sneaker
+            const upperShoeGeo = new THREE.BoxGeometry(0.115, 0.07, 0.27)
+            const upperShoe = new THREE.Mesh(upperShoeGeo, shoeUpperMat)
+            upperShoe.position.set(0, 0.035, 0)
+            upperShoe.castShadow = true
+            shoeGroup.add(upperShoe)
+
+            // Sneaker Toe Cap
+            const toeCapGeo = new THREE.SphereGeometry(0.055, 10, 8)
+            toeCapGeo.scale(1.05, 0.6, 1)
+            const toeCap = new THREE.Mesh(toeCapGeo, shoeUpperMat)
+            toeCap.position.set(0, 0.01, 0.10)
+            shoeGroup.add(toeCap)
+
+            // Athletic Accent Stripe
+            const accentGeo = new THREE.BoxGeometry(0.126, 0.025, 0.16)
+            const accent = new THREE.Mesh(accentGeo, shoeAccentMat)
+            accent.position.set(0, 0.04, -0.01)
+            shoeGroup.add(accent)
+
+            return { legRoot, lowerLeg }
+        }
+
+        const leftLegObj = createLeg(-0.115)
+        const rightLegObj = createLeg(0.115)
+
+        const leftLeg = leftLegObj.legRoot
+        const leftLowerLeg = leftLegObj.lowerLeg
+        const rightLeg = rightLegObj.legRoot
+        const rightLowerLeg = rightLegObj.lowerLeg
 
         // Add character directly to scene
         this.game.scene.add(girl)
@@ -485,24 +718,26 @@ export class VisualVehicle
         this.girl.root.position.y = physicalVehicle.position.y - 0.45
         this.girl.root.position.z = physicalVehicle.position.z
 
-        // Smooth facing orientation towards movement direction
-        if(speed > 0.35)
-        {
-            const targetAngle = Math.atan2(vx, vz)
-            let diff = targetAngle - this.facingAngle
-            while(diff < -Math.PI) diff += Math.PI * 2
-            while(diff > Math.PI) diff -= Math.PI * 2
-            this.facingAngle += diff * Math.min(1, delta * 12)
-        }
+        // Smooth facing orientation towards movement direction or chassis forward orientation
+        const targetAngle = speed > 0.35 
+            ? Math.atan2(vx, vz) 
+            : Math.atan2(physicalVehicle.forward.x, physicalVehicle.forward.z)
+
+        let diff = targetAngle - this.facingAngle
+        while(diff < -Math.PI) diff += Math.PI * 2
+        while(diff > Math.PI) diff -= Math.PI * 2
+        this.facingAngle += diff * Math.min(1, delta * 14)
         this.girl.root.rotation.y = this.facingAngle
 
-        // Locomotion walking/running animation
-        if(speed > 0.3)
+        // Locomotion walking/running/turning animation
+        const isTurning = Math.abs(this.game.player.steering) > 0.05
+        if(speed > 0.28 || isTurning)
         {
-            this.walkPhase += speed * delta * 6.5
+            const animSpeed = speed > 0.28 ? speed : Math.abs(this.game.player.steering) * 1.6
+            this.walkPhase += animSpeed * delta * 7.0
             const stride = Math.sin(this.walkPhase)
-            const legAmp = Math.min(0.75, 0.3 + speed * 0.08)
-            const armAmp = Math.min(0.65, 0.25 + speed * 0.08)
+            const legAmp = Math.min(0.75, 0.25 + animSpeed * 0.08)
+            const armAmp = Math.min(0.65, 0.2 + animSpeed * 0.08)
 
             // Leg strides with natural knee flexion
             this.girl.leftLeg.rotation.x = stride * legAmp
@@ -517,11 +752,11 @@ export class VisualVehicle
             this.girl.rightForearm.rotation.x = 0.15 + Math.abs(stride) * 0.15
 
             // Vertical gait bounce
-            this.girl.hips.position.y = 0.92 + Math.abs(Math.sin(this.walkPhase * 2)) * 0.05
+            this.girl.hips.position.y = 0.94 + Math.abs(Math.sin(this.walkPhase * 2)) * 0.04
             
-            // Dynamic ponytail bounce & lag
-            this.girl.ponytail.rotation.x = 0.25 + Math.sin(this.walkPhase * 2) * 0.15 + speed * 0.03
-            this.girl.ponytail.rotation.z = Math.sin(this.walkPhase) * 0.08
+            // Dynamic ponytail bounce & sway
+            this.girl.ponytail.rotation.x = 0.25 + Math.sin(this.walkPhase * 2) * 0.15 + animSpeed * 0.03
+            this.girl.ponytail.rotation.z = Math.sin(this.walkPhase) * 0.10 + (this.game.player.steering * 0.15)
         }
         else
         {
@@ -538,7 +773,7 @@ export class VisualVehicle
             this.girl.leftForearm.rotation.x *= 0.88
             this.girl.rightForearm.rotation.x *= 0.88
 
-            this.girl.hips.position.y = 0.92
+            this.girl.hips.position.y = 0.94
             this.girl.torso.position.y = Math.sin(this.idlePhase) * 0.015
             this.girl.head.rotation.x = Math.sin(this.idlePhase * 0.7) * 0.02
             this.girl.ponytail.rotation.x = 0.2 + Math.sin(this.idlePhase) * 0.03

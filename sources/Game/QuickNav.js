@@ -51,6 +51,11 @@ export class QuickNav
                 {
                     // Focus canvas / inputs
                     this.game.domElement.querySelector('.js-canvas')?.focus()
+
+                    if(destination === 'projects' && this.game.world.areas?.projects)
+                    {
+                        this.game.world.areas.projects.open()
+                    }
                 })
             })
         }

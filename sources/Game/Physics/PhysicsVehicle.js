@@ -484,6 +484,25 @@ export class PhysicsVehicle
         // Steer
         const steer = this.game.player.steering * this.steeringAmplitude
 
+        // Active yaw angular velocity for immediate, human-like turning and in-place rotation
+        if(this.game.player.steering !== 0)
+        {
+            const isStationary = Math.abs(this.game.player.accelerating) < 0.2
+            const turnRate = this.game.player.steering * (isStationary ? 3.8 : 2.6)
+            const currentAngvel = this.chassis.physical.body.angvel()
+            this.chassis.physical.body.setAngvel({
+                x: currentAngvel.x * 0.85,
+                y: turnRate,
+                z: currentAngvel.z * 0.85
+            }, true)
+
+            // When turning in place, assist wheel roll so ground friction doesn't wedge the turn
+            if(isStationary)
+            {
+                engineForce = 140 * this.game.ticker.deltaScaled
+            }
+        }
+
         // Update wheels
         this.controller.setWheelSteering(0, steer)
         this.controller.setWheelSteering(1, steer)

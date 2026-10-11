@@ -22,8 +22,16 @@ export class ClosingManager
         {
             if(action.active)
             {
+                // Projects => Close
+                if(this.game.world.areas?.projects && (this.game.world.areas.projects.state === ProjectsArea.STATE_OPEN || this.game.world.areas.projects.state === ProjectsArea.STATE_OPENING))
+                    this.game.world.areas.projects.close()
+
+                // Lab => Close
+                else if(this.game.world.areas?.lab && (this.game.world.areas.lab.state === LabArea.STATE_OPEN || this.game.world.areas.lab.state === LabArea.STATE_OPENING))
+                    this.game.world.areas.lab.close()
+
                 // Whispers flag select => Close
-                if(this.game.world.whispers?.menu.inputFlag.isOpen)
+                else if(this.game.world.whispers?.menu.inputFlag.isOpen)
                     this.game.world.whispers.menu.inputFlag.close()
 
                 // Circuit flag select => Close
@@ -42,19 +50,25 @@ export class ClosingManager
                 else if(this.game.world.areas?.circuit?.state === CircuitArea.STATE_RUNNING || this.game.world.areas?.circuit?.state === CircuitArea.STATE_STARTING)
                     this.game.menu.open('circuit')
 
-                // Projects => Close
-                else if(this.game.world.areas?.projects && (this.game.world.areas?.projects.state === ProjectsArea.STATE_OPEN || this.game.world.areas?.projects.state === ProjectsArea.STATE_OPENING))
-                    this.game.world.areas.projects.close()
-
-                // Lab => Close
-                else if(this.game.world.areas?.lab && (this.game.world.areas?.lab.state === LabArea.STATE_OPEN || this.game.world.areas?.lab.state === LabArea.STATE_OPENING))
-                    this.game.world.areas.lab.close()
-
                 // Nothing opened and used the keyboard Escape key => Open default modal
                 else if(action.activeKeys.has('Keyboard.Escape'))
                     this.game.menu.open()
             }
         })
+
+        // Global fallback Escape key handler to ensure Escape always works
+        window.addEventListener('keydown', (event) =>
+        {
+            if(event.key === 'Escape' || event.code === 'Escape')
+            {
+                if(this.game.world.areas?.projects && (this.game.world.areas.projects.state === ProjectsArea.STATE_OPEN || this.game.world.areas.projects.state === ProjectsArea.STATE_OPENING))
+                {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    this.game.world.areas.projects.close()
+                }
+            }
+        }, true)
 
         // Pause input => Close menu or open menu  intro
         this.game.inputs.events.on('pause', (action) =>

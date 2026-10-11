@@ -53,6 +53,7 @@ export class ProjectsArea extends Area
         this.setGrinder()
         this.setAnvil()
         this.setAchievement()
+        this.setOverlay()
 
         this.changeProject(0, ProjectsArea.DIRECTION_NEXT, false, true)
 
@@ -1293,6 +1294,184 @@ export class ProjectsArea extends Area
         })
     }
 
+    setOverlay()
+    {
+        this.overlay = {}
+
+        const element = document.createElement('div')
+        element.className = 'project-details-overlay'
+        element.innerHTML = `
+            <div class="project-details-backdrop js-project-backdrop"></div>
+            <div class="project-details-card">
+                <div class="project-header">
+                    <div class="project-meta">
+                        <span class="project-badge js-project-badge">Category</span>
+                        <span class="project-counter js-project-counter">1 / 13</span>
+                    </div>
+                    <button class="project-close-btn js-project-close" title="Exit project view (Esc)">
+                        <span class="close-text">Exit</span>
+                        <span class="close-key">ESC</span>
+                    </button>
+                </div>
+                
+                <div class="project-content-scroll">
+                    <div>
+                        <h2 class="project-title js-project-title"></h2>
+                        <p class="project-tagline js-project-tagline"></p>
+                    </div>
+
+                    <div class="project-block">
+                        <div class="block-title">💡 What It Is</div>
+                        <p class="block-text js-project-desc"></p>
+                    </div>
+
+                    <div class="project-block">
+                        <div class="block-title">🎯 Problem & Impact</div>
+                        <p class="block-text js-project-problem"></p>
+                    </div>
+
+                    <div class="project-block">
+                        <div class="block-title">⚡ Key Highlights</div>
+                        <ul class="project-features-list js-project-features"></ul>
+                    </div>
+
+                    <div class="project-block">
+                        <div class="block-title">🛠️ Tech Stack</div>
+                        <div class="project-tech-tags js-project-tech"></div>
+                    </div>
+                </div>
+
+                <div class="project-footer">
+                    <div class="project-nav-buttons">
+                        <button class="project-nav-btn js-project-prev" title="Previous Project (A or ←)">
+                            <span>◀ Prev</span>
+                            <span class="kbd-hint">A / ←</span>
+                        </button>
+                        <button class="project-nav-btn js-project-next" title="Next Project (D or →)">
+                            <span>Next ▶</span>
+                            <span class="kbd-hint">D / →</span>
+                        </button>
+                    </div>
+                    <a class="project-github-link js-project-github" href="#" target="_blank" rel="noopener noreferrer">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <span>View Repository on GitHub ↗</span>
+                    </a>
+                </div>
+            </div>
+        `
+        document.body.appendChild(element)
+        this.overlay.element = element
+
+        this.overlay.badge = element.querySelector('.js-project-badge')
+        this.overlay.counter = element.querySelector('.js-project-counter')
+        this.overlay.title = element.querySelector('.js-project-title')
+        this.overlay.tagline = element.querySelector('.js-project-tagline')
+        this.overlay.desc = element.querySelector('.js-project-desc')
+        this.overlay.problem = element.querySelector('.js-project-problem')
+        this.overlay.features = element.querySelector('.js-project-features')
+        this.overlay.tech = element.querySelector('.js-project-tech')
+        this.overlay.github = element.querySelector('.js-project-github')
+
+        element.querySelector('.js-project-close').addEventListener('click', (e) =>
+        {
+            e.preventDefault()
+            e.stopPropagation()
+            this.close()
+        })
+
+        element.querySelector('.js-project-backdrop').addEventListener('click', (e) =>
+        {
+            e.preventDefault()
+            e.stopPropagation()
+            this.close()
+        })
+
+        element.querySelector('.js-project-prev').addEventListener('click', (e) =>
+        {
+            e.preventDefault()
+            e.stopPropagation()
+            this.changeProject(this.navigation.index - 1, ProjectsArea.DIRECTION_PREVIOUS)
+        })
+
+        element.querySelector('.js-project-next').addEventListener('click', (e) =>
+        {
+            e.preventDefault()
+            e.stopPropagation()
+            this.changeProject(this.navigation.index + 1, ProjectsArea.DIRECTION_NEXT)
+        })
+
+        // Global key listeners during project view - capture phase ensures ESC always closes
+        window.addEventListener('keydown', (event) =>
+        {
+            if(this.state === ProjectsArea.STATE_OPEN || this.state === ProjectsArea.STATE_OPENING)
+            {
+                if(event.key === 'Escape' || event.code === 'Escape')
+                {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    this.close()
+                }
+                else if(event.key === 'ArrowLeft' || event.code === 'KeyA')
+                {
+                    event.preventDefault()
+                    this.changeProject(this.navigation.index - 1, ProjectsArea.DIRECTION_PREVIOUS)
+                }
+                else if(event.key === 'ArrowRight' || event.code === 'KeyD')
+                {
+                    event.preventDefault()
+                    this.changeProject(this.navigation.index + 1, ProjectsArea.DIRECTION_NEXT)
+                }
+            }
+        }, true)
+
+        this.overlay.update = (project, currentIdx, total) =>
+        {
+            if(!project) return
+            this.overlay.badge.textContent = project.category || 'Open Source Project'
+            this.overlay.counter.textContent = `${currentIdx} / ${total}`
+            this.overlay.title.textContent = project.title || ''
+            this.overlay.tagline.textContent = project.tagline || ''
+            this.overlay.desc.textContent = project.description || ''
+            this.overlay.problem.textContent = project.problemSolved || ''
+
+            // Features list
+            this.overlay.features.innerHTML = ''
+            if(project.keyFeatures && project.keyFeatures.length)
+            {
+                for(const feat of project.keyFeatures)
+                {
+                    const li = document.createElement('li')
+                    li.textContent = feat
+                    this.overlay.features.appendChild(li)
+                }
+            }
+
+            // Tech stack pills
+            this.overlay.tech.innerHTML = ''
+            if(project.techStack && project.techStack.length)
+            {
+                for(const tech of project.techStack)
+                {
+                    const span = document.createElement('span')
+                    span.className = 'tech-tag'
+                    span.textContent = tech
+                    this.overlay.tech.appendChild(span)
+                }
+            }
+
+            // GitHub link
+            if(project.url)
+            {
+                this.overlay.github.href = project.url
+                this.overlay.github.style.display = 'flex'
+            }
+            else
+            {
+                this.overlay.github.style.display = 'none'
+            }
+        }
+    }
+
     open()
     {
         if(this.state === ProjectsArea.STATE_OPEN || this.state === ProjectsArea.STATE_OPENING)
@@ -1353,6 +1532,13 @@ export class ProjectsArea extends Area
         if(sound)
             sound.play(true)
 
+        // Show detailed projects overlay
+        if(this.overlay)
+        {
+            this.overlay.element.classList.add('is-active')
+            this.overlay.update(this.navigation.current, this.navigation.index + 1, projectsData.length)
+        }
+
         // Achievements
         this.game.achievements.setProgress('projects', this.navigation.current.title)
     }
@@ -1373,6 +1559,12 @@ export class ProjectsArea extends Area
             this.state = ProjectsArea.STATE_CLOSED
             this.stateTransition = null
         })
+
+        // Hide detailed projects overlay
+        if(this.overlay)
+        {
+            this.overlay.element.classList.remove('is-active')
+        }
 
         // Input filters
         this.game.inputs.filters.delete('cinematic')
@@ -1507,6 +1699,12 @@ export class ProjectsArea extends Area
         }
 
         this.changeImage(imageIndex, direction, silent)
+
+        // Update detailed overlay
+        if(this.overlay)
+        {
+            this.overlay.update(this.navigation.current, this.navigation.index + 1, projectsData.length)
+        }
 
         // Achievements
         if(this.state === ProjectsArea.STATE_OPEN)
