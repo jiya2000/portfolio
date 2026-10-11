@@ -35,9 +35,14 @@ export class LandingArea extends Area
                 if(reference.userData && reference.userData.object)
                 {
                     if(reference.userData.object.visual && reference.userData.object.visual.object3D)
+                    {
                         reference.userData.object.visual.object3D.visible = false
+                        reference.userData.object.visual.object3D.removeFromParent()
+                    }
                     if(reference.userData.object.physical && reference.userData.object.physical.body)
+                    {
                         reference.userData.object.physical.body.setEnabled(false)
+                    }
                 }
             }
         }
@@ -45,20 +50,22 @@ export class LandingArea extends Area
         // Create 3D letters for ADITI SHARMA
         const font = new FontLoader().parse(fontData)
         const words = ['ADITI', 'SHARMA']
-        const letterSize = 1.3
+        const letterSize = 1.15
         const letterDepth = 0.46
-        const letterSpacing = 0.22
-        const wordSpacing = 0.9
+        const letterSpacing = 0.15
+        const wordSpacing = 0.75
 
-        const startX = -10.9
-        const startY = -2.53
-        const startZ = 5.75
-        const dirX = 0.9063
-        const dirZ = -0.4226
+        // World coordinates along the brick track at the landing area
+        // Original letters spanned from world [38.38, 0.75, 44.25] to [49.70, 0.75, 38.97]
+        const startX = 38.15
+        const startY = 0.75
+        const startZ = 44.35
+        const dirX = 0.90630779
+        const dirZ = -0.42261826
         const rotationQuat = new THREE.Quaternion(0, 0.2164396, 0, 0.976296)
 
         const letterMaterial = new MeshDefaultMaterial({
-            colorNode: color('#f28d7b'),
+            colorNode: mix(color('#ff3a3a'), color('#721551'), positionGeometry.y.remapClamp(-0.6, 0.6, 0, 1)),
             hasWater: false
         })
 
@@ -90,7 +97,7 @@ export class LandingArea extends Area
                 currentDist += halfWidth
 
                 const posX = startX + dirX * currentDist
-                const posY = startY + height * 0.5 - 0.05
+                const posY = startY
                 const posZ = startZ + dirZ * currentDist
 
                 const mesh = new THREE.Mesh(geometry, letterMaterial)
