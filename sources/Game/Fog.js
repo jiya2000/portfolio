@@ -15,7 +15,7 @@ export class Fog
 
         const colorMix = vec2(viewportUV.xy).sub(this.radialCenter).length().smoothstep(this.radialStart, this.radialEnd)
         this.color = mix(this.colorA, this.colorB, colorMix)
-        this.game.scene.backgroundNode = this.color
+        // this.game.scene.backgroundNode = this.color // Disabled for AR
 
         this.near = uniform(this.game.view.optimalArea.nearDistance)
         this.far = uniform(this.game.view.optimalArea.farDistance)
