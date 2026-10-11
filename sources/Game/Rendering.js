@@ -1,7 +1,6 @@
 import * as THREE from 'three/webgpu'
 import { pass, mrt, output, emissive, renderOutput, vec4 } from 'three/tsl'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
-import { ARButton } from 'three/addons/webxr/ARButton.js'
 import { Game } from './Game.js'
 import { cheapDOF } from './Passes/cheapDOF.js'
 import { Inspector } from 'three/addons/inspector/Inspector.js'
@@ -41,17 +40,11 @@ export class Rendering
         this.renderer = new THREE.WebGPURenderer({
             canvas: this.game.canvasElement,
             powerPreference: 'high-performance',
-            forceWebGL: true, // Forced to true for iPhone compatibility
-            alpha: true, // Required for AR pass-through
+            forceWebGL: false,
             antialias: this.game.viewport.pixelRatio < 2
         })
         this.renderer.setSize(this.game.viewport.width, this.game.viewport.height)
         this.renderer.setPixelRatio(this.game.viewport.pixelRatio)
-        
-        // Setup AR
-        this.renderer.xr.enabled = true
-        this.renderer.setClearColor(0x000000, 0)
-        document.body.appendChild(ARButton.createButton(this.renderer))
         this.renderer.sortObjects = false
 
         this.renderer.domElement.classList.add('experience')
