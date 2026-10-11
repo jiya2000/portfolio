@@ -52,6 +52,7 @@ export class Areas
                             if(c.isMesh) c.visible = false
                             c.userData.preventAutoAdd = true
                         })
+                        continue
                     }
                     this[name] = new AreaClass(child)
                 }

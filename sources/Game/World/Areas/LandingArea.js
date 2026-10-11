@@ -48,16 +48,19 @@ export class LandingArea extends Area
         }
 
         // Create 3D letters for ADITI SHARMA
-        const font = new FontLoader().parse(fontData)
-        const words = ['ADITI', 'SHARMA']
-        const letterSize = 1.15
-        const letterDepth = 0.46
-        const letterSpacing = 0.15
-        const wordSpacing = 0.75
+        try
+        {
+            const fontDataRaw = fontData.default || fontData
+            const font = new FontLoader().parse(fontDataRaw)
+            const words = ['ADITI', 'SHARMA']
+            const letterSize = 1.15
+            const letterDepth = 0.46
+            const letterSpacing = 0.15
+            const wordSpacing = 0.75
 
-        // World coordinates along the brick track at the landing area
-        // Original letters spanned from world [38.38, 0.75, 44.25] to [49.70, 0.75, 38.97]
-        const startX = 38.15
+            // World coordinates along the brick track at the landing area
+            // Original letters spanned from world [38.38, 0.75, 44.25] to [49.70, 0.75, 38.97]
+            const startX = 38.15
         const startY = 0.75
         const startZ = 44.35
         const dirX = 0.90630779
@@ -143,6 +146,11 @@ export class LandingArea extends Area
             {
                 currentDist += wordSpacing
             }
+        }
+        }
+        catch(error)
+        {
+            console.error('Error initializing 3D letters:', error)
         }
     }
 

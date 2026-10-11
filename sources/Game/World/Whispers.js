@@ -277,6 +277,9 @@ export class Whispers
         this.menu = {}
 
         this.menu.instance = this.game.menu.items.get('whispers')
+        if(!this.menu.instance)
+            return
+
         this.menu.container = this.menu.instance.contentElement
         this.menu.inputGroup = this.menu.container.querySelector('.js-input-group')
         this.menu.input = this.menu.inputGroup.querySelector('.js-input')
