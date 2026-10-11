@@ -49,6 +49,7 @@ import { Options } from './Options.js'
 import gsap from 'gsap'
 import { Map } from './Map.js'
 import { QuickNav } from './QuickNav.js'
+import { AR } from './AR.js'
 
 export class Game
 {
@@ -197,6 +198,7 @@ export class Game
         this.tornado = new Tornado()
         this.map = new Map()
         this.quickNav = new QuickNav()
+        this.ar = new AR()
         this.title = new Title()
         // this.monitoring = new Monitoring()
         this.world.step(1)

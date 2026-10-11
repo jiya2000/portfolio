@@ -50,6 +50,9 @@
 
         gtag('config', '%VITE_ANALYTICS_TAG%');
     </script>
+
+    <!-- Google Model Viewer for Cross-Platform WebXR & Apple QuickLook AR -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -131,6 +134,16 @@
                 <span class="label">Contact</span>
             </button>
             <div class="nav-divider"></div>
+            <button class="nav-btn is-ar" data-destination="ar" title="View in Augmented Reality (AR)">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                        <path d="m3.3 7 8.7 5 8.7-5"/>
+                        <path d="M12 22V12"/>
+                    </svg>
+                </span>
+                <span class="label">AR</span>
+            </button>
             <button class="nav-btn is-map" data-destination="map" title="Open 3D Map">
                 <span class="icon">
                     <img src="ui/map.svg" width="13" height="13" alt="Map">
@@ -763,6 +776,99 @@
                 </div>
             </div>
 
+            <!-- AR Experience Modal -->
+            <div class="js-modal modal ar-modal" data-name="ar">
+
+                <button class="js-close close">
+                    <div class="button-inner">
+                        <div class="icon-container">
+                            <img class="icon is-default" src="ui/close.svg" loading="lazy">
+                            <span class="icon is-xbox">A</span>
+                        </div>
+                    </div>
+                </button>
+
+                <div class="ar-layout">
+                    <!-- 3D Interactive Model Viewer with AR launch -->
+                    <div class="ar-preview-side">
+                        <div class="ar-orbit-hint">Drag to rotate • Pinch to zoom</div>
+                        <model-viewer
+                            id="aditi-ar-viewer"
+                            src="ar/aditi-avatar.glb"
+                            alt="Aditi Sharma 3D Avatar in Augmented Reality"
+                            ar
+                            ar-modes="webxr scene-viewer quick-look"
+                            ar-scale="auto"
+                            camera-controls
+                            touch-action="pan-y"
+                            auto-rotate
+                            auto-rotate-delay="600"
+                            rotation-per-second="15deg"
+                            camera-orbit="25deg 78deg 4.2m"
+                            camera-target="0m 0.82m 0m"
+                            field-of-view="32deg"
+                            interaction-prompt="none"
+                            shadow-intensity="1.2"
+                            shadow-softness="0.8"
+                            exposure="1.0"
+                            loading="eager"
+                        >
+                            <button slot="ar-button" class="ar-launch-btn js-ar-direct-launch">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                                    <path d="m3.3 7 8.7 5 8.7-5"/>
+                                    <path d="M12 22V12"/>
+                                </svg>
+                                <span>Place In Your Room (AR)</span>
+                            </button>
+                        </model-viewer>
+                    </div>
+
+                    <!-- AR Information & QR Code Side -->
+                    <div class="ar-info-side">
+                        <div>
+                            <div class="ar-badge">AUGMENTED REALITY</div>
+                            <h2 class="ar-title">Bring Aditi Into Your Space</h2>
+                            <p class="ar-desc">View and interact with Aditi's 3D avatar in real-world scale on your desk, floor, or tabletop.</p>
+                        </div>
+
+                        <div class="ar-features">
+                            <div class="feature-row">
+                                <div class="f-icon">🌐</div>
+                                <div class="f-text">
+                                    <strong>Universal Mobile AR</strong>
+                                    <span>Instant launch via WebXR on Android and Apple Quick Look on iPhone & iPad.</span>
+                                </div>
+                            </div>
+                            <div class="feature-row">
+                                <div class="f-icon">📏</div>
+                                <div class="f-text">
+                                    <strong>Life-Sized & Tabletop Scale</strong>
+                                    <span>Place the character on any flat surface with real-time floor hit detection.</span>
+                                </div>
+                            </div>
+                            <div class="feature-row">
+                                <div class="f-icon">📸</div>
+                                <div class="f-text">
+                                    <strong>Interactive Poses & Photos</strong>
+                                    <span>Walk around the model, inspect details, and snap photos directly on mobile.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ar-mobile-qr-section">
+                            <div class="js-ar-qr-container qr-code-display"></div>
+                            <div class="qr-instructions">
+                                <div class="qr-title">Scan on Mobile for Full AR</div>
+                                <div class="qr-detail">Point your phone camera to open this portfolio in AR mode instantly.</div>
+                                <button class="js-ar-copy-link copy-btn">Copy AR Link</button>
+                                <div class="js-ar-status status-msg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <!-- Notifications -->

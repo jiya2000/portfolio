@@ -48,6 +48,13 @@ export class QuickNav
                     return
                 }
 
+                if(destination === 'ar')
+                {
+                    if(this.game.ar)
+                        this.game.ar.toggle()
+                    return
+                }
+
                 // Close any open modals/menus
                 if(this.game.modals?.isOpen)
                     this.game.modals.close()
