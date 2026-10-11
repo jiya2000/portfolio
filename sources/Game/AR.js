@@ -16,17 +16,42 @@ export class AR
         this.checkURLHash()
     }
 
+    getARUrl()
+    {
+        let origin = window.location.origin
+        const hostname = window.location.hostname
+        
+        // When running on localhost or 127.0.0.1, mobile devices cannot resolve "localhost"
+        // Use the local network IP provided by Vite define or fallback to current Mac Wi-Fi IP
+        if(hostname === 'localhost' || hostname === '127.0.0.1')
+        {
+            const devIp = (typeof __DEV_NETWORK_IP__ !== 'undefined' && __DEV_NETWORK_IP__ && __DEV_NETWORK_IP__ !== 'localhost') 
+                ? __DEV_NETWORK_IP__ 
+                : '172.20.10.3'
+            const port = window.location.port ? `:${window.location.port}` : ''
+            origin = `${window.location.protocol}//${devIp}${port}`
+        }
+
+        return `${origin}${window.location.pathname}#ar`
+    }
+
     initQR()
     {
         if(!this.qrContainer)
             return
 
-        const url = `${window.location.origin}${window.location.pathname}#ar`
+        const url = this.getARUrl()
         const encodedUrl = encodeURIComponent(url)
         
         this.qrContainer.innerHTML = `
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedUrl}&margin=0" alt="Scan QR Code to view Aditi in AR" class="qr-img">
         `
+
+        const urlDisplay = document.querySelector('.js-ar-url-display')
+        if(urlDisplay)
+        {
+            urlDisplay.textContent = url
+        }
 
         if(this.copyLinkBtn)
         {
@@ -36,7 +61,7 @@ export class AR
                 if(navigator.clipboard && navigator.clipboard.writeText)
                 {
                     navigator.clipboard.writeText(url).then(() => {
-                        this.showStatus('Copied AR link to clipboard!')
+                        this.showStatus('Copied AR link: ' + url)
                     })
                 }
                 else

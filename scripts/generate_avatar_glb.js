@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
+import { USDZExporter } from 'three/examples/jsm/exporters/USDZExporter.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -397,9 +398,10 @@ function buildAditiCharacter() {
     return girl;
 }
 
-async function exportGLB() {
+async function exportModels() {
     const character = buildAditiCharacter();
-    const exporter = new GLTFExporter();
+    const gltfExporter = new GLTFExporter();
+    const usdzExporter = new USDZExporter();
 
     const outputDir = path.resolve(__dirname, '../static/ar');
     if (!fs.existsSync(outputDir)) {
@@ -407,16 +409,30 @@ async function exportGLB() {
     }
 
     const glbPath = path.join(outputDir, 'aditi-avatar.glb');
+    const usdzPath = path.join(outputDir, 'aditi-avatar.usdz');
 
     try {
-        const gltf = await exporter.parseAsync(character, { binary: true });
-        const buffer = Buffer.from(gltf);
-        fs.writeFileSync(glbPath, buffer);
-        console.log(`Successfully generated AR avatar model: ${glbPath} (${buffer.length} bytes)`);
+        const gltf = await gltfExporter.parseAsync(character, { binary: true });
+        const glbBuffer = Buffer.from(gltf);
+        fs.writeFileSync(glbPath, glbBuffer);
+        console.log(`Successfully generated AR GLB model: ${glbPath} (${glbBuffer.length} bytes)`);
+
+        await new Promise((resolve, reject) => {
+            usdzExporter.parse(character, (usdzData) => {
+                try {
+                    const usdzBuffer = Buffer.from(usdzData);
+                    fs.writeFileSync(usdzPath, usdzBuffer);
+                    console.log(`Successfully generated AR USDZ model for iOS: ${usdzPath} (${usdzBuffer.length} bytes)`);
+                    resolve();
+                } catch(e) {
+                    reject(e);
+                }
+            }, reject);
+        });
     } catch(error) {
-        console.error('Error exporting GLB:', error);
+        console.error('Error exporting 3D models:', error);
         process.exit(1);
     }
 }
 
-exportGLB();
+exportModels();
