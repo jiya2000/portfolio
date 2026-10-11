@@ -5,6 +5,9 @@ import { InteractivePoints } from '../../InteractivePoints.js'
 import { Area } from './Area.js'
 import gsap from 'gsap'
 import { MeshDefaultMaterial } from '../../Materials/MeshDefaultMaterial.js'
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
+import fontData from 'three/examples/fonts/helvetiker_bold.typeface.json'
 
 export class LandingArea extends Area
 {
@@ -23,16 +26,115 @@ export class LandingArea extends Area
 
     setLetters()
     {
+        // Hide and disable old letters
         const references = this.references.items.get('letters')
-
-        for(const reference of references)
+        if(references)
         {
-            const physical = reference.userData.object.physical
-            physical.colliders[0].setActiveEvents(this.game.RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS)
-            physical.colliders[0].setContactForceEventThreshold(5)
-            physical.onCollision = (force, position) =>
+            for(const reference of references)
             {
-                this.game.audio.groups.get('hitBrick').playRandomNext(force, position)
+                if(reference.userData && reference.userData.object)
+                {
+                    if(reference.userData.object.visual && reference.userData.object.visual.object3D)
+                        reference.userData.object.visual.object3D.visible = false
+                    if(reference.userData.object.physical && reference.userData.object.physical.body)
+                        reference.userData.object.physical.body.setEnabled(false)
+                }
+            }
+        }
+
+        // Create 3D letters for ADITI SHARMA
+        const font = new FontLoader().parse(fontData)
+        const words = ['ADITI', 'SHARMA']
+        const letterSize = 1.3
+        const letterDepth = 0.46
+        const letterSpacing = 0.22
+        const wordSpacing = 0.9
+
+        const startX = -10.9
+        const startY = -2.53
+        const startZ = 5.75
+        const dirX = 0.9063
+        const dirZ = -0.4226
+        const rotationQuat = new THREE.Quaternion(0, 0.2164396, 0, 0.976296)
+
+        const letterMaterial = new MeshDefaultMaterial({
+            colorNode: color('#f28d7b'),
+            hasWater: false
+        })
+
+        let currentDist = 0
+
+        for(let w = 0; w < words.length; w++)
+        {
+            const word = words[w]
+            for(let i = 0; i < word.length; i++)
+            {
+                const char = word[i]
+                const geometry = new TextGeometry(char, {
+                    font: font,
+                    size: letterSize,
+                    depth: letterDepth,
+                    curveSegments: 4,
+                    bevelEnabled: true,
+                    bevelThickness: 0.04,
+                    bevelSize: 0.03,
+                    bevelSegments: 3
+                })
+                geometry.computeBoundingBox()
+                const width = geometry.boundingBox.max.x - geometry.boundingBox.min.x
+                const height = geometry.boundingBox.max.y - geometry.boundingBox.min.y
+                
+                geometry.center()
+
+                const halfWidth = width * 0.5
+                currentDist += halfWidth
+
+                const posX = startX + dirX * currentDist
+                const posY = startY + height * 0.5 - 0.05
+                const posZ = startZ + dirZ * currentDist
+
+                const mesh = new THREE.Mesh(geometry, letterMaterial)
+                mesh.castShadow = true
+                mesh.receiveShadow = true
+
+                const object = this.game.objects.add(
+                    {
+                        model: mesh,
+                        castShadow: true,
+                        receiveShadow: true,
+                        updateMaterials: false
+                    },
+                    {
+                        type: 'dynamic',
+                        position: new THREE.Vector3(posX, posY, posZ),
+                        rotation: rotationQuat,
+                        mass: 0.2,
+                        sleeping: true,
+                        colliders: [
+                            {
+                                shape: 'cuboid',
+                                parameters: [ Math.max(0.2, halfWidth * 0.9), height * 0.5, letterDepth * 0.5 ]
+                            }
+                        ]
+                    }
+                )
+
+                if(object.physical && object.physical.colliders && object.physical.colliders[0])
+                {
+                    object.physical.colliders[0].setActiveEvents(this.game.RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS)
+                    object.physical.colliders[0].setContactForceEventThreshold(5)
+                    object.physical.onCollision = (force, position) =>
+                    {
+                        this.game.audio.groups.get('hitBrick').playRandomNext(force, position)
+                    }
+                }
+
+                currentDist += halfWidth + letterSpacing
+            }
+
+            if(w < words.length - 1)
+            {
+                currentDist += wordSpacing
             }
         }
     }
