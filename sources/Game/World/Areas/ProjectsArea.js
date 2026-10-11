@@ -179,10 +179,10 @@ export class ProjectsArea extends Area
         this.cinematic = {}
         
         this.cinematic.position = new THREE.Vector3()
-        this.cinematic.positionOffset = new THREE.Vector3(3.6, 3.6, 3.8)
+        this.cinematic.positionOffset = new THREE.Vector3(0.5, 2.45, 0.2)
         
         this.cinematic.target = new THREE.Vector3()
-        this.cinematic.targetOffset = new THREE.Vector3(-3.4, 1.75, -4.5)
+        this.cinematic.targetOffset = new THREE.Vector3(-3.4, 1.82, -4.5)
 
         const applyPositionAndTarget = () =>
         {
@@ -356,7 +356,7 @@ export class ProjectsArea extends Area
         }
 
         // Text wrapping helper
-        const wrapText = (text, x, y, maxWidth, lineHeight, maxLines = 10) =>
+        const wrapText = (text, x, y, maxWidth, lineHeight, maxLines = 8) =>
         {
             if(!text) return y
             const words = text.split(' ')
@@ -387,19 +387,19 @@ export class ProjectsArea extends Area
             return y + lineHeight
         }
 
-        // Background gradient
+        // 1. Rich Background
         const bgGrad = ctx.createLinearGradient(0, 0, width, height)
-        bgGrad.addColorStop(0, '#080d1a')
-        bgGrad.addColorStop(0.45, '#0e1729')
-        bgGrad.addColorStop(1, '#05070e')
+        bgGrad.addColorStop(0, '#0a0f1d')
+        bgGrad.addColorStop(0.5, '#0f172a')
+        bgGrad.addColorStop(1, '#070b14')
         ctx.fillStyle = bgGrad
         ctx.fillRect(0, 0, width, height)
 
         // Subtle matrix/circuit grid dots
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)'
-        for(let gx = 40; gx < width; gx += 40)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.035)'
+        for(let gx = 30; gx < width; gx += 36)
         {
-            for(let gy = 40; gy < height; gy += 40)
+            for(let gy = 30; gy < height; gy += 36)
             {
                 ctx.beginPath()
                 ctx.arc(gx, gy, 1.5, 0, Math.PI * 2)
@@ -407,216 +407,244 @@ export class ProjectsArea extends Area
             }
         }
 
-        // Ambient radial glow behind title
-        const titleGlow = ctx.createRadialGradient(width * 0.4, 120, 20, width * 0.4, 120, 500)
-        titleGlow.addColorStop(0, 'rgba(56, 189, 248, 0.12)')
-        titleGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
-        ctx.fillStyle = titleGlow
+        // Glowing ambient backlights
+        const glow1 = ctx.createRadialGradient(400, 100, 10, 400, 100, 450)
+        glow1.addColorStop(0, 'rgba(56, 189, 248, 0.16)')
+        glow1.addColorStop(1, 'rgba(0, 0, 0, 0)')
+        ctx.fillStyle = glow1
         ctx.fillRect(0, 0, width, 300)
 
-        // Outer border frame
-        ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)'
-        ctx.lineWidth = 3
-        roundRect(20, 20, width - 40, height - 40, 24)
+        const glow2 = ctx.createRadialGradient(width - 400, 500, 20, width - 400, 500, 500)
+        glow2.addColorStop(0, 'rgba(129, 140, 248, 0.12)')
+        glow2.addColorStop(1, 'rgba(0, 0, 0, 0)')
+        ctx.fillStyle = glow2
+        ctx.fillRect(width / 2, 200, width / 2, 800)
+
+        // Outer crisp border
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.5)'
+        ctx.lineWidth = 4
+        roundRect(16, 16, width - 32, height - 32, 20)
         ctx.stroke()
 
-        // 1. Top Header
+        // 2. Header
+        const padX = 48
         // Category Pill
-        ctx.fillStyle = 'rgba(30, 41, 59, 0.92)'
-        roundRect(60, 46, 520, 44, 22)
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.95)'
+        roundRect(padX, 34, 580, 48, 24)
         ctx.fill()
         ctx.strokeStyle = '#38bdf8'
-        ctx.lineWidth = 1.5
-        roundRect(60, 46, 520, 44, 22)
+        ctx.lineWidth = 2
+        roundRect(padX, 34, 580, 48, 24)
         ctx.stroke()
 
-        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 24px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#38bdf8'
         ctx.textBaseline = 'middle'
-        ctx.fillText(project.category || '🚀 Featured Project', 84, 68)
+        ctx.fillText(project.category || '🚀 Featured Project', padX + 24, 58)
 
         // Counter Pill
-        ctx.fillStyle = 'rgba(30, 41, 59, 0.92)'
-        roundRect(width - 220, 46, 160, 44, 22)
+        const countW = 180
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.95)'
+        roundRect(width - padX - countW, 34, countW, 48, 24)
         ctx.fill()
-        ctx.strokeStyle = '#64748b'
-        ctx.lineWidth = 1.5
-        roundRect(width - 220, 46, 160, 44, 22)
+        ctx.strokeStyle = '#818cf8'
+        ctx.lineWidth = 2
+        roundRect(width - padX - countW, 34, countW, 48, 24)
         ctx.stroke()
 
-        ctx.font = 'bold 22px monospace'
+        ctx.font = 'bold 26px monospace'
         ctx.fillStyle = '#e2e8f0'
+        ctx.textAlign = 'center'
         const counterText = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
-        ctx.fillText(counterText, width - 180, 68)
+        ctx.fillText(counterText, width - padX - countW / 2, 58)
+        ctx.textAlign = 'left'
 
-        // Main Title
-        ctx.font = 'bold 52px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#ffffff'
+        // Main Title (Large & Bold)
         ctx.textBaseline = 'top'
-        ctx.fillText(project.title, 60, 106)
+        ctx.font = 'bold 58px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#ffffff'
+        ctx.fillText(project.title, padX, 96)
 
-        // Tagline
-        ctx.font = '600 25px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#60a5fa'
-        ctx.fillText(project.tagline || '', 60, 168)
+        // Tagline (Large & Crisp)
+        ctx.font = '600 28px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#67e8f9'
+        ctx.fillText(project.tagline || '', padX, 164)
 
-        // 2. Left Column (Width: 870, X: 60)
-        const colW = 870
-        let curY = 216
+        // 3. Two Columns filling the height with zero empty space
+        const colGap = 32
+        const colW = (width - padX * 2 - colGap) / 2
+        const leftX = padX
+        const rightX = padX + colW + colGap
+        const topY = 212
+        const botContentY = 992
 
-        // Card 1: What It Is
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
-        roundRect(60, curY, colW, 206, 16)
+        // --- LEFT COLUMN ---
+        // Card 1: What It Is (Height: 270px)
+        const c1H = 270
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
+        roundRect(leftX, topY, colW, c1H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)'
-        ctx.lineWidth = 1.5
-        roundRect(60, curY, colW, 206, 16)
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)'
+        ctx.lineWidth = 2
+        roundRect(leftX, topY, colW, c1H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#93c5fd'
-        ctx.fillText('💡 WHAT IT IS', 84, curY + 20)
+        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#38bdf8'
+        ctx.fillText('💡 WHAT IT IS', leftX + 26, topY + 20)
 
-        ctx.font = '21px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#cbd5e1'
-        wrapText(project.description || '', 84, curY + 62, colW - 48, 32, 4)
+        ctx.font = '500 26px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#f8fafc'
+        wrapText(project.description || '', leftX + 26, topY + 68, colW - 52, 38, 5)
 
-        curY += 224
-
-        // Card 2: Problem & Impact
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
-        roundRect(60, curY, colW, 164, 16)
+        // Card 2: Problem & Impact (Height: 220px)
+        const c2Y = topY + c1H + 20
+        const c2H = 220
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
+        roundRect(leftX, c2Y, colW, c2H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(244, 114, 182, 0.28)'
-        roundRect(60, curY, colW, 164, 16)
+        ctx.strokeStyle = 'rgba(244, 114, 182, 0.45)'
+        ctx.lineWidth = 2
+        roundRect(leftX, c2Y, colW, c2H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#f472b6'
-        ctx.fillText('🎯 PROBLEM & IMPACT', 84, curY + 20)
+        ctx.fillText('🎯 PROBLEM & IMPACT', leftX + 26, c2Y + 20)
 
-        ctx.font = '21px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#e2e8f0'
-        wrapText(project.problemSolved || '', 84, curY + 62, colW - 48, 32, 3)
+        ctx.font = '500 26px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#f8fafc'
+        wrapText(project.problemSolved || '', leftX + 26, c2Y + 68, colW - 52, 38, 4)
 
-        curY += 182
-
-        // Card 3: Tech Stack
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
-        roundRect(60, curY, colW, 170, 16)
+        // Card 3: Tech Stack (Height: fills rest = 250px)
+        const c3Y = c2Y + c2H + 20
+        const c3H = botContentY - c3Y
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
+        roundRect(leftX, c3Y, colW, c3H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(167, 139, 250, 0.28)'
-        roundRect(60, curY, colW, 170, 16)
+        ctx.strokeStyle = 'rgba(167, 139, 250, 0.45)'
+        ctx.lineWidth = 2
+        roundRect(leftX, c3Y, colW, c3H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#a78bfa'
-        ctx.fillText('🛠️ TECH STACK', 84, curY + 20)
+        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#c084fc'
+        ctx.fillText('🛠️ TECH STACK', leftX + 26, c3Y + 20)
 
-        let pillX = 84
-        let pillY = curY + 65
-        ctx.font = 'bold 20px system-ui, -apple-system, sans-serif'
+        let pillX = leftX + 26
+        let pillY = c3Y + 68
+        ctx.font = 'bold 23px system-ui, -apple-system, sans-serif'
         if(project.techStack && project.techStack.length)
         {
             for(const tech of project.techStack)
             {
                 const tw = ctx.measureText(tech).width
-                const pw = tw + 30
-                if(pillX + pw > 60 + colW - 20)
+                const pw = tw + 36
+                if(pillX + pw > leftX + colW - 26)
                 {
-                    pillX = 84
-                    pillY += 48
+                    pillX = leftX + 26
+                    pillY += 56
                 }
-                ctx.fillStyle = 'rgba(30, 27, 75, 0.92)'
-                roundRect(pillX, pillY, pw, 38, 19)
+                ctx.fillStyle = 'rgba(49, 46, 129, 0.95)'
+                roundRect(pillX, pillY, pw, 46, 23)
                 ctx.fill()
                 ctx.strokeStyle = '#818cf8'
-                ctx.lineWidth = 1.2
-                roundRect(pillX, pillY, pw, 38, 19)
+                ctx.lineWidth = 1.5
+                roundRect(pillX, pillY, pw, 46, 23)
                 ctx.stroke()
 
-                ctx.fillStyle = '#e0e7ff'
+                ctx.fillStyle = '#ffffff'
                 ctx.textBaseline = 'middle'
-                ctx.fillText(tech, pillX + 15, pillY + 19)
+                ctx.fillText(tech, pillX + 18, pillY + 23)
                 ctx.textBaseline = 'top'
 
-                pillX += pw + 12
+                pillX += pw + 14
             }
         }
 
-        // 3. Right Column (Width: 890, X: 970)
-        const rightX = 970
-        const rightW = 890
-        let rY = 216
-
-        // Card 4: Key Highlights
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
-        roundRect(rightX, rY, rightW, 376, 16)
+        // --- RIGHT COLUMN ---
+        // Card 4: Key Highlights (Height: 510px)
+        const c4H = 510
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
+        roundRect(rightX, topY, colW, c4H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(251, 191, 36, 0.28)'
-        ctx.lineWidth = 1.5
-        roundRect(rightX, rY, rightW, 376, 16)
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)'
+        ctx.lineWidth = 2
+        roundRect(rightX, topY, colW, c4H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#fbbf24'
-        ctx.fillText('⚡ KEY HIGHLIGHTS', rightX + 24, rY + 20)
+        ctx.fillText('⚡ KEY HIGHLIGHTS', rightX + 26, topY + 20)
 
-        let featY = rY + 68
+        let featY = topY + 70
         if(project.keyFeatures && project.keyFeatures.length)
         {
             for(const feat of project.keyFeatures)
             {
-                ctx.font = 'bold 22px monospace'
+                ctx.font = 'bold 28px monospace'
                 ctx.fillStyle = '#fbbf24'
-                ctx.fillText('◆', rightX + 26, featY)
+                ctx.fillText('◆', rightX + 28, featY)
 
-                ctx.font = '21px system-ui, -apple-system, sans-serif'
-                ctx.fillStyle = '#f1f5f9'
-                const nextY = wrapText(feat, rightX + 56, featY, rightW - 80, 30, 2)
-                featY = Math.max(featY + 70, nextY + 10)
+                ctx.font = '500 25px system-ui, -apple-system, sans-serif'
+                ctx.fillStyle = '#f8fafc'
+                const nextY = wrapText(feat, rightX + 64, featY, colW - 90, 36, 3)
+                featY = Math.max(featY + 78, nextY + 16)
             }
         }
 
-        rY += 396
-
-        // Card 5: GitHub Repository
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)'
-        roundRect(rightX, rY, rightW, 164, 16)
+        // Card 5: GitHub Repository (Height: fills rest = 230px)
+        const c5Y = topY + c4H + 20
+        const c5H = botContentY - c5Y
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.95)'
+        roundRect(rightX, c5Y, colW, c5H, 18)
         ctx.fill()
         ctx.strokeStyle = '#6366f1'
-        ctx.lineWidth = 2
-        roundRect(rightX, rY, rightW, 164, 16)
+        ctx.lineWidth = 2.5
+        roundRect(rightX, c5Y, colW, c5H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 24px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#a5b4fc'
-        ctx.fillText('📂 GITHUB REPOSITORY', rightX + 24, rY + 20)
+        ctx.fillText('📂 GITHUB REPOSITORY', rightX + 26, c5Y + 20)
 
-        ctx.font = 'bold 26px monospace'
-        ctx.fillStyle = '#ffffff'
-        const displayUrl = (project.url || '').replace(/https?:\/\//, '')
-        ctx.fillText(displayUrl, rightX + 24, rY + 62)
-
-        ctx.font = '19px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#94a3b8'
-        ctx.fillText('Press [E] or Click the URL sign above the billboard to open in browser ↗', rightX + 24, rY + 112)
-
-        // 4. Bottom Hint Bar
-        const botY = height - 90
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)'
-        roundRect(60, botY, width - 120, 50, 12)
+        // Repo URL Box
+        const urlBoxY = c5Y + 62
+        const urlBoxH = 62
+        ctx.fillStyle = 'rgba(30, 27, 75, 0.95)'
+        roundRect(rightX + 24, urlBoxY, colW - 48, urlBoxH, 12)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(100, 116, 139, 0.35)'
-        ctx.lineWidth = 1
-        roundRect(60, botY, width - 120, 50, 12)
+        ctx.strokeStyle = '#818cf8'
+        ctx.lineWidth = 1.5
+        roundRect(rightX + 24, urlBoxY, colW - 48, urlBoxH, 12)
         ctx.stroke()
 
-        ctx.font = 'bold 19px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 25px monospace'
+        ctx.fillStyle = '#38bdf8'
+        ctx.textBaseline = 'middle'
+        const displayUrl = (project.url || '').replace(/https?:\/\//, '')
+        ctx.fillText(displayUrl, rightX + 44, urlBoxY + urlBoxH / 2)
+        ctx.textBaseline = 'top'
+
+        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#cbd5e1'
+        ctx.fillText('Press [E] or Click to open source repository in browser ↗', rightX + 26, c5Y + 144)
+
+        // 4. Bottom Navigation Bar (Height: 54px)
+        const botBarY = 1010
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.95)'
+        roundRect(padX, botBarY, width - padX * 2, 54, 14)
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)'
+        ctx.lineWidth = 1.5
+        roundRect(padX, botBarY, width - padX * 2, 54, 14)
+        ctx.stroke()
+
+        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#94a3b8'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        ctx.fillText('◀  [A / ←] PREVIOUS PROJECT      •      [E] OPEN GITHUB REPOSITORY      •      [D / →] NEXT PROJECT  ▶      •      [ESC] EXIT', width / 2, botY + 25)
+        ctx.fillText('◀  [A / ←] PREVIOUS PROJECT      •      [E] OPEN GITHUB REPO      •      [D / →] NEXT PROJECT  ▶      •      [ESC] EXIT', width / 2, botBarY + 27)
 
         return canvas
     }
