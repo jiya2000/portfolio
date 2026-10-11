@@ -35,6 +35,12 @@ export class Respawns
 
             this.items.set(name, item)
         }
+
+        const careerRespawn = this.items.get('career')
+        if(careerRespawn)
+        {
+            careerRespawn.rotation = Math.PI
+        }
     }
 
     getByName(name)

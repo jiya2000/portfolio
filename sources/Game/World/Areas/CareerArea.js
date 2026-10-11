@@ -60,6 +60,62 @@ export class CareerArea extends Area
         })
     }
 
+    createCareerTextTexture(textLines, originalWidth, originalHeight)
+    {
+        const scale = 2
+        const width = originalWidth * scale
+        const height = originalHeight * scale
+
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+
+        ctx.clearRect(0, 0, width, height)
+
+        const lineCount = textLines.length
+        let fontSize = lineCount === 3 ? Math.floor(height * 0.25) : Math.floor(height * 0.38)
+        
+        const padLeft = Math.floor(width * 0.05)
+        const maxWidth = width - padLeft * 2
+
+        ctx.font = `900 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`
+        for(const t of textLines)
+        {
+            const textWidth = ctx.measureText(t.toUpperCase()).width
+            if(textWidth > maxWidth)
+            {
+                const neededSize = Math.floor(fontSize * (maxWidth / textWidth))
+                if(neededSize < fontSize)
+                    fontSize = neededSize
+            }
+        }
+
+        ctx.font = `900 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`
+        ctx.fillStyle = '#ffffff'
+        ctx.textAlign = 'left'
+        ctx.textBaseline = 'middle'
+
+        const totalTextHeight = lineCount === 3 ? height * 0.78 : height * 0.70
+        const startY = (height - totalTextHeight) / 2 + (totalTextHeight / (lineCount * 2))
+        const stepY = totalTextHeight / lineCount
+
+        for(let i = 0; i < lineCount; i++)
+        {
+            const lineY = startY + i * stepY
+            ctx.fillText(textLines[i].toUpperCase(), padLeft, lineY)
+        }
+
+        const canvasTexture = new THREE.CanvasTexture(canvas)
+        canvasTexture.colorSpace = THREE.SRGBColorSpace
+        canvasTexture.flipY = false
+        canvasTexture.magFilter = THREE.LinearFilter
+        canvasTexture.minFilter = THREE.LinearFilter
+        canvasTexture.generateMipmaps = false
+
+        return canvasTexture
+    }
+
     setLines()
     {
         this.lines = {}
@@ -76,6 +132,39 @@ export class CareerArea extends Area
             green: uniform(color('#a2ffab'))
         }
 
+        const aditiCareerTextures = {
+            careerHetic: {
+                lines: ["ST. JOSEPH'S CONVENT", '95.4% SCHOOL TOPPER'],
+                w: 316,
+                h: 60
+            },
+            careerFreelancer: {
+                lines: ['TEAM SAMMARD', 'CS LEAD • ISRO CANSAT'],
+                w: 240,
+                h: 60
+            },
+            careerUzik: {
+                lines: ['NDA 149 MERIT', 'AIR 417 (GIRLS 53)'],
+                w: 240,
+                h: 60
+            },
+            careerIRLTeacher: {
+                lines: ['HCLTECH', 'SOFTWARE & AI INTERN', 'AZURE & LANGGRAPH'],
+                w: 268,
+                h: 92
+            },
+            careerImmersiveGarden: {
+                lines: ['VIT STUDENT COUNCIL', 'MEMBER SECRETARY'],
+                w: 340,
+                h: 60
+            },
+            careerOnlineTeacher: {
+                lines: ['VIT VELLORE', 'INTEGRATED M.TECH CSE', '9.65 CGPA • RANK 3'],
+                w: 332,
+                h: 92
+            }
+        }
+
         for(const group of lineGroups)
         {
             const line = {}
@@ -83,7 +172,16 @@ export class CareerArea extends Area
             line.size = parseFloat(line.group.userData.size)
             line.hasEnd = line.group.userData.hasEnd
             line.color = line.group.userData.color
-            line.texture = this.game.resources[`${line.group.userData.texture}Texture`]
+            
+            const textureConfig = aditiCareerTextures[line.group.userData.texture]
+            if(textureConfig)
+            {
+                line.texture = this.createCareerTextTexture(textureConfig.lines, textureConfig.w, textureConfig.h)
+            }
+            else
+            {
+                line.texture = this.game.resources[`${line.group.userData.texture}Texture`]
+            }
 
             line.stone = line.group.children.find(child => child.name.startsWith('stone'))
             line.stone.position.y = 0
@@ -155,7 +253,7 @@ export class CareerArea extends Area
         this.year.originZ = this.year.group.position.z
         this.year.size = 17
         this.year.offsetTarget = 0
-        this.year.start = 2008
+        this.year.start = 2023
         this.year.current = this.year.start
 
         //    Digit indexes
@@ -365,7 +463,8 @@ export class CareerArea extends Area
         const finalPositionZ = this.year.originZ - this.year.offsetTarget
         this.year.group.position.z += (finalPositionZ - this.year.group.position.z) * this.game.ticker.deltaScaled * 10
 
-        const yearCurrent = this.year.start + Math.floor(this.year.offsetTarget)
+        const progress = Math.min(1, Math.max(0, this.year.offsetTarget / this.year.size))
+        const yearCurrent = Math.min(2028, this.year.start + Math.floor(progress * 6))
 
         if(yearCurrent !== this.year.current)
         {

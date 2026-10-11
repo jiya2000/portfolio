@@ -179,10 +179,10 @@ export class ProjectsArea extends Area
         this.cinematic = {}
         
         this.cinematic.position = new THREE.Vector3()
-        this.cinematic.positionOffset = new THREE.Vector3(0.5, 2.45, 0.2)
+        this.cinematic.positionOffset = new THREE.Vector3(3.6, 3.6, 3.8)
         
         this.cinematic.target = new THREE.Vector3()
-        this.cinematic.targetOffset = new THREE.Vector3(-3.4, 1.82, -4.5)
+        this.cinematic.targetOffset = new THREE.Vector3(-3.4, 1.75, -4.5)
 
         const applyPositionAndTarget = () =>
         {
@@ -461,13 +461,13 @@ export class ProjectsArea extends Area
 
         // Main Title (Large & Bold)
         ctx.textBaseline = 'top'
-        ctx.font = 'bold 58px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 62px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#ffffff'
-        ctx.fillText(project.title, padX, 96)
+        ctx.fillText(project.title, padX, 94)
 
         // Tagline (Large & Crisp)
-        ctx.font = '600 28px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#67e8f9'
+        ctx.font = '600 32px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#38bdf8'
         ctx.fillText(project.tagline || '', padX, 164)
 
         // 3. Two Columns filling the height with zero empty space
@@ -484,18 +484,18 @@ export class ProjectsArea extends Area
         ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
         roundRect(leftX, topY, colW, c1H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)'
-        ctx.lineWidth = 2
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)'
+        ctx.lineWidth = 2.5
         roundRect(leftX, topY, colW, c1H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 36px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#38bdf8'
-        ctx.fillText('💡 WHAT IT IS', leftX + 26, topY + 20)
+        ctx.fillText('💡 WHAT IT IS', leftX + 26, topY + 18)
 
-        ctx.font = '500 26px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#f8fafc'
-        wrapText(project.description || '', leftX + 26, topY + 68, colW - 52, 38, 5)
+        ctx.font = 'bold 33px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#ffffff'
+        wrapText(project.description || '', leftX + 26, topY + 68, colW - 52, 46, 4)
 
         // Card 2: Problem & Impact (Height: 220px)
         const c2Y = topY + c1H + 20
@@ -503,18 +503,18 @@ export class ProjectsArea extends Area
         ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
         roundRect(leftX, c2Y, colW, c2H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(244, 114, 182, 0.45)'
-        ctx.lineWidth = 2
+        ctx.strokeStyle = 'rgba(244, 114, 182, 0.55)'
+        ctx.lineWidth = 2.5
         roundRect(leftX, c2Y, colW, c2H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 36px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#f472b6'
-        ctx.fillText('🎯 PROBLEM & IMPACT', leftX + 26, c2Y + 20)
+        ctx.fillText('🎯 PROBLEM & IMPACT', leftX + 26, c2Y + 18)
 
-        ctx.font = '500 26px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#f8fafc'
-        wrapText(project.problemSolved || '', leftX + 26, c2Y + 68, colW - 52, 38, 4)
+        ctx.font = 'bold 33px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#ffffff'
+        wrapText(project.problemSolved || '', leftX + 26, c2Y + 68, colW - 52, 46, 3)
 
         // Card 3: Tech Stack (Height: fills rest = 250px)
         const c3Y = c2Y + c2H + 20
@@ -522,40 +522,40 @@ export class ProjectsArea extends Area
         ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
         roundRect(leftX, c3Y, colW, c3H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(167, 139, 250, 0.45)'
-        ctx.lineWidth = 2
+        ctx.strokeStyle = 'rgba(167, 139, 250, 0.55)'
+        ctx.lineWidth = 2.5
         roundRect(leftX, c3Y, colW, c3H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 36px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#c084fc'
-        ctx.fillText('🛠️ TECH STACK', leftX + 26, c3Y + 20)
+        ctx.fillText('🛠️ TECH STACK', leftX + 26, c3Y + 18)
 
         let pillX = leftX + 26
         let pillY = c3Y + 68
-        ctx.font = 'bold 23px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
         if(project.techStack && project.techStack.length)
         {
             for(const tech of project.techStack)
             {
                 const tw = ctx.measureText(tech).width
-                const pw = tw + 36
+                const pw = tw + 42
                 if(pillX + pw > leftX + colW - 26)
                 {
                     pillX = leftX + 26
-                    pillY += 56
+                    pillY += 60
                 }
                 ctx.fillStyle = 'rgba(49, 46, 129, 0.95)'
-                roundRect(pillX, pillY, pw, 46, 23)
+                roundRect(pillX, pillY, pw, 52, 26)
                 ctx.fill()
                 ctx.strokeStyle = '#818cf8'
-                ctx.lineWidth = 1.5
-                roundRect(pillX, pillY, pw, 46, 23)
+                ctx.lineWidth = 2
+                roundRect(pillX, pillY, pw, 52, 26)
                 ctx.stroke()
 
                 ctx.fillStyle = '#ffffff'
                 ctx.textBaseline = 'middle'
-                ctx.fillText(tech, pillX + 18, pillY + 23)
+                ctx.fillText(tech, pillX + 21, pillY + 26)
                 ctx.textBaseline = 'top'
 
                 pillX += pw + 14
@@ -568,28 +568,28 @@ export class ProjectsArea extends Area
         ctx.fillStyle = 'rgba(15, 23, 42, 0.94)'
         roundRect(rightX, topY, colW, c4H, 18)
         ctx.fill()
-        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)'
-        ctx.lineWidth = 2
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.55)'
+        ctx.lineWidth = 2.5
         roundRect(rightX, topY, colW, c4H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 36px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#fbbf24'
-        ctx.fillText('⚡ KEY HIGHLIGHTS', rightX + 26, topY + 20)
+        ctx.fillText('⚡ KEY HIGHLIGHTS', rightX + 26, topY + 18)
 
         let featY = topY + 70
         if(project.keyFeatures && project.keyFeatures.length)
         {
             for(const feat of project.keyFeatures)
             {
-                ctx.font = 'bold 28px monospace'
+                ctx.font = 'bold 34px monospace'
                 ctx.fillStyle = '#fbbf24'
                 ctx.fillText('◆', rightX + 28, featY)
 
-                ctx.font = '500 25px system-ui, -apple-system, sans-serif'
-                ctx.fillStyle = '#f8fafc'
-                const nextY = wrapText(feat, rightX + 64, featY, colW - 90, 36, 3)
-                featY = Math.max(featY + 78, nextY + 16)
+                ctx.font = 'bold 31px system-ui, -apple-system, sans-serif'
+                ctx.fillStyle = '#ffffff'
+                const nextY = wrapText(feat, rightX + 68, featY, colW - 96, 44, 3)
+                featY = Math.max(featY + 84, nextY + 16)
             }
         }
 
@@ -604,31 +604,39 @@ export class ProjectsArea extends Area
         roundRect(rightX, c5Y, colW, c5H, 18)
         ctx.stroke()
 
-        ctx.font = 'bold 28px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 34px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#a5b4fc'
-        ctx.fillText('📂 GITHUB REPOSITORY', rightX + 26, c5Y + 20)
+        ctx.fillText('📂 GITHUB REPOSITORY', rightX + 26, c5Y + 18)
 
         // Repo URL Box
         const urlBoxY = c5Y + 62
-        const urlBoxH = 62
+        const urlBoxH = 68
         ctx.fillStyle = 'rgba(30, 27, 75, 0.95)'
-        roundRect(rightX + 24, urlBoxY, colW - 48, urlBoxH, 12)
+        roundRect(rightX + 24, urlBoxY, colW - 48, urlBoxH, 14)
         ctx.fill()
         ctx.strokeStyle = '#818cf8'
-        ctx.lineWidth = 1.5
-        roundRect(rightX + 24, urlBoxY, colW - 48, urlBoxH, 12)
+        ctx.lineWidth = 2
+        roundRect(rightX + 24, urlBoxY, colW - 48, urlBoxH, 14)
         ctx.stroke()
 
-        ctx.font = 'bold 25px monospace'
+        let urlFontSize = 30
+        ctx.font = `bold ${urlFontSize}px monospace`
+        const displayUrl = (project.url || '').replace(/https?:\/\//, '')
+        const maxUrlW = colW - 88
+        const measuredUrlW = ctx.measureText(displayUrl).width
+        if(measuredUrlW > maxUrlW)
+        {
+            urlFontSize = Math.max(20, Math.floor(urlFontSize * (maxUrlW / measuredUrlW)))
+            ctx.font = `bold ${urlFontSize}px monospace`
+        }
         ctx.fillStyle = '#38bdf8'
         ctx.textBaseline = 'middle'
-        const displayUrl = (project.url || '').replace(/https?:\/\//, '')
         ctx.fillText(displayUrl, rightX + 44, urlBoxY + urlBoxH / 2)
         ctx.textBaseline = 'top'
 
-        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
         ctx.fillStyle = '#cbd5e1'
-        ctx.fillText('Press [E] or Click to open source repository in browser ↗', rightX + 26, c5Y + 144)
+        ctx.fillText('Press [E] or Click to open source repository in browser ↗', rightX + 26, c5Y + 148)
 
         // 4. Bottom Navigation Bar (Height: 54px)
         const botBarY = 1010
@@ -640,8 +648,8 @@ export class ProjectsArea extends Area
         roundRect(padX, botBarY, width - padX * 2, 54, 14)
         ctx.stroke()
 
-        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
-        ctx.fillStyle = '#94a3b8'
+        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#ffffff'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
         ctx.fillText('◀  [A / ←] PREVIOUS PROJECT      •      [E] OPEN GITHUB REPO      •      [D / →] NEXT PROJECT  ▶      •      [ESC] EXIT', width / 2, botBarY + 27)
