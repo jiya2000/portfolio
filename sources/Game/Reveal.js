@@ -47,19 +47,125 @@ export class Reveal
     {
         const speedMultiplier = location.hash.match(/skip/i) ? 4 : 1
 
-        // Step 0: Immediately smoothly reveal the portfolio world
+        // Step 0: Start screen & click-to-start ready
         if(step === 0)
         {
-            if(this.game.world?.intro?.circle?.hide)
-            {
-                this.game.world.intro.circle.hide()
-            }
+            // Transition HTML start overlay from loading state to ready state
+            const loadingEl = document.getElementById('startLoading')
+            const startBtn = document.getElementById('startBtn')
+            const startHint = document.getElementById('startHint')
+            if(loadingEl) loadingEl.style.display = 'none'
+            if(startBtn) startBtn.style.display = 'inline-flex'
+            if(startHint) startHint.style.display = 'block'
+
+            // Position 3D intro camera and reveal ring
+            this.distance.value = 0
+
+            this.game.view.zoom.smoothedRatio = 0.65
+            this.game.view.zoom.baseRatio = 0.65
+
+            gsap.to(
+                this.game.view.zoom,
+                {
+                    baseRatio: 0.35,
+                    ease: 'power1.inOut',
+                    duration: 1.25 / speedMultiplier,
+                    overwrite: true,
+                }
+            )
+
+            gsap.to(
+                this.distance,
+                {
+                    value: 3.5,
+                    ease: 'back.out(1.7)',
+                    duration: 1.5 / speedMultiplier,
+                    overwrite: true,
+                }
+            )
+
             if(this.game.world?.grid?.show)
-            {
                 this.game.world.grid.show()
+
+            if(this.game.world?.intro?.setText)
+            {
+                try
+                {
+                    this.game.world.intro.setText()
+                    this.game.world.intro.setSoundButton()
+                    this.game.ticker.wait(0.5, () =>
+                    {
+                        if(this.game.world?.intro?.showLabel)
+                            this.game.world.intro.showLabel()
+                    })
+                }
+                catch(e)
+                {
+                    console.warn('Intro 3D label catch:', e)
+                }
             }
 
-            this.updateStep(1)
+            if(this.game.world?.cherryTrees?.leaves)
+                this.game.world.cherryTrees.leaves.seeThroughMultiplier = 0.5
+
+            if(location.hash.match(/skip/i))
+            {
+                this.updateStep(1)
+            }
+            else
+            {
+                let started = false
+                const next = () =>
+                {
+                    if(started) return
+                    started = true
+
+                    // Smoothly fade out Start Screen
+                    const startScreen = document.getElementById('startScreen')
+                    if(startScreen)
+                    {
+                        startScreen.classList.add('is-hidden')
+                        setTimeout(() => startScreen.remove(), 700)
+                    }
+
+                    // Advance to step 1 (reveal wave + camera zoom)
+                    this.updateStep(1)
+
+                    // Cleanup listeners
+                    window.removeEventListener('pointerdown', next)
+                    window.removeEventListener('keydown', keyCallback)
+                    this.game.inputs.events.off('introStart', next)
+                    if(intersect)
+                        this.game.rayCursor.removeIntersect(intersect)
+                }
+
+                const keyCallback = (event) =>
+                {
+                    next()
+                }
+
+                // Click start button or anywhere on screen
+                if(startBtn)
+                    startBtn.addEventListener('click', (e) => { e.stopPropagation(); next(); }, { once: true })
+
+                window.addEventListener('pointerdown', next, { once: true })
+                window.addEventListener('keydown', keyCallback, { once: true })
+
+                // 3D sphere ray intersect
+                const position = this.position.clone()
+                position.y = 0
+                const intersect = this.game.rayCursor.addIntersect({
+                    active: true,
+                    shape: new THREE.Sphere(position, 4),
+                    onClick: next
+                })
+
+                // Gamepad & keyboard actions
+                this.game.inputs.addActions([
+                    { name: 'introStart', categories: [ 'intro' ], keys: [ 'Gamepad.cross', 'Keyboard.Enter', 'Keyboard.Space', 'Keyboard.ArrowUp', 'Keyboard.ArrowDown', 'Keyboard.KeyW', 'Keyboard.KeyD' ] },
+                ])
+                this.game.inputs.events.on('introStart', next)
+            }
         }
         else if(step === 1)
         {
