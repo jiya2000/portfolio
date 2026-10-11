@@ -175,15 +175,8 @@ export class Game
             ],
             (toLoad, total) =>
             {
-                const progress = Math.min(1, Math.max(0, 1 - toLoad / total))
                 if(this.world?.intro?.updateProgress)
-                    this.world.intro.updateProgress(progress)
-
-                const bar = document.getElementById('startLoadingBar')
-                const text = document.getElementById('startLoadingText')
-                const pct = Math.round(progress * 100)
-                if(bar) bar.style.width = `${pct}%`
-                if(text) text.textContent = `Loading 3D World... ${pct}%`
+                    this.world.intro.updateProgress(1 - toLoad / total)
             }
         )
 

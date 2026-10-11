@@ -47,124 +47,133 @@ export class Reveal
     {
         const speedMultiplier = location.hash.match(/skip/i) ? 4 : 1
 
-        // Step 0: Start screen & click-to-start ready
+        // Step 0: 3D intro screen (glowing circle, CLICK TO START arrow, and sound icon)
         if(step === 0)
         {
-            // Transition HTML start overlay from loading state to ready state
-            const loadingEl = document.getElementById('startLoading')
-            const startBtn = document.getElementById('startBtn')
-            const startHint = document.getElementById('startHint')
-            if(loadingEl) loadingEl.style.display = 'none'
-            if(startBtn) startBtn.style.display = 'inline-flex'
-            if(startHint) startHint.style.display = 'block'
-
-            // Position 3D intro camera and reveal ring
-            this.distance.value = 0
-
-            this.game.view.zoom.smoothedRatio = 0.65
-            this.game.view.zoom.baseRatio = 0.65
-
-            gsap.to(
-                this.game.view.zoom,
-                {
-                    baseRatio: 0.35,
-                    ease: 'power1.inOut',
-                    duration: 1.25 / speedMultiplier,
-                    overwrite: true,
-                }
-            )
-
-            gsap.to(
-                this.distance,
-                {
-                    value: 3.5,
-                    ease: 'back.out(1.7)',
-                    duration: 1.5 / speedMultiplier,
-                    overwrite: true,
-                }
-            )
-
-            if(this.game.world?.grid?.show)
-                this.game.world.grid.show()
-
-            if(this.game.world?.intro?.setText)
+            const setupIntro = () =>
             {
-                try
-                {
-                    this.game.world.intro.setText()
-                    this.game.world.intro.setSoundButton()
-                    this.game.ticker.wait(0.5, () =>
+                // Grid
+                if(this.game.world?.grid?.show)
+                    this.game.world.grid.show()
+
+                // Reveal glowing circle around the character
+                this.distance.value = 0
+
+                gsap.to(
+                    this.distance,
                     {
-                        if(this.game.world?.intro?.showLabel)
-                            this.game.world.intro.showLabel()
-                    })
-                }
-                catch(e)
+                        value: 3.5,
+                        ease: 'back.out(1.7)',
+                        duration: 1.8 / speedMultiplier,
+                        overwrite: true,
+                    }
+                )
+
+                // Isometric zoomed-out view
+                this.game.view.zoom.smoothedRatio = 0.6
+                this.game.view.zoom.baseRatio = 0.6
+
+                gsap.to(
+                    this.game.view.zoom,
+                    {
+                        baseRatio: 0.3,
+                        ease: 'power1.inOut',
+                        duration: 1.25 / speedMultiplier,
+                        overwrite: true,
+                    }
+                )
+
+                // 3D CLICK TO START label and speaker button
+                if(this.game.world?.intro)
                 {
-                    console.warn('Intro 3D label catch:', e)
+                    try
+                    {
+                        this.game.world.intro.setText()
+                        this.game.world.intro.setSoundButton()
+                        this.game.world.intro.showLabel()
+                    }
+                    catch(e)
+                    {
+                        console.warn('Intro 3D label error:', e)
+                    }
+                }
+
+                // Cherry trees see-through
+                if(this.game.world?.cherryTrees?.leaves)
+                    this.game.world.cherryTrees.leaves.seeThroughMultiplier = 0.5
+
+                if(location.hash.match(/skip/i))
+                {
+                    this.updateStep(1)
+                }
+                else
+                {
+                    let nextTriggered = false
+                    const next = () =>
+                    {
+                        if(nextTriggered) return
+                        nextTriggered = true
+
+                        // Advance to step 1 (reveal wave + camera swoop)
+                        this.updateStep(1)
+
+                        // Cleanup listeners
+                        window.removeEventListener('pointerdown', pointerCallback)
+                        window.removeEventListener('keydown', keyCallback)
+                        this.game.inputs.events.off('introStart', next)
+                        if(intersect)
+                            this.game.rayCursor.removeIntersect(intersect)
+                    }
+
+                    const pointerCallback = (event) =>
+                    {
+                        // Don't advance if clicking on the sound toggle icon
+                        if(this.game.world?.intro?.soundButton?.intersect?.isHovered)
+                            return
+                        next()
+                    }
+
+                    const keyCallback = (event) =>
+                    {
+                        next()
+                    }
+
+                    window.addEventListener('pointerdown', pointerCallback, { once: true })
+                    window.addEventListener('keydown', keyCallback, { once: true })
+
+                    // 3D sphere ray intersect on the glowing circle
+                    const position = this.position.clone()
+                    position.y = 0
+                    const intersect = this.game.rayCursor.addIntersect({
+                        active: true,
+                        shape: new THREE.Sphere(position, 4),
+                        onClick: next,
+                        onEnter: () =>
+                        {
+                            gsap.to(this, { intensityMultiplier: 1.22, duration: 0.2, overwrite: true })
+                        },
+                        onLeave: () =>
+                        {
+                            gsap.to(this, { intensityMultiplier: 1, duration: 0.2, overwrite: true })
+                        }
+                    })
+
+                    // Gamepad & keyboard actions
+                    this.game.inputs.addActions([
+                        { name: 'introStart', categories: [ 'intro' ], keys: [ 'Gamepad.cross', 'Keyboard.Enter', 'Keyboard.Space', 'Keyboard.ArrowUp', 'Keyboard.ArrowDown', 'Keyboard.KeyW', 'Keyboard.KeyD' ] },
+                    ])
+                    this.game.inputs.events.on('introStart', next)
                 }
             }
 
-            if(this.game.world?.cherryTrees?.leaves)
-                this.game.world.cherryTrees.leaves.seeThroughMultiplier = 0.5
-
-            if(location.hash.match(/skip/i))
+            // Hide loading circle and setup intro scene
+            if(this.game.world?.intro?.circle?.hide)
             {
-                this.updateStep(1)
+                this.game.world.intro.circle.hide(setupIntro)
             }
             else
             {
-                let started = false
-                const next = () =>
-                {
-                    if(started) return
-                    started = true
-
-                    // Smoothly fade out Start Screen
-                    const startScreen = document.getElementById('startScreen')
-                    if(startScreen)
-                    {
-                        startScreen.classList.add('is-hidden')
-                        setTimeout(() => startScreen.remove(), 700)
-                    }
-
-                    // Advance to step 1 (reveal wave + camera zoom)
-                    this.updateStep(1)
-
-                    // Cleanup listeners
-                    window.removeEventListener('pointerdown', next)
-                    window.removeEventListener('keydown', keyCallback)
-                    this.game.inputs.events.off('introStart', next)
-                    if(intersect)
-                        this.game.rayCursor.removeIntersect(intersect)
-                }
-
-                const keyCallback = (event) =>
-                {
-                    next()
-                }
-
-                // Click start button or anywhere on screen
-                if(startBtn)
-                    startBtn.addEventListener('click', (e) => { e.stopPropagation(); next(); }, { once: true })
-
-                window.addEventListener('pointerdown', next, { once: true })
-                window.addEventListener('keydown', keyCallback, { once: true })
-
-                // 3D sphere ray intersect
-                const position = this.position.clone()
-                position.y = 0
-                const intersect = this.game.rayCursor.addIntersect({
-                    active: true,
-                    shape: new THREE.Sphere(position, 4),
-                    onClick: next
-                })
-
-                // Gamepad & keyboard actions
-                this.game.inputs.addActions([
-                    { name: 'introStart', categories: [ 'intro' ], keys: [ 'Gamepad.cross', 'Keyboard.Enter', 'Keyboard.Space', 'Keyboard.ArrowUp', 'Keyboard.ArrowDown', 'Keyboard.KeyW', 'Keyboard.KeyD' ] },
-                ])
-                this.game.inputs.events.on('introStart', next)
+                setupIntro()
             }
         }
         else if(step === 1)

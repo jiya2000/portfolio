@@ -148,23 +148,30 @@ export class Intro
             let cachedTexture = this.text.textures.get(name)
             if(!cachedTexture)
             {
+                const onLoaded = (loadedTexture) =>
+                {
+                    this.text.textures.set(name, loadedTexture)
+
+                    // Update material and mesh
+                    material.outputNode = Fn(() =>
+                    {
+                        texture(loadedTexture, vec2(uv().x, uv().y.oneMinus())).r.lessThan(0.5).discard()
+                        return vec4(1)
+                    })()
+                    material.needsUpdate = true
+                    mesh.visible = true
+                }
+
                 const loader = this.game.resourcesLoader.getLoader('textureKtx')
-                
                 const resourcePath = `intro/${name}Label.ktx`
                 loader.load(
                     resourcePath,
-                    (loadedTexture) =>
+                    onLoaded,
+                    undefined,
+                    () =>
                     {
-                        this.text.textures.set(name, loadedTexture)
-
-                        // Update material and mesh
-                        material.outputNode = Fn(() =>
-                        {
-                            texture(loadedTexture, vec2(uv().x, uv().y.oneMinus())).r.lessThan(0.5).discard()
-                            return vec4(1)
-                        })()
-                        material.needsUpdate = true
-                        mesh.visible = true
+                        const fallbackLoader = this.game.resourcesLoader.getLoader('texture')
+                        fallbackLoader.load(`intro/${name}Label.png`, onLoaded)
                     }
                 )
             }
@@ -260,20 +267,16 @@ export class Intro
 
     showLabel()
     {
-        const dummy = { scale: 0 }
         const speedMultiplier = this.game.debug.active ? 4 : 1
         gsap.to(
-            dummy,
+            this.label.scale,
             {
-                scale: 1,
-                duration: 2 / speedMultiplier,
-                delay: 1 / speedMultiplier,
-                ease: 'elastic.out(0.5)',
-                overwrite: true,
-                onUpdate: () =>
-                {
-                    this.label.scale.setScalar(dummy.scale)
-                }
+                x: 1,
+                y: 1,
+                z: 1,
+                duration: 1.2 / speedMultiplier,
+                ease: 'elastic.out(1, 0.5)',
+                overwrite: true
             }
         )
     }
@@ -281,18 +284,15 @@ export class Intro
     hideLabel()
     {
         const speedMultiplier = this.game.debug.active ? 4 : 1
-        const dummy = { scale: 1 }
         gsap.to(
-            dummy,
+            this.label.scale,
             {
-                scale: 0,
-                duration: 0.3 / speedMultiplier,
+                x: 0,
+                y: 0,
+                z: 0,
+                duration: 0.35 / speedMultiplier,
                 ease: 'power2.in',
                 overwrite: true,
-                onUpdate: () =>
-                {
-                    this.label.scale.setScalar(dummy.scale)
-                },
                 onComplete: () =>
                 {
                     this.text.mesh.removeFromParent()
