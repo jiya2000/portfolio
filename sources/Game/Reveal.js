@@ -47,138 +47,37 @@ export class Reveal
     {
         const speedMultiplier = location.hash.match(/skip/i) ? 4 : 1
 
-        // Step 0
+        // Step 0: Immediately smoothly reveal the portfolio world
         if(step === 0)
         {
-            // Intro loader => Hide circle
-            this.game.world.intro.circle.hide(() =>
+            if(this.game.world?.intro?.circle?.hide)
             {
-                // Grid
+                this.game.world.intro.circle.hide()
+            }
+            if(this.game.world?.grid?.show)
+            {
                 this.game.world.grid.show()
+            }
 
-                // Reveal
-                this.distance.value = 0
-
-                gsap.to(
-                    this.distance,
-                    {
-                        value: 3.5,
-                        ease: 'back.out(1.7)',
-                        duration: 2 / speedMultiplier,
-                        overwrite: true,
-                    }
-                )
-
-                // View
-                this.game.view.zoom.smoothedRatio = 0.6
-                this.game.view.zoom.baseRatio = 0.6
-
-                gsap.to(
-                    this.game.view.zoom,
-                    {
-                        baseRatio: 0.3,
-                        // smoothedRatio: 0.4,
-                        ease: 'power1.inOut',
-                        duration: 1.25 / speedMultiplier,
-                        overwrite: true,
-                    }
-                )
-
-                // Intro loader => Show label and sound button
-                this.game.world.intro.setText()
-                this.game.world.intro.setSoundButton()
-                this.game.ticker.wait(1, () =>
-                {
-                    this.game.world.intro.showLabel()
-                })
-
-                // Cherry trees
-                if(this.game.world.cherryTrees)
-                    this.game.world.cherryTrees.leaves.seeThroughMultiplier = 0.5
-
-                // Click
-                if(location.hash.match(/skip/i))
-                {
-                    this.updateStep(1)
-                }
-                else
-                {
-                    let nextTriggered = false
-                    let autoTimer = null
-
-                    // Next function
-                    const next = () =>
-                    {
-                        if(nextTriggered) return
-                        nextTriggered = true
-
-                        if(autoTimer)
-                            clearTimeout(autoTimer)
-
-                        window.removeEventListener('pointerdown', next)
-                        window.removeEventListener('keydown', next)
-
-                        this.updateStep(1)
-                        this.game.inputs.events.off('introStart', inputCallback)
-                        this.game.rayCursor.removeIntersect(intersect)
-                    }
-
-                    // Input callback
-                    const inputCallback = () =>
-                    {
-                        next()
-                    }
-
-                    // Listen anywhere on window for instant response
-                    window.addEventListener('pointerdown', next, { once: true })
-                    window.addEventListener('keydown', next, { once: true })
-
-                    // Auto-enter after 2 seconds so user never gets stuck waiting
-                    autoTimer = setTimeout(() =>
-                    {
-                        next()
-                    }, 2000)
-
-                    // Intersect
-                    const position = this.position.clone()
-                    position.y = 0
-                    
-                    const intersect = this.game.rayCursor.addIntersect({
-                        active: true,
-                        shape: new THREE.Sphere(position, 5),
-                        onClick: next,
-                        onEnter: () =>
-                        {
-                            gsap.to(this, { intensityMultiplier: 1.22, duration: 0.2, overwrite: true })
-                        },
-                        onLeave: () =>
-                        {
-                            gsap.to(this, { intensityMultiplier: 1, duration: 0.2, overwrite: true })
-                        }
-                    })
-                    
-                    // Inputs (for gamepad and keyboard)
-                    this.game.inputs.addActions([
-                        { name: 'introStart', categories: [ 'intro' ], keys: [ 'Gamepad.cross', 'Keyboard.Enter', 'Keyboard.Space', 'Keyboard.ArrowUp', 'Keyboard.ArrowDown', 'Keyboard.KeyW', 'Keyboard.KeyD' ] },
-                    ])
-
-                    this.game.inputs.events.on('introStart', inputCallback)
-                }
-            })
+            this.updateStep(1)
         }
         else if(step === 1)
         {
             // Audio
-            this.game.audio.init()
-            this.sound.play()
+            try
+            {
+                this.game.audio.init()
+                this.sound.play()
+            }
+            catch(e) {}
 
-            // Reveal
+            // Reveal: smoothly open 3D world to reveal all areas
             gsap.to(
                 this.distance,
                 {
-                    value: 30,
-                    ease: 'back.in(1.3)',
-                    duration: 2 / speedMultiplier,
+                    value: 40,
+                    ease: 'power2.out',
+                    duration: 1.25,
                     overwrite: true,
                     onComplete: () =>
                     {
@@ -188,24 +87,23 @@ export class Reveal
             )
 
             // Intro loader => Hide label
-            this.game.world.intro.hideLabel()
+            if(this.game.world?.intro?.hideLabel)
+                this.game.world.intro.hideLabel()
 
-            // Inputs
+            // Inputs => Immediately enable player locomotion and HUD
             this.game.inputs.filters.clear()
             this.game.inputs.filters.add('wandering')
 
-            // View
+            // View => Focus camera smoothly on Aditi
             this.game.view.focusPoint.isTracking = true
             this.game.view.focusPoint.magnet.active = false
 
-            // View
             gsap.to(
                 this.game.view.zoom,
                 {
                     baseRatio: 0,
-                    // smoothedRatio: 0,
-                    ease: 'back.in(1.5)',
-                    duration: 1.75 / speedMultiplier,
+                    ease: 'power2.out',
+                    duration: 1.25,
                     overwrite: true,
                     onComplete: () =>
                     {
@@ -215,14 +113,14 @@ export class Reveal
             )
 
             // Cherry trees
-            if(this.game.world.cherryTrees)
+            if(this.game.world?.cherryTrees?.leaves)
             {
                 gsap.to(
                     this.game.world.cherryTrees.leaves,
                     {
                         seeThroughMultiplier: 1,
                         ease: 'power1.inOut',
-                        duration: 2 / speedMultiplier,
+                        duration: 1.25,
                         overwrite: true
                     }
                 )

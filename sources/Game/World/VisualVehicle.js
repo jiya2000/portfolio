@@ -425,8 +425,16 @@ export class VisualVehicle
         })
 
         // Chassis dummy object kept for internal tracking & screenPosition
-        this.parts.chassis.visible = false
-        this.game.scene.add(this.parts.chassis)
+        if(this.parts.chassis)
+        {
+            this.parts.chassis.visible = false
+            this.game.scene.add(this.parts.chassis)
+        }
+        else
+        {
+            this.parts.chassis = new THREE.Group()
+            this.game.scene.add(this.parts.chassis)
+        }
     }
 
     setWheels()

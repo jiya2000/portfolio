@@ -201,14 +201,18 @@ export class Game
         this.world.step(1)
         this.overlay = new Overlay()
 
-        // Pre-render if quality high
-        if(this.quality.level === 0 && this.rendering.renderer.backend.isWebGPUBackend)
-            PreRenderer.render()
-
-        this.ticker.wait(3, () =>
+        // Pre-render if quality high (safely guarded)
+        try
         {
-            this.reveal.updateStep(0)
-        })
+            if(this.quality.level === 0 && this.rendering.renderer.backend?.isWebGPUBackend)
+                PreRenderer.render()
+        }
+        catch(e)
+        {
+            console.warn('PreRender caught:', e)
+        }
+
+        this.reveal.updateStep(0)
 
         // Debug achievement
         if(this.debug.active)

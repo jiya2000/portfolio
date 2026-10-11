@@ -88,25 +88,25 @@ export class Intro
         this.circle.hide = (callback = null) =>
         {
             const dummy = { scale: 1 }
-            const speedMultiplier = this.game.debug.active ? 4 : 1
             gsap.to(
                 dummy,
                 {
                     scale: 0,
-                    duration: 1.5 / speedMultiplier,
-                    // ease: 'back.in(1.7)',
+                    duration: 0.8,
                     ease: 'power4.in',
                     overwrite: true,
                     onUpdate: () =>
                     {
-                        mesh.scale.setScalar(dummy.scale)
+                        if(mesh && mesh.scale)
+                            mesh.scale.setScalar(dummy.scale)
                     },
                     onComplete: () =>
                     {
                         if(typeof callback === 'function')
                             callback()
 
-                        mesh.removeFromParent()
+                        if(mesh)
+                            mesh.removeFromParent()
                     }
                 }
             )
