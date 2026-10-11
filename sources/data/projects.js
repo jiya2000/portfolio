@@ -21,12 +21,7 @@ export default [
             with: [ 'LangGraph', 'FastAPI', 'Qdrant' ]
         },
         distinctions: [ 'fwa' ],
-        images:
-        [
-            'threejs-journey-1.ktx',
-            'threejs-journey-2.ktx',
-            'threejs-journey-3.ktx'
-        ]
+        images: [ 'project-0' ]
     },
     {
         title: 'Enterprise Cloud Operations Platform',
@@ -50,12 +45,7 @@ export default [
             with: [ 'LangGraph', 'Azure', 'Kubernetes' ]
         },
         distinctions: [ 'awwwards' ],
-        images:
-        [
-            'bonhomme-10-ans-1.ktx',
-            'bonhomme-10-ans-2.ktx',
-            'bonhomme-10-ans-3.ktx'
-        ]
+        images: [ 'project-1' ]
     },
     {
         title: 'Ground Control Visualization Platform',
@@ -79,12 +69,7 @@ export default [
             with: [ 'Python', 'PyQt5', 'Telemetry' ]
         },
         distinctions: [ 'fwa' ],
-        images:
-        [
-            'citrix-redbull-1.ktx',
-            'citrix-redbull-2.ktx',
-            'citrix-redbull-3.ktx'
-        ]
+        images: [ 'project-2' ]
     },
     {
         title: 'FraudNet Guardian',
@@ -108,12 +93,7 @@ export default [
             with: [ 'Machine Learning', 'Python', 'JavaScript' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'madbox-1.ktx',
-            'madbox-2.ktx',
-            'madbox-3.ktx'
-        ]
+        images: [ 'project-3' ]
     },
     {
         title: 'ZoneLock AI Road Guardian',
@@ -137,12 +117,7 @@ export default [
             with: [ 'Python', 'OpenCV', 'Deep Learning' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'luni-1.ktx',
-            'luni-2.ktx',
-            'luni-3.ktx'
-        ]
+        images: [ 'project-4' ]
     },
     {
         title: 'Risk Scoring & Prioritization Platform',
@@ -166,12 +141,7 @@ export default [
             with: [ 'Scikit-learn', 'FastAPI', 'Pandas' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'prior-1.ktx',
-            'prior-2.ktx',
-            'prior-3.ktx'
-        ]
+        images: [ 'project-5' ]
     },
     {
         title: 'Customer Retention Analytics & Churn Engine',
@@ -195,12 +165,7 @@ export default [
             with: [ 'RFM Analysis', 'Predictive Modeling' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'orano-1.ktx',
-            'orano-2.ktx',
-            'orano-3.ktx'
-        ]
+        images: [ 'project-6' ]
     },
     {
         title: 'PowerBI Databricks IoT Platform',
@@ -224,12 +189,7 @@ export default [
             with: [ 'Databricks', 'PySpark', 'PowerBI' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'scout-1.ktx',
-            'scout-2.ktx',
-            'scout-3.ktx'
-        ]
+        images: [ 'project-7' ]
     },
     {
         title: 'InvoChain Smart Invoicing Platform',
@@ -253,11 +213,7 @@ export default [
             with: [ 'Smart Contracts', 'Web3', 'JavaScript' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'threejs-journey-4.ktx',
-            'threejs-journey-5.ktx'
-        ]
+        images: [ 'project-8' ]
     },
     {
         title: 'Moodify Adaptive Audio Intelligence',
@@ -281,11 +237,7 @@ export default [
             with: [ 'Python', 'Recommendation Engine' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'chartogne-taillet-1.ktx',
-            'chartogne-taillet-2.ktx'
-        ]
+        images: [ 'project-9' ]
     },
     {
         title: 'AR/VR Spatial Experience',
@@ -309,11 +261,7 @@ export default [
             with: [ 'Three.js', 'WebXR', 'JavaScript' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'chartogne-taillet-3.ktx',
-            'bonhomme-10-ans-4.ktx'
-        ]
+        images: [ 'project-10' ]
     },
     {
         title: 'Enterprise Asset Tracking & Management',
@@ -337,11 +285,7 @@ export default [
             with: [ 'Python', 'Data Storage' ]
         },
         distinctions: [  ],
-        images:
-        [
-            'luni-4.ktx',
-            'madbox-3.ktx'
-        ]
+        images: [ 'project-11' ]
     },
     {
         title: 'Aditi Sharma 3D Interactive Portfolio',
@@ -365,10 +309,6 @@ export default [
             with: [ 'Three.js', 'WebGPU', 'Vite' ]
         },
         distinctions: [ 'fwa' ],
-        images:
-        [
-            'threejs-journey-1.ktx',
-            'threejs-journey-2.ktx'
-        ]
+        images: [ 'project-12' ]
     }
 ]

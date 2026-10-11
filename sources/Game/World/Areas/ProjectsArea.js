@@ -179,10 +179,10 @@ export class ProjectsArea extends Area
         this.cinematic = {}
         
         this.cinematic.position = new THREE.Vector3()
-        this.cinematic.positionOffset = new THREE.Vector3(4.65, 4, 4.85)
+        this.cinematic.positionOffset = new THREE.Vector3(3.6, 3.6, 3.8)
         
         this.cinematic.target = new THREE.Vector3()
-        this.cinematic.targetOffset = new THREE.Vector3(-3.0, 1.60, -4.60)
+        this.cinematic.targetOffset = new THREE.Vector3(-3.4, 1.75, -4.5)
 
         const applyPositionAndTarget = () =>
         {
@@ -215,12 +215,12 @@ export class ProjectsArea extends Area
 
         this.shadeMix.images = {}
         this.shadeMix.images.min = 0.1
-        this.shadeMix.images.max = 0.65
+        this.shadeMix.images.max = 0.95
         this.shadeMix.images.mixUniform = uniform(this.shadeMix.images.min)
 
         this.shadeMix.texts = {}
         this.shadeMix.texts.min = 0.1
-        this.shadeMix.texts.max = 0.3
+        this.shadeMix.texts.max = 0.4
         this.shadeMix.texts.mixUniform = uniform(this.shadeMix.texts.min)
 
         // Debug
@@ -330,16 +330,307 @@ export class ProjectsArea extends Area
         this.navigation.previous = null
     }
 
+    createProjectSlideCanvas(project, index, total)
+    {
+        const width = 1920
+        const height = 1080
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+
+        // Rounded rectangle helper
+        const roundRect = (x, y, w, h, r) =>
+        {
+            ctx.beginPath()
+            ctx.moveTo(x + r, y)
+            ctx.lineTo(x + w - r, y)
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+            ctx.lineTo(x + w, y + h - r)
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+            ctx.lineTo(x + r, y + h)
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+            ctx.lineTo(x, y + r)
+            ctx.quadraticCurveTo(x, y, x + r, y)
+            ctx.closePath()
+        }
+
+        // Text wrapping helper
+        const wrapText = (text, x, y, maxWidth, lineHeight, maxLines = 10) =>
+        {
+            if(!text) return y
+            const words = text.split(' ')
+            let line = ''
+            let linesDrawn = 0
+            for(let n = 0; n < words.length; n++)
+            {
+                const testLine = line + words[n] + ' '
+                const metrics = ctx.measureText(testLine)
+                if(metrics.width > maxWidth && n > 0)
+                {
+                    ctx.fillText(line.trim(), x, y)
+                    line = words[n] + ' '
+                    y += lineHeight
+                    linesDrawn++
+                    if(linesDrawn >= maxLines - 1 && n < words.length - 1)
+                    {
+                        line += '...'
+                        break
+                    }
+                }
+                else
+                {
+                    line = testLine
+                }
+            }
+            ctx.fillText(line.trim(), x, y)
+            return y + lineHeight
+        }
+
+        // Background gradient
+        const bgGrad = ctx.createLinearGradient(0, 0, width, height)
+        bgGrad.addColorStop(0, '#080d1a')
+        bgGrad.addColorStop(0.45, '#0e1729')
+        bgGrad.addColorStop(1, '#05070e')
+        ctx.fillStyle = bgGrad
+        ctx.fillRect(0, 0, width, height)
+
+        // Subtle matrix/circuit grid dots
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)'
+        for(let gx = 40; gx < width; gx += 40)
+        {
+            for(let gy = 40; gy < height; gy += 40)
+            {
+                ctx.beginPath()
+                ctx.arc(gx, gy, 1.5, 0, Math.PI * 2)
+                ctx.fill()
+            }
+        }
+
+        // Ambient radial glow behind title
+        const titleGlow = ctx.createRadialGradient(width * 0.4, 120, 20, width * 0.4, 120, 500)
+        titleGlow.addColorStop(0, 'rgba(56, 189, 248, 0.12)')
+        titleGlow.addColorStop(1, 'rgba(0, 0, 0, 0)')
+        ctx.fillStyle = titleGlow
+        ctx.fillRect(0, 0, width, 300)
+
+        // Outer border frame
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)'
+        ctx.lineWidth = 3
+        roundRect(20, 20, width - 40, height - 40, 24)
+        ctx.stroke()
+
+        // 1. Top Header
+        // Category Pill
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.92)'
+        roundRect(60, 46, 520, 44, 22)
+        ctx.fill()
+        ctx.strokeStyle = '#38bdf8'
+        ctx.lineWidth = 1.5
+        roundRect(60, 46, 520, 44, 22)
+        ctx.stroke()
+
+        ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#38bdf8'
+        ctx.textBaseline = 'middle'
+        ctx.fillText(project.category || '🚀 Featured Project', 84, 68)
+
+        // Counter Pill
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.92)'
+        roundRect(width - 220, 46, 160, 44, 22)
+        ctx.fill()
+        ctx.strokeStyle = '#64748b'
+        ctx.lineWidth = 1.5
+        roundRect(width - 220, 46, 160, 44, 22)
+        ctx.stroke()
+
+        ctx.font = 'bold 22px monospace'
+        ctx.fillStyle = '#e2e8f0'
+        const counterText = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
+        ctx.fillText(counterText, width - 180, 68)
+
+        // Main Title
+        ctx.font = 'bold 52px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#ffffff'
+        ctx.textBaseline = 'top'
+        ctx.fillText(project.title, 60, 106)
+
+        // Tagline
+        ctx.font = '600 25px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#60a5fa'
+        ctx.fillText(project.tagline || '', 60, 168)
+
+        // 2. Left Column (Width: 870, X: 60)
+        const colW = 870
+        let curY = 216
+
+        // Card 1: What It Is
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
+        roundRect(60, curY, colW, 206, 16)
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)'
+        ctx.lineWidth = 1.5
+        roundRect(60, curY, colW, 206, 16)
+        ctx.stroke()
+
+        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#93c5fd'
+        ctx.fillText('💡 WHAT IT IS', 84, curY + 20)
+
+        ctx.font = '21px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#cbd5e1'
+        wrapText(project.description || '', 84, curY + 62, colW - 48, 32, 4)
+
+        curY += 224
+
+        // Card 2: Problem & Impact
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
+        roundRect(60, curY, colW, 164, 16)
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(244, 114, 182, 0.28)'
+        roundRect(60, curY, colW, 164, 16)
+        ctx.stroke()
+
+        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#f472b6'
+        ctx.fillText('🎯 PROBLEM & IMPACT', 84, curY + 20)
+
+        ctx.font = '21px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#e2e8f0'
+        wrapText(project.problemSolved || '', 84, curY + 62, colW - 48, 32, 3)
+
+        curY += 182
+
+        // Card 3: Tech Stack
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
+        roundRect(60, curY, colW, 170, 16)
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(167, 139, 250, 0.28)'
+        roundRect(60, curY, colW, 170, 16)
+        ctx.stroke()
+
+        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#a78bfa'
+        ctx.fillText('🛠️ TECH STACK', 84, curY + 20)
+
+        let pillX = 84
+        let pillY = curY + 65
+        ctx.font = 'bold 20px system-ui, -apple-system, sans-serif'
+        if(project.techStack && project.techStack.length)
+        {
+            for(const tech of project.techStack)
+            {
+                const tw = ctx.measureText(tech).width
+                const pw = tw + 30
+                if(pillX + pw > 60 + colW - 20)
+                {
+                    pillX = 84
+                    pillY += 48
+                }
+                ctx.fillStyle = 'rgba(30, 27, 75, 0.92)'
+                roundRect(pillX, pillY, pw, 38, 19)
+                ctx.fill()
+                ctx.strokeStyle = '#818cf8'
+                ctx.lineWidth = 1.2
+                roundRect(pillX, pillY, pw, 38, 19)
+                ctx.stroke()
+
+                ctx.fillStyle = '#e0e7ff'
+                ctx.textBaseline = 'middle'
+                ctx.fillText(tech, pillX + 15, pillY + 19)
+                ctx.textBaseline = 'top'
+
+                pillX += pw + 12
+            }
+        }
+
+        // 3. Right Column (Width: 890, X: 970)
+        const rightX = 970
+        const rightW = 890
+        let rY = 216
+
+        // Card 4: Key Highlights
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'
+        roundRect(rightX, rY, rightW, 376, 16)
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.28)'
+        ctx.lineWidth = 1.5
+        roundRect(rightX, rY, rightW, 376, 16)
+        ctx.stroke()
+
+        ctx.font = 'bold 25px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#fbbf24'
+        ctx.fillText('⚡ KEY HIGHLIGHTS', rightX + 24, rY + 20)
+
+        let featY = rY + 68
+        if(project.keyFeatures && project.keyFeatures.length)
+        {
+            for(const feat of project.keyFeatures)
+            {
+                ctx.font = 'bold 22px monospace'
+                ctx.fillStyle = '#fbbf24'
+                ctx.fillText('◆', rightX + 26, featY)
+
+                ctx.font = '21px system-ui, -apple-system, sans-serif'
+                ctx.fillStyle = '#f1f5f9'
+                const nextY = wrapText(feat, rightX + 56, featY, rightW - 80, 30, 2)
+                featY = Math.max(featY + 70, nextY + 10)
+            }
+        }
+
+        rY += 396
+
+        // Card 5: GitHub Repository
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.92)'
+        roundRect(rightX, rY, rightW, 164, 16)
+        ctx.fill()
+        ctx.strokeStyle = '#6366f1'
+        ctx.lineWidth = 2
+        roundRect(rightX, rY, rightW, 164, 16)
+        ctx.stroke()
+
+        ctx.font = 'bold 24px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#a5b4fc'
+        ctx.fillText('📂 GITHUB REPOSITORY', rightX + 24, rY + 20)
+
+        ctx.font = 'bold 26px monospace'
+        ctx.fillStyle = '#ffffff'
+        const displayUrl = (project.url || '').replace(/https?:\/\//, '')
+        ctx.fillText(displayUrl, rightX + 24, rY + 62)
+
+        ctx.font = '19px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#94a3b8'
+        ctx.fillText('Press [E] or Click the URL sign above the billboard to open in browser ↗', rightX + 24, rY + 112)
+
+        // 4. Bottom Hint Bar
+        const botY = height - 90
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)'
+        roundRect(60, botY, width - 120, 50, 12)
+        ctx.fill()
+        ctx.strokeStyle = 'rgba(100, 116, 139, 0.35)'
+        ctx.lineWidth = 1
+        roundRect(60, botY, width - 120, 50, 12)
+        ctx.stroke()
+
+        ctx.font = 'bold 19px system-ui, -apple-system, sans-serif'
+        ctx.fillStyle = '#94a3b8'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText('◀  [A / ←] PREVIOUS PROJECT      •      [E] OPEN GITHUB REPOSITORY      •      [D / →] NEXT PROJECT  ▶      •      [ESC] EXIT', width / 2, botY + 25)
+
+        return canvas
+    }
+
     setImages()
     {
         this.images = {}
         this.images.initiated = false
-        this.images.width = 1920 * 0.5
-        this.images.height = 1080 * 0.5
+        this.images.width = 1920
+        this.images.height = 1080
         this.images.index = 0
         this.images.direction = ProjectsArea.DIRECTION_NEXT
         this.images.resources = new Map()
-        this.images.loadProgress = uniform(0)
+        this.images.loadProgress = uniform(1)
         this.images.animationProgress = uniform(0)
         this.images.animationDirection = uniform(0)
 
@@ -421,12 +712,13 @@ export class ProjectsArea extends Area
                 this.images.init(key)
 
             // Current image => Reveal
-            if(this.navigation.current.images[this.images.index] === key)
+            const currentKey = this.navigation.current.images[this.images.index] || `project-${this.navigation.index}`
+            if(currentKey === key)
             {
                 const resource = this.images.getResourceAndLoad(key)
                 this.images.textureNew.copy(resource.texture)
                 this.images.textureNew.needsUpdate = true
-                gsap.to(this.images.loadProgress, { value: 1, duration: 1, overwrite: true })
+                gsap.to(this.images.loadProgress, { value: 1, duration: 0.5, overwrite: true })
 
                 this.images.loadSibling()
             }
@@ -462,47 +754,43 @@ export class ProjectsArea extends Area
                 imageIndex = 0
             }
 
-            const key = projectsData[projectIndex].images[imageIndex]
-            const resource = this.images.getResourceAndLoad(key)
+            const key = projectsData[projectIndex].images[imageIndex] || `project-${projectIndex}`
+            this.images.getResourceAndLoad(key)
         }
 
-        // Get resource and load
+        // Get resource and load (dynamic 2D canvas texture with rich project presentation)
         this.images.getResourceAndLoad = (key) =>
         {
-            const path = `projects/images/${key}`
-            
-            // Try to retrieve resource
             let resource = this.images.resources.get(key)
 
-            // Resource not found => Create
             if(!resource)
             {
                 resource = {}
                 resource.loaded = false
 
-                const loader = this.game.resourcesLoader.getLoader('textureKtx')
+                let projectIndex = this.navigation.index
+                if(typeof key === 'string' && key.startsWith('project-'))
+                {
+                    const parsed = parseInt(key.replace('project-', ''), 10)
+                    if(!isNaN(parsed))
+                        projectIndex = parsed
+                }
+                const project = projectsData[projectIndex] || this.navigation.current
 
-                loader.load(
-                    path,
-                    (loadedTexture) =>
-                    {
-                        resource.texture = loadedTexture
-                        resource.colorSpace = THREE.SRGBColorSpace
-                        resource.flipY = false
-                        resource.magFilter = THREE.LinearFilter
-                        resource.minFilter = THREE.LinearFilter
-                        resource.generateMipmaps = false
+                const canvas = this.createProjectSlideCanvas(project, projectIndex, projectsData.length)
+                const canvasTexture = new THREE.CanvasTexture(canvas)
+                canvasTexture.colorSpace = THREE.SRGBColorSpace
+                canvasTexture.flipY = false
+                canvasTexture.magFilter = THREE.LinearFilter
+                canvasTexture.minFilter = THREE.LinearFilter
+                canvasTexture.generateMipmaps = false
 
-                        resource.loaded = true
-                        
-                        this.images.loadEnded(key)
-                    }
-                )
+                resource.texture = canvasTexture
+                resource.loaded = true
 
-                // Save
                 this.images.resources.set(key, resource)
+                this.images.loadEnded(key)
             }
-
 
             return resource
         }
@@ -513,18 +801,11 @@ export class ProjectsArea extends Area
             this.images.direction = direction
 
             // Get resource
-            const key = this.navigation.current.images[this.images.index]
+            const key = this.navigation.current.images[this.images.index] || `project-${this.navigation.index}`
             const resource = this.images.getResourceAndLoad(key)
 
-            if(resource.loaded)
-            {
-                this.images.loadSibling()
-                this.images.loadProgress.value = 1
-            }
-            else
-            {
-                this.images.loadProgress.value = 0
-            }
+            this.images.loadSibling()
+            this.images.loadProgress.value = 1
 
             // Update textures
             if(this.images.initiated)
@@ -532,7 +813,7 @@ export class ProjectsArea extends Area
                 this.images.textureOld.copy(this.images.textureNew)
                 this.images.textureOld.needsUpdate = true
 
-                if(resource.loaded)
+                if(resource && resource.loaded)
                 {
                     this.images.textureNew.copy(resource.texture)
                     this.images.textureNew.needsUpdate = true
@@ -540,7 +821,7 @@ export class ProjectsArea extends Area
             }
 
             // Animate right away
-            gsap.fromTo(this.images.animationProgress, { value: 0 }, { value: 1, duration: 1, ease: 'power2.inOut', overwrite: true })
+            gsap.fromTo(this.images.animationProgress, { value: 0 }, { value: 1, duration: 0.8, ease: 'power2.inOut', overwrite: true })
             this.images.animationDirection.value = direction === ProjectsArea.DIRECTION_NEXT ? 1 : -1
         }
     }
@@ -1299,105 +1580,22 @@ export class ProjectsArea extends Area
         this.overlay = {}
 
         const element = document.createElement('div')
-        element.className = 'project-details-overlay'
+        element.className = 'project-view-hud'
         element.innerHTML = `
-            <div class="project-details-backdrop js-project-backdrop"></div>
-            <div class="project-details-card">
-                <div class="project-header">
-                    <div class="project-meta">
-                        <span class="project-badge js-project-badge">Category</span>
-                        <span class="project-counter js-project-counter">1 / 13</span>
-                    </div>
-                    <button class="project-close-btn js-project-close" title="Exit project view (Esc)">
-                        <span class="close-text">Exit</span>
-                        <span class="close-key">ESC</span>
-                    </button>
-                </div>
-                
-                <div class="project-content-scroll">
-                    <div>
-                        <h2 class="project-title js-project-title"></h2>
-                        <p class="project-tagline js-project-tagline"></p>
-                    </div>
-
-                    <div class="project-block">
-                        <div class="block-title">💡 What It Is</div>
-                        <p class="block-text js-project-desc"></p>
-                    </div>
-
-                    <div class="project-block">
-                        <div class="block-title">🎯 Problem & Impact</div>
-                        <p class="block-text js-project-problem"></p>
-                    </div>
-
-                    <div class="project-block">
-                        <div class="block-title">⚡ Key Highlights</div>
-                        <ul class="project-features-list js-project-features"></ul>
-                    </div>
-
-                    <div class="project-block">
-                        <div class="block-title">🛠️ Tech Stack</div>
-                        <div class="project-tech-tags js-project-tech"></div>
-                    </div>
-                </div>
-
-                <div class="project-footer">
-                    <div class="project-nav-buttons">
-                        <button class="project-nav-btn js-project-prev" title="Previous Project (A or ←)">
-                            <span>◀ Prev</span>
-                            <span class="kbd-hint">A / ←</span>
-                        </button>
-                        <button class="project-nav-btn js-project-next" title="Next Project (D or →)">
-                            <span>Next ▶</span>
-                            <span class="kbd-hint">D / →</span>
-                        </button>
-                    </div>
-                    <a class="project-github-link js-project-github" href="#" target="_blank" rel="noopener noreferrer">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                        <span>View Repository on GitHub ↗</span>
-                    </a>
-                </div>
-            </div>
+            <button class="project-hud-btn js-project-close" title="Exit project view (Esc)">
+                <span class="hud-close-icon">✕</span>
+                <span>Exit</span>
+                <span class="hud-key">ESC</span>
+            </button>
         `
         document.body.appendChild(element)
         this.overlay.element = element
-
-        this.overlay.badge = element.querySelector('.js-project-badge')
-        this.overlay.counter = element.querySelector('.js-project-counter')
-        this.overlay.title = element.querySelector('.js-project-title')
-        this.overlay.tagline = element.querySelector('.js-project-tagline')
-        this.overlay.desc = element.querySelector('.js-project-desc')
-        this.overlay.problem = element.querySelector('.js-project-problem')
-        this.overlay.features = element.querySelector('.js-project-features')
-        this.overlay.tech = element.querySelector('.js-project-tech')
-        this.overlay.github = element.querySelector('.js-project-github')
 
         element.querySelector('.js-project-close').addEventListener('click', (e) =>
         {
             e.preventDefault()
             e.stopPropagation()
             this.close()
-        })
-
-        element.querySelector('.js-project-backdrop').addEventListener('click', (e) =>
-        {
-            e.preventDefault()
-            e.stopPropagation()
-            this.close()
-        })
-
-        element.querySelector('.js-project-prev').addEventListener('click', (e) =>
-        {
-            e.preventDefault()
-            e.stopPropagation()
-            this.changeProject(this.navigation.index - 1, ProjectsArea.DIRECTION_PREVIOUS)
-        })
-
-        element.querySelector('.js-project-next').addEventListener('click', (e) =>
-        {
-            e.preventDefault()
-            e.stopPropagation()
-            this.changeProject(this.navigation.index + 1, ProjectsArea.DIRECTION_NEXT)
         })
 
         // Global key listeners during project view - capture phase ensures ESC always closes
@@ -1414,61 +1612,24 @@ export class ProjectsArea extends Area
                 else if(event.key === 'ArrowLeft' || event.code === 'KeyA')
                 {
                     event.preventDefault()
-                    this.changeProject(this.navigation.index - 1, ProjectsArea.DIRECTION_PREVIOUS)
+                    this.previous()
                 }
                 else if(event.key === 'ArrowRight' || event.code === 'KeyD')
                 {
                     event.preventDefault()
-                    this.changeProject(this.navigation.index + 1, ProjectsArea.DIRECTION_NEXT)
+                    this.next()
+                }
+                else if(event.key === 'KeyE' || event.code === 'KeyE')
+                {
+                    event.preventDefault()
+                    this.url.open()
                 }
             }
         }, true)
 
         this.overlay.update = (project, currentIdx, total) =>
         {
-            if(!project) return
-            this.overlay.badge.textContent = project.category || 'Open Source Project'
-            this.overlay.counter.textContent = `${currentIdx} / ${total}`
-            this.overlay.title.textContent = project.title || ''
-            this.overlay.tagline.textContent = project.tagline || ''
-            this.overlay.desc.textContent = project.description || ''
-            this.overlay.problem.textContent = project.problemSolved || ''
-
-            // Features list
-            this.overlay.features.innerHTML = ''
-            if(project.keyFeatures && project.keyFeatures.length)
-            {
-                for(const feat of project.keyFeatures)
-                {
-                    const li = document.createElement('li')
-                    li.textContent = feat
-                    this.overlay.features.appendChild(li)
-                }
-            }
-
-            // Tech stack pills
-            this.overlay.tech.innerHTML = ''
-            if(project.techStack && project.techStack.length)
-            {
-                for(const tech of project.techStack)
-                {
-                    const span = document.createElement('span')
-                    span.className = 'tech-tag'
-                    span.textContent = tech
-                    this.overlay.tech.appendChild(span)
-                }
-            }
-
-            // GitHub link
-            if(project.url)
-            {
-                this.overlay.github.href = project.url
-                this.overlay.github.style.display = 'flex'
-            }
-            else
-            {
-                this.overlay.github.style.display = 'none'
-            }
+            // All project details are presented directly on the 3D billboard screen
         }
     }
 
