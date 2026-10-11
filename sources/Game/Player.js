@@ -59,12 +59,11 @@ export class Player
             path: 'sounds/vehicle/suspensions/Robotic_Lifeforms_2_-_Air_Source_-_Piston_Studio_Chair_07.mp3',
             autoplay: false,
             loop: false,
-            volume: 0.4,
+            volume: 0,
             antiSpam: 0.1,
-            onPlay: (item, count) =>
+            onPlay: (item) =>
             {
-                item.volume = 0.3 + count * 0.08
-                item.rate = 0.9 + Math.random() * 0.2
+                item.volume = 0
             }
         })
         this.sounds.honk = this.game.audio.register(
@@ -72,41 +71,39 @@ export class Player
             path: 'sounds/vehicle/honk/Car Horn Long 4.mp3',
             autoplay: true,
             loop: true,
-            volume: 0.4,
+            volume: 0,
             antiSpam: 0.1,
             onPlaying: (item) =>
             {
-                item.volume = this.game.inputs.actions.get('honk').active ? 0.5 : 0
+                item.volume = 0
             }
         })
         this.sounds.spring1 = this.game.audio.register({
             path: 'sounds/vehicle/springs/HandleSqueak_BW.60329.mp3',
             autoplay: false,
             loop: false,
-            volume: 0.4,
+            volume: 0,
             antiSpam: 1,
-            onPlay: (item, count) =>
+            onPlay: (item) =>
             {
-                item.volume = 0.05 + count * 0.02
-                item.rate = 1 + Math.random() * 0.1
+                item.volume = 0
             }
         })
         this.sounds.spring2 = this.game.audio.register({
             path: 'sounds/vehicle/springs/SpringMetalMovements_1u54Y_01.mp3',
             autoplay: false,
             loop: false,
-            volume: 0.4,
+            volume: 0,
             antiSpam: 0.2,
-            onPlay: (item, count) =>
+            onPlay: (item) =>
             {
-                item.volume = 0.05 + count * 0.1
-                item.rate = 0.9 + Math.random() * 0.4
+                item.volume = 0
             }
         })
 
-        // Wheels on floor
+        // Footsteps / floor ambience
         {
-            // Default pebbles
+            // Default pebbles (footsteps on pavement/gravel)
             this.game.audio.register({
                 group: 'wheelsOnFloor',
                 path: 'sounds/vehicle/floor/wheels-on-pebbles-road.mp3',
@@ -118,7 +115,7 @@ export class Player
                     const defaultElevation = 1.08
                     const inAirEffect = remapClamp(Math.abs(this.game.physicalVehicle.position.y - defaultElevation), 0, 2, 1, 0)
                     const speedEffect = Math.min(1, this.game.physicalVehicle.xzSpeed * 0.1)
-                    item.volume = inAirEffect * speedEffect * 0.25
+                    item.volume = inAirEffect * speedEffect * 0.18
                 }
             })
 
@@ -131,27 +128,14 @@ export class Player
                 volume: 0,
                 onPlaying: (item) =>
                 {
-                    const directionRatio = (1 - Math.abs(this.game.physicalVehicle.forwardRatio)) * 0.6
-                    
-                    let brakeEffect = Math.max(directionRatio, this.game.player.braking) * this.game.physicalVehicle.xzSpeed * 0.15 * this.game.physicalVehicle.wheels.inContactCount / 4
-                    brakeEffect = clamp(brakeEffect, 0, 1)
-
-                    const volume = brakeEffect * 0.4
-                    const delta = volume - item.volume
-
-                    if(delta > 0)
-                        item.volume += delta * this.game.ticker.deltaScaled * 20
-                    else
-                        item.volume += delta * this.game.ticker.deltaScaled * 5
-                    
-                    item.rate = 0.8
+                    item.volume = 0
                 }
             })
         }
 
-        // Engine and speed
+        // Engine and speed (Engine muted for walking avatar)
         {
-            // Engine
+            // Engine muted
             this.game.audio.register({
                 path: 'sounds/vehicle/engine/muscle car engine loop idle.mp3',
                 autoplay: true,
@@ -159,16 +143,7 @@ export class Player
                 volume: 0,
                 onPlaying: (item) =>
                 {
-                    const accelerating = Math.abs(this.game.player.accelerating) * 0.5
-                    const boosting = this.game.player.boosting + 1
-                    const volume = Math.max(0.05, accelerating * boosting * 0.8)
-                    const delta = volume - item.volume
-                    const easing = delta > 0 ? 10 : 2.5
-                    
-                    item.volume += delta * this.game.ticker.deltaScaled * easing
-
-                    const rate = remapClamp(accelerating * boosting, 0, 1, 0.6, 1.1)
-                    item.rate += (rate - item.rate) * this.game.ticker.deltaScaled * 5
+                    item.volume = 0
                 }
             })
 

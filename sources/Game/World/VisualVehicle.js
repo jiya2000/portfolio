@@ -13,19 +13,19 @@ export class VisualVehicle
     constructor(model)
     {
         this.game = Game.getInstance()
-        
         this.model = model
+
+        this.walkPhase = 0
+        this.idlePhase = 0
+        this.facingAngle = 0
 
         this.setParts()
         this.setMainGroundTrack()
         this.setWheels()
-        this.setBlinkers()
-        this.setBackLights()
-        this.setAntenna()
-        this.setBoostTrails()
-        this.setBoostAnimation()
         this.setScreenPosition()
-        this.setPaints()
+
+        // Create Girl Character (Aditi)
+        this.createCharacter()
 
         this.tickCallback = () =>
         {
@@ -38,11 +38,8 @@ export class VisualVehicle
     {
         this.game.ticker.events.off('tick', this.tickCallback)
 
-        if(this.blinkers)
-        {
-            this.game.inputs.events.off('left', this.blinkers.leftCallback)
-            this.game.inputs.events.off('right', this.blinkers.rightCallback)
-        }
+        if(this.girl && this.girl.root)
+            this.girl.root.removeFromParent()
 
         for(let partName in this.parts)
         {
@@ -55,6 +52,330 @@ export class VisualVehicle
         for(const wheel of this.wheels.items)
         {
             this.game.tracks.remove(wheel.groundTrack)
+        }
+    }
+
+    createCharacter()
+    {
+        const girl = new THREE.Group()
+        girl.name = 'aditiCharacter'
+
+        // Materials using MeshDefaultMaterial for proper lighting, shadows and fog
+        const skinMat = new MeshDefaultMaterial({
+            colorNode: color('#fcd3be'),
+            hasWater: false
+        })
+        const hairMat = new MeshDefaultMaterial({
+            colorNode: color('#231815'),
+            hasWater: false
+        })
+        const hairTieMat = new MeshDefaultMaterial({
+            colorNode: color('#ff4a4a'),
+            hasWater: false
+        })
+        const jacketMat = new MeshDefaultMaterial({
+            colorNode: color('#4f75ff'), // Vibrant tech cobalt jacket
+            hasWater: false
+        })
+        const jacketTrimMat = new MeshDefaultMaterial({
+            colorNode: color('#ffffff'),
+            hasWater: false
+        })
+        const shirtMat = new MeshDefaultMaterial({
+            colorNode: color('#f8f9fc'),
+            hasWater: false
+        })
+        const pantsMat = new MeshDefaultMaterial({
+            colorNode: color('#242933'), // Sleek dark pants
+            hasWater: false
+        })
+        const shoeMat = new MeshDefaultMaterial({
+            colorNode: color('#ffffff'),
+            hasWater: false
+        })
+        const shoeAccentMat = new MeshDefaultMaterial({
+            colorNode: color('#ff4a4a'),
+            hasWater: false
+        })
+        const eyeMat = new MeshDefaultMaterial({
+            colorNode: color('#12131a'),
+            hasWater: false
+        })
+        const blushMat = new MeshDefaultMaterial({
+            colorNode: color('#ff9e9e'),
+            hasWater: false
+        })
+
+        // Root container for body animations (bob, sway, breathing)
+        const body = new THREE.Group()
+        girl.add(body)
+
+        // Hips / Pelvis
+        const hips = new THREE.Group()
+        hips.position.y = 0.92
+        body.add(hips)
+
+        // Torso & Jacket
+        const torso = new THREE.Group()
+        hips.add(torso)
+
+        // Lower jacket / waistband
+        const waistGeo = new THREE.CylinderGeometry(0.23, 0.25, 0.22, 12)
+        const waist = new THREE.Mesh(waistGeo, jacketMat)
+        waist.position.y = 0.11
+        waist.castShadow = true
+        waist.receiveShadow = true
+        torso.add(waist)
+
+        // Upper torso / chest jacket
+        const chestGeo = new THREE.CylinderGeometry(0.26, 0.23, 0.34, 12)
+        const chest = new THREE.Mesh(chestGeo, jacketMat)
+        chest.position.y = 0.37
+        chest.castShadow = true
+        chest.receiveShadow = true
+        torso.add(chest)
+
+        // Inner shirt collar (v-neck detail)
+        const shirtGeo = new THREE.CylinderGeometry(0.16, 0.18, 0.35, 8)
+        const shirt = new THREE.Mesh(shirtGeo, shirtMat)
+        shirt.position.set(0, 0.38, 0.08)
+        shirt.scale.set(0.65, 1, 0.35)
+        torso.add(shirt)
+
+        // Jacket zipper line
+        const zipperGeo = new THREE.BoxGeometry(0.025, 0.42, 0.04)
+        const zipper = new THREE.Mesh(zipperGeo, jacketTrimMat)
+        zipper.position.set(0, 0.32, 0.24)
+        torso.add(zipper)
+
+        // Neck
+        const neckGeo = new THREE.CylinderGeometry(0.09, 0.1, 0.14, 10)
+        const neck = new THREE.Mesh(neckGeo, skinMat)
+        neck.position.y = 0.57
+        torso.add(neck)
+
+        // Head Group
+        const head = new THREE.Group()
+        head.position.y = 0.73
+        torso.add(head)
+
+        // Stylized Cute Face
+        const faceGeo = new THREE.SphereGeometry(0.25, 16, 14)
+        faceGeo.scale(0.95, 1.05, 1)
+        const face = new THREE.Mesh(faceGeo, skinMat)
+        face.castShadow = true
+        face.receiveShadow = true
+        head.add(face)
+
+        // Eyes
+        const eyeGeo = new THREE.SphereGeometry(0.045, 8, 8)
+        eyeGeo.scale(0.7, 1.3, 0.5)
+        
+        const leftEye = new THREE.Mesh(eyeGeo, eyeMat)
+        leftEye.position.set(-0.09, 0.02, 0.23)
+        head.add(leftEye)
+
+        const rightEye = new THREE.Mesh(eyeGeo, eyeMat)
+        rightEye.position.set(0.09, 0.02, 0.23)
+        head.add(rightEye)
+
+        // Cheeks (blush)
+        const blushGeo = new THREE.CircleGeometry(0.04, 8)
+        const leftBlush = new THREE.Mesh(blushGeo, blushMat)
+        leftBlush.position.set(-0.13, -0.06, 0.23)
+        leftBlush.rotation.y = -0.3
+        head.add(leftBlush)
+
+        const rightBlush = new THREE.Mesh(blushGeo, blushMat)
+        rightBlush.position.set(0.13, -0.06, 0.23)
+        rightBlush.rotation.y = 0.3
+        head.add(rightBlush)
+
+        // Hair - Main volume
+        const hairTopGeo = new THREE.SphereGeometry(0.28, 14, 12)
+        hairTopGeo.scale(1, 1.05, 1.05)
+        const hairTop = new THREE.Mesh(hairTopGeo, hairMat)
+        hairTop.position.set(0, 0.06, -0.04)
+        hairTop.castShadow = true
+        head.add(hairTop)
+
+        // Bangs / Front hair fringe
+        const bangsGeo = new THREE.CylinderGeometry(0.27, 0.28, 0.18, 12, 1, false, -Math.PI * 0.45, Math.PI * 0.9)
+        const bangs = new THREE.Mesh(bangsGeo, hairMat)
+        bangs.position.set(0, 0.12, 0.06)
+        bangs.rotation.x = 0.2
+        head.add(bangs)
+
+        // Side locks
+        const sideLockGeo = new THREE.ConeGeometry(0.055, 0.28, 6)
+        const leftSideLock = new THREE.Mesh(sideLockGeo, hairMat)
+        leftSideLock.position.set(-0.23, -0.06, 0.1)
+        leftSideLock.rotation.z = 0.2
+        head.add(leftSideLock)
+
+        const rightSideLock = new THREE.Mesh(sideLockGeo, hairMat)
+        rightSideLock.position.set(0.23, -0.06, 0.1)
+        rightSideLock.rotation.z = -0.2
+        head.add(rightSideLock)
+
+        // Ponytail Pivot (at back of head, sways dynamically)
+        const ponytail = new THREE.Group()
+        ponytail.position.set(0, 0.14, -0.25)
+        head.add(ponytail)
+
+        // Hair Tie / Ribbon
+        const hairTieGeo = new THREE.TorusGeometry(0.065, 0.025, 8, 12)
+        const hairTie = new THREE.Mesh(hairTieGeo, hairTieMat)
+        hairTie.rotation.x = Math.PI * 0.5
+        ponytail.add(hairTie)
+
+        // Ponytail hair segments
+        const ponytailUpperGeo = new THREE.ConeGeometry(0.1, 0.38, 8)
+        const ponytailUpper = new THREE.Mesh(ponytailUpperGeo, hairMat)
+        ponytailUpper.position.set(0, -0.16, -0.08)
+        ponytailUpper.rotation.x = -0.5
+        ponytailUpper.castShadow = true
+        ponytail.add(ponytailUpper)
+
+        const ponytailTipGeo = new THREE.ConeGeometry(0.065, 0.3, 8)
+        const ponytailTip = new THREE.Mesh(ponytailTipGeo, hairMat)
+        ponytailTip.position.set(0, -0.34, -0.18)
+        ponytailTip.rotation.x = -0.6
+        ponytailTip.castShadow = true
+        ponytail.add(ponytailTip)
+
+        // Arms
+        // Left Arm Pivot
+        const leftArm = new THREE.Group()
+        leftArm.position.set(-0.31, 0.45, 0)
+        torso.add(leftArm)
+
+        const upperArmGeo = new THREE.CylinderGeometry(0.07, 0.06, 0.26, 8)
+        const leftUpperArm = new THREE.Mesh(upperArmGeo, jacketMat)
+        leftUpperArm.position.y = -0.13
+        leftUpperArm.castShadow = true
+        leftArm.add(leftUpperArm)
+
+        const leftForearm = new THREE.Group()
+        leftForearm.position.y = -0.26
+        leftArm.add(leftForearm)
+
+        const forearmGeo = new THREE.CylinderGeometry(0.06, 0.05, 0.24, 8)
+        const leftLowerArmMesh = new THREE.Mesh(forearmGeo, jacketMat)
+        leftLowerArmMesh.position.y = -0.12
+        leftForearm.add(leftLowerArmMesh)
+
+        const handGeo = new THREE.SphereGeometry(0.05, 8, 8)
+        const leftHand = new THREE.Mesh(handGeo, skinMat)
+        leftHand.position.y = -0.23
+        leftForearm.add(leftHand)
+
+        // Right Arm Pivot
+        const rightArm = new THREE.Group()
+        rightArm.position.set(0.31, 0.45, 0)
+        torso.add(rightArm)
+
+        const rightUpperArm = new THREE.Mesh(upperArmGeo, jacketMat)
+        rightUpperArm.position.y = -0.13
+        rightUpperArm.castShadow = true
+        rightArm.add(rightUpperArm)
+
+        const rightForearm = new THREE.Group()
+        rightForearm.position.y = -0.26
+        rightArm.add(rightForearm)
+
+        const rightLowerArmMesh = new THREE.Mesh(forearmGeo, jacketMat)
+        rightLowerArmMesh.position.y = -0.12
+        rightForearm.add(rightLowerArmMesh)
+
+        const rightHand = new THREE.Mesh(handGeo, skinMat)
+        rightHand.position.y = -0.23
+        rightForearm.add(rightHand)
+
+        // Legs
+        // Left Leg Pivot
+        const leftLeg = new THREE.Group()
+        leftLeg.position.set(-0.12, 0, 0)
+        hips.add(leftLeg)
+
+        const upperLegGeo = new THREE.CylinderGeometry(0.095, 0.075, 0.44, 8)
+        const leftUpperLeg = new THREE.Mesh(upperLegGeo, pantsMat)
+        leftUpperLeg.position.y = -0.22
+        leftUpperLeg.castShadow = true
+        leftLeg.add(leftUpperLeg)
+
+        const leftLowerLeg = new THREE.Group()
+        leftLowerLeg.position.y = -0.44
+        leftLeg.add(leftLowerLeg)
+
+        const lowerLegGeo = new THREE.CylinderGeometry(0.075, 0.065, 0.4, 8)
+        const leftLowerLegMesh = new THREE.Mesh(lowerLegGeo, pantsMat)
+        leftLowerLegMesh.position.y = -0.2
+        leftLowerLegMesh.castShadow = true
+        leftLowerLeg.add(leftLowerLegMesh)
+
+        // Sneakers
+        const shoeGeo = new THREE.BoxGeometry(0.13, 0.1, 0.27)
+        const leftShoe = new THREE.Mesh(shoeGeo, shoeMat)
+        leftShoe.position.set(0, -0.37, 0.05)
+        leftShoe.castShadow = true
+        leftLowerLeg.add(leftShoe)
+
+        const shoeAccentGeo = new THREE.BoxGeometry(0.135, 0.03, 0.275)
+        const leftShoeAccent = new THREE.Mesh(shoeAccentGeo, shoeAccentMat)
+        leftShoeAccent.position.set(0, -0.41, 0.05)
+        leftLowerLeg.add(leftShoeAccent)
+
+        // Right Leg Pivot
+        const rightLeg = new THREE.Group()
+        rightLeg.position.set(0.12, 0, 0)
+        hips.add(rightLeg)
+
+        const rightUpperLeg = new THREE.Mesh(upperLegGeo, pantsMat)
+        rightUpperLeg.position.y = -0.22
+        rightUpperLeg.castShadow = true
+        rightLeg.add(rightUpperLeg)
+
+        const rightLowerLeg = new THREE.Group()
+        rightLowerLeg.position.y = -0.44
+        rightLeg.add(rightLowerLeg)
+
+        const rightLowerLegMesh = new THREE.Mesh(lowerLegGeo, pantsMat)
+        rightLowerLegMesh.position.y = -0.2
+        rightLowerLegMesh.castShadow = true
+        rightLowerLeg.add(rightLowerLegMesh)
+
+        const rightShoe = new THREE.Mesh(shoeGeo, shoeMat)
+        rightShoe.position.set(0, -0.37, 0.05)
+        rightShoe.castShadow = true
+        rightLowerLeg.add(rightShoe)
+
+        const rightShoeAccent = new THREE.Mesh(shoeAccentGeo, shoeAccentMat)
+        rightShoeAccent.position.set(0, -0.41, 0.05)
+        rightLowerLeg.add(rightShoeAccent)
+
+        // Initial relaxed arm pose
+        leftArm.rotation.z = 0.12
+        rightArm.rotation.z = -0.12
+
+        // Add character directly to scene
+        this.game.scene.add(girl)
+
+        this.girl = {
+            root: girl,
+            body: body,
+            hips: hips,
+            torso: torso,
+            head: head,
+            ponytail: ponytail,
+            leftArm: leftArm,
+            leftForearm: leftForearm,
+            rightArm: rightArm,
+            rightForearm: rightForearm,
+            leftLeg: leftLeg,
+            leftLowerLeg: leftLowerLeg,
+            rightLeg: rightLeg,
+            rightLowerLeg: rightLowerLeg,
         }
     }
 
@@ -83,17 +404,9 @@ export class VisualVehicle
 
         this.model.traverse((child) =>
         {
-            if(child.isMesh)
-            {
-                child.receiveShadow = true
-                child.castShadow = true
-                child.material.shadowSide = THREE.BackSide
-            }
-
             for(const search of searchList)
             {
                 const match = child.name.match(search)
-
                 if(match)
                 {
                     this.parts[match[0]] = child
@@ -101,313 +414,41 @@ export class VisualVehicle
             }
         })
 
-        // Chassis
-        this.parts.chassis.rotation.reorder('YXZ')
-        this.game.materials.updateObject(this.parts.chassis)
-        this.game.scene.add(this.parts.chassis)
-
-        // Blinker left
-        if(this.parts.blinkerLeft)
-            this.parts.blinkerLeft.visible = false
-
-        // Blinker right
-        if(this.parts.blinkerRight)
-            this.parts.blinkerRight.visible = false
-
-        // Stop lights
-        if(this.parts.stopLights)
-            this.parts.stopLights.visible = false
-
-        // Back lights
-        if(this.parts.backLights)
-            this.parts.backLights.visible = false
-
-        // Wheel
-        this.game.materials.updateObject(this.parts.wheelContainer)
-    }
-
-    setPaints()
-    {
-        this.paints = {}
-
-        this.paints.choices = {}
-        this.paints.choices.red = this.game.materials.getFromName('redGradient')
-        this.paints.choices.orange = this.game.materials.createGradient('orangeGradient', '#ff940d', '#af0071', this.game.materials.debugPanel?.addFolder({ title: 'orangeGradient' }))
-        this.paints.choices.white = this.game.materials.createGradient('whiteGradient', '#ffffff', '#b5b5b5', this.game.materials.debugPanel?.addFolder({ title: 'whiteGradient' }))
-        this.paints.choices.black = this.game.materials.createGradient('blackGradient', '#626262', '#262526', this.game.materials.debugPanel?.addFolder({ title: 'blackGradient' }))
-        
-        // Flames
+        // Hide all car geometry
+        this.model.visible = false
+        this.model.traverse((child) =>
         {
-            const material = this.paints.choices.red.clone()
-            const baseOutput = material.outputNode
-            const colorA = uniform(color('#ff9c20'))
-            const colorB = uniform(color('#ff0000'))
-            const emissiveStrength = uniform(7.75)
-
-            material.outputNode = Fn(() =>
+            if(child.isMesh)
             {
-                // Flames
-                {
-                    const newUv = uv(1).toVar()
-                    const uv3 = newUv.sub(vec2(0, this.game.ticker.elapsedScaledUniform.mul(-0.075))).mul(vec2(0.96 * 1.3, 0.35 * 1.3))
-                    const noise3 = texture(this.game.noises.voronoi, uv3).r
-
-                    const uv4 = newUv.sub(vec2(0, this.game.ticker.elapsedScaledUniform.mul(-0.041))).mul(vec2(1.28 * 1.3, 0.75 * 1.3))
-                    const noise4 = texture(this.game.noises.voronoi, uv4).r
-
-                    const noiseFinal = min(noise3, noise4)
-                    const stepTreshold = newUv.y.oneMinus()
-                    const flameMix = noiseFinal.step(stepTreshold)
-
-                    const flameColor = mix(colorA, colorB, newUv.y).mul(emissiveStrength)
-
-                    baseOutput.rgb.assign(mix(baseOutput.rgb, flameColor, flameMix))
-                }
-
-
-                return baseOutput
-            })()
-
-            this.paints.choices.flames = material
-
-            // Debug
-            if(this.game.debug.active && this.game.materials.debugPanel)
-            {
-                const debugPanel = this.game.materials.debugPanel.addFolder({
-                    title: 'flames',
-                    expanded: true,
-                })
-                this.game.debug.addThreeColorBinding(debugPanel, colorA.value, 'flamesColorA')
-                this.game.debug.addThreeColorBinding(debugPanel, colorB.value, 'flamesColorB')
-                debugPanel.addBinding(emissiveStrength, 'value', { label: 'emissiveStrength', min: 1, max: 10, step: 0.001 })
+                child.visible = false
             }
-        }
-        
-        // Abyssal
-        {
-            const material = new THREE.MeshBasicMaterial({ wireframe: false })
-            const fresnelColor = uniform(color('#6053ff'))
-            const fresnelIntensity = uniform(30)
-            const starsIntensity = uniform(10)
-
-            material.outputNode = Fn(() =>
-            {
-                const starsUv = screenCoordinate.div(256).fract()
-                const starsColor = texture(this.game.resources.behindTheSceneStarsTexture, starsUv).rgb.pow(2).mul(starsIntensity)
-				
-                const viewDirection = positionWorld.sub( cameraPosition ).normalize();
-                const fresnel = viewDirection.dot(normalWorld).remapClamp(-0.2, -0.4, 1, 0)
-                
-                const fresnelFinalColor = fresnelColor.mul(fresnelIntensity)
-                const finalColor = mix(starsColor, fresnelFinalColor, fresnel)
-
-                finalColor.assign(MeshDefaultMaterial.revealDiscardNodeBuilder(this.game, finalColor))
-
-                return vec4(finalColor, 1)
-            })()
-
-            this.paints.choices.abyssal = material
-
-            // Debug
-            if(this.game.debug.active && this.game.materials.debugPanel)
-            {
-                const debugPanel = this.game.materials.debugPanel.addFolder({
-                    title: 'abyssal',
-                    expanded: true,
-                })
-                this.game.debug.addThreeColorBinding(debugPanel, fresnelColor.value, 'fresnelColor')
-                debugPanel.addBinding(fresnelIntensity, 'value', { label: 'fresnelIntensity', min: 1, max: 40, step: 0.001 })
-                debugPanel.addBinding(starsIntensity, 'value', { label: 'starsIntensity', min: 1, max: 40, step: 0.001 })
-            }
-        }
-
-        this.paints.changeTo = (name = 'red') =>
-        {
-            const material = this.paints.choices[name]
-
-            if(!material)
-                return false
-
-            this.parts.bodyPainted.material = material
-
-            for(const wheel of this.wheels.items)
-            {
-                if(wheel.painted)
-                    wheel.painted.material = material
-            }
-        }
-        
-        // From achievemnts
-        this.paints.changeTo(this.game.achievements.rewards.current.name)
-
-        this.game.achievements.events.on('rewardActiveChange', (reward) =>
-        {
-            this.paints.changeTo(reward.name)
         })
-    }
 
-    setMainGroundTrack()
-    {
-        this.mainGroundTrack = this.game.tracks.add(new Track(1.5, 'g'))
+        // Chassis dummy object kept for internal tracking & screenPosition
+        this.parts.chassis.visible = false
+        this.game.scene.add(this.parts.chassis)
     }
 
     setWheels()
     {
-        // Setup
         this.wheels = {}
         this.wheels.items = []
         this.wheels.steering = 0
 
-        // Create wheels
         for(let i = 0; i < 4; i++)
         {
             const wheel = {}
-
-            // Clone group
-            wheel.container = this.parts.wheelContainer.clone(true)
-            this.parts.chassis.add(wheel.container)
-
-            wheel.container.traverse((child) =>
-            {
-                if(child.name.match(/^wheelSuspension/))
-                    wheel.suspension = child
-                if(child.name.match(/^wheelCylinder/))
-                    wheel.cylinder = child
-                if(child.name.match(/^wheelPainted/))
-                    wheel.painted = child
-            })
-            
-            // Cylinder (actual wheel)
-            wheel.cylinder.position.set(0, 0, 0)
-            
-            if(i === 0 || i === 2)
-                wheel.container.rotation.y = Math.PI
-
-            // Add new track
-            wheel.groundTrack = this.game.tracks.add(new Track(0.5, 'r'))
-
+            wheel.container = new THREE.Group()
+            wheel.container.visible = false
+            wheel.cylinder = new THREE.Group()
+            wheel.groundTrack = { update: () => {} }
             this.wheels.items.push(wheel)
         }
     }
 
-    setBlinkers()
+    setMainGroundTrack()
     {
-        if(!this.parts.blinkerLeft)
-            return
-            
-        this.blinkers = {}
-
-        let running = false
-        let on = false
-
-        const start = () =>
-        {
-            if(running)
-                return
-
-            running = true
-            on = true
-
-            this.parts.blinkerLeft.visible = this.game.inputs.actions.get('left').active ? on : false
-            this.parts.blinkerRight.visible = this.game.inputs.actions.get('right').active ? on : false
-
-            gsap.delayedCall(0.8, blink)
-        }
-
-        const blink = () =>
-        {
-            on = !on
-
-            this.parts.blinkerLeft.visible = this.game.inputs.actions.get('left').active ? on : false
-            this.parts.blinkerRight.visible = this.game.inputs.actions.get('right').active ? on : false
-
-            if(!this.game.inputs.actions.get('left').active && !this.game.inputs.actions.get('right').active && !on)
-            {
-                running = false
-            }
-            else
-            {
-                gsap.delayedCall(0.8, blink)
-            }
-        }
-
-        this.blinkers.leftCallback = (active) =>
-        {
-            if(active.active)
-                start()
-        }
-        
-        this.blinkers.rightCallback = (active) =>
-        {
-            if(active.active)
-                start()
-        }
-
-        this.game.inputs.events.on('left', this.blinkers.leftCallback)
-        this.game.inputs.events.on('right', this.blinkers.rightCallback)
-    }
-
-    setBackLights()
-    {
-        this.backLights = {}
-        this.backLights.material = new THREE.MeshBasicNodeMaterial({ colorNode: vec3(2.2) })
-    }
-
-    setAntenna()
-    {
-        if(!this.parts.antenna)
-            return
-
-        this.antenna = {}
-        this.antenna.target = new THREE.Vector3(0, 2, 0)
-        this.antenna.target = new THREE.Vector3(0, 2, 0)
-        this.antenna.object = this.parts.antenna
-        this.antenna.head = this.game.resources.vehicle.scene.getObjectByName('antennaHead')
-        this.antenna.headAxle = this.antenna.head.children[0]
-        this.antenna.headReference = this.antenna.object.getObjectByName('antennaHeadReference')
-
-        this.game.materials.updateObject(this.antenna.head)
-        this.game.scene.add(this.antenna.head)
-    }
-
-    setBoostTrails()
-    {
-        this.boostTrails = {}
-        this.boostTrails.instance = new Trails()
-
-        this.boostTrails.leftReference = new THREE.Object3D()
-        this.boostTrails.leftReference.position.set(-1.28, 0.1, -0.55)
-        this.parts.chassis.add(this.boostTrails.leftReference)
-
-        this.boostTrails.left = this.boostTrails.instance.create()
-        this.boostTrails.leftReference.getWorldPosition(this.boostTrails.left.position)
-    
-        this.boostTrails.rightReference = new THREE.Object3D()
-        this.boostTrails.rightReference.position.set(-1.28, 0.1, 0.55)
-        this.parts.chassis.add(this.boostTrails.rightReference)
-
-        this.boostTrails.right = this.boostTrails.instance.create()
-        this.boostTrails.rightReference.getWorldPosition(this.boostTrails.right.position)
-    }
-
-    setBoostAnimation()
-    {
-        this.boostAnimation = {}
-        this.boostAnimation.mix = 0
-        this.boostAnimation.speed = 1.2
-        this.boostAnimation.mixUniform = uniform(0)
-
-        // Energy
-        if(this.parts.energy)
-        {
-            const emissiveOuput = this.game.materials.getFromName('emissivePurpleRadialGradient').outputNode
-            const defaultOutput = this.parts.energy.material.outputNode
-
-            const material = new THREE.MeshLambertNodeMaterial()
-            material.outputNode = mix(defaultOutput, emissiveOuput, this.boostAnimation.mixUniform)
-
-            this.parts.energy.material = material
-        }
+        this.mainGroundTrack = { update: () => {} }
     }
 
     setScreenPosition()
@@ -418,127 +459,87 @@ export class VisualVehicle
     update()
     {
         const physicalVehicle = this.game.physicalVehicle
-        
-        // Chassis
+        const delta = this.game.ticker.deltaScaled
+
+        // Keep chassis dummy in sync for camera focus point & see-through foliage
         this.parts.chassis.position.copy(physicalVehicle.position)
-        this.parts.chassis.quaternion.copy(physicalVehicle.quaternion)
-        
-        // Wheels
-        this.wheels.steering += ((this.game.player.steering * physicalVehicle.steeringAmplitude) - this.wheels.steering) * this.game.ticker.deltaScaled * 16
 
-        const wheelsRotation = (physicalVehicle.forwardSpeed) / physicalVehicle.wheels.settings.radius * 0.006
+        if(!this.girl)
+            return
 
-        for(let i = 0; i < 4; i++)
+        // Velocity & speed
+        const vx = physicalVehicle.velocity.x
+        const vz = physicalVehicle.velocity.z
+        const speed = Math.hypot(vx, vz)
+
+        // Position girl aligned with physics body and ground
+        this.girl.root.position.x = physicalVehicle.position.x
+        this.girl.root.position.y = physicalVehicle.position.y - 0.45
+        this.girl.root.position.z = physicalVehicle.position.z
+
+        // Smooth facing orientation towards movement direction
+        if(speed > 0.35)
         {
-            const visualWheel = this.wheels.items[i]
-            const physicalWheel = physicalVehicle.wheels.items[i]
-
-            // visualWheel.container.position.copy(physicalWheel.basePosition)
-
-            if(!this.game.inputs.actions.get('brake').active || this.game.inputs.actions.get('forward').active || this.game.inputs.actions.get('backward').active)
-            {
-                if(i === 0 || i === 2)
-                    visualWheel.cylinder.rotation.z += wheelsRotation
-                else
-                    visualWheel.cylinder.rotation.z -= wheelsRotation
-            }
-
-            if(i === 0)
-                visualWheel.container.rotation.y = Math.PI + this.wheels.steering
-
-            if(i === 1)
-                visualWheel.container.rotation.y = this.wheels.steering
-  
-            const suspensionLength = physicalWheel.suspensionLength
-            let wheelY = physicalWheel.basePosition.y - suspensionLength
-            wheelY = Math.min(wheelY, -0.5)
-
-            visualWheel.container.position.x = physicalWheel.basePosition.x
-            visualWheel.container.position.y += (wheelY - visualWheel.container.position.y) * 25 * this.game.ticker.deltaScaled
-            visualWheel.container.position.z = physicalWheel.basePosition.z
-
-            if(visualWheel.suspension)
-            {
-                const suspensionScale = Math.abs(visualWheel.container.position.y) - 0.5
-                visualWheel.suspension.scale.y = suspensionScale
-            }
-
-            // Ground tracks
-            visualWheel.groundTrack.update(physicalWheel.contactPoint, physicalWheel.inContact)
+            const targetAngle = Math.atan2(vx, vz)
+            let diff = targetAngle - this.facingAngle
+            while(diff < -Math.PI) diff += Math.PI * 2
+            while(diff > Math.PI) diff -= Math.PI * 2
+            this.facingAngle += diff * Math.min(1, delta * 12)
         }
+        this.girl.root.rotation.y = this.facingAngle
 
-        // Main ground track
-        this.mainGroundTrack.update(physicalVehicle.position, physicalVehicle.position.y < 1.5)
-
-        // Antenna
-        if(this.antenna)
+        // Locomotion walking/running animation
+        if(speed > 0.3)
         {
-            const angle = Math.atan2(this.antenna.target.x - physicalVehicle.position.x, this.antenna.target.z - physicalVehicle.position.z)
-            this.antenna.object.rotation.y = angle - this.parts.chassis.rotation.y
-            this.antenna.headReference.getWorldPosition(this.antenna.head.position)
-            this.antenna.head.lookAt(this.antenna.target)
+            this.walkPhase += speed * delta * 6.5
+            const stride = Math.sin(this.walkPhase)
+            const legAmp = Math.min(0.75, 0.3 + speed * 0.08)
+            const armAmp = Math.min(0.65, 0.25 + speed * 0.08)
 
-            const antennaTargetDistance = this.antenna.target.distanceTo(physicalVehicle.position)
+            // Leg strides with natural knee flexion
+            this.girl.leftLeg.rotation.x = stride * legAmp
+            this.girl.rightLeg.rotation.x = -stride * legAmp
+            this.girl.leftLowerLeg.rotation.x = Math.max(0, -stride) * 0.55
+            this.girl.rightLowerLeg.rotation.x = Math.max(0, stride) * 0.55
+
+            // Arms swing counter to legs
+            this.girl.leftArm.rotation.x = -stride * armAmp
+            this.girl.rightArm.rotation.x = stride * armAmp
+            this.girl.leftForearm.rotation.x = 0.15 + Math.abs(stride) * 0.15
+            this.girl.rightForearm.rotation.x = 0.15 + Math.abs(stride) * 0.15
+
+            // Vertical gait bounce
+            this.girl.hips.position.y = 0.92 + Math.abs(Math.sin(this.walkPhase * 2)) * 0.05
             
-            const antennaRotationSpeed = remapClamp(antennaTargetDistance, 50, 5, 1, 10)
-            this.antenna.headAxle.rotation.z += this.game.ticker.deltaScaled * antennaRotationSpeed
-        }
-
-        // Stop/back lights
-        if(this.game.player.braking)
-        {
-            if(this.parts.stopLights)
-                this.parts.stopLights.visible = true
-
-            if(this.parts.backLights)
-            {
-                this.parts.backLights.visible = true
-                this.parts.backLights.material = this.game.materials.getFromName('emissiveOrangeRadialGradient')
-            }
+            // Dynamic ponytail bounce & lag
+            this.girl.ponytail.rotation.x = 0.25 + Math.sin(this.walkPhase * 2) * 0.15 + speed * 0.03
+            this.girl.ponytail.rotation.z = Math.sin(this.walkPhase) * 0.08
         }
         else
         {
-            if(this.parts.stopLights)
-                this.parts.stopLights.visible = false
+            // Idle state with gentle breathing and limb relaxation
+            this.idlePhase += delta * 2.2
 
-            if(this.parts.backLights)
-            {
-                // Backward
-                if(this.game.player.accelerating < 0)
-                {
-                    this.parts.backLights.visible = true
-                    this.parts.backLights.material = this.backLights.material
-                }
-                // Backward
-                else
-                {
-                    this.parts.backLights.visible = false
-                }
-            }
+            this.girl.leftLeg.rotation.x *= 0.88
+            this.girl.rightLeg.rotation.x *= 0.88
+            this.girl.leftLowerLeg.rotation.x *= 0.88
+            this.girl.rightLowerLeg.rotation.x *= 0.88
+
+            this.girl.leftArm.rotation.x *= 0.88
+            this.girl.rightArm.rotation.x *= 0.88
+            this.girl.leftForearm.rotation.x *= 0.88
+            this.girl.rightForearm.rotation.x *= 0.88
+
+            this.girl.hips.position.y = 0.92
+            this.girl.torso.position.y = Math.sin(this.idlePhase) * 0.015
+            this.girl.head.rotation.x = Math.sin(this.idlePhase * 0.7) * 0.02
+            this.girl.ponytail.rotation.x = 0.2 + Math.sin(this.idlePhase) * 0.03
+            this.girl.ponytail.rotation.z *= 0.9
         }
 
-        // Boost trails
-        const trailAlpha = physicalVehicle.goingForward && this.game.player.boosting && this.game.player.accelerating > 0 ? 1 : 0
-        this.boostTrails.leftReference.getWorldPosition(this.boostTrails.left.position)
-        this.boostTrails.left.alpha = trailAlpha
-        this.boostTrails.rightReference.getWorldPosition(this.boostTrails.right.position)
-        this.boostTrails.right.alpha = trailAlpha
-
-        // Boost animation
-        this.boostAnimation.mix += (this.game.player.boosting ? 1 : - 1) * this.game.ticker.deltaScaled * this.boostAnimation.speed
-        this.boostAnimation.mix = clamp(this.boostAnimation.mix, 0, 1)
-        // this.boostAnimation.mixUniform.value = remapClamp(this.boostAnimation.mix, 0, 0.2, 0, 1)
-        this.boostAnimation.mixUniform.value = 1 - Math.pow(1 - this.boostAnimation.mix, 7)
-        if(this.parts.energy)
-        {
-            this.parts.cell1.position.y = remapClamp(this.boostAnimation.mix, 0, 0.6, 0.2, 0)
-            this.parts.cell3.position.y = remapClamp(this.boostAnimation.mix, 0.2, 0.8, 0.2, 0)
-            this.parts.cell2.position.y = remapClamp(this.boostAnimation.mix, 0.4, 1, 0.2, 0)
-        }
-
-        // Screen position
+        // Screen position calculation for UI & foliage see-through
         const vector = new THREE.Vector3()
-        vector.setFromMatrixPosition(this.parts.chassis.matrixWorld)
+        vector.setFromMatrixPosition(this.girl.root.matrixWorld)
         vector.project(this.game.view.camera)
 
         this.screenPosition.x = (vector.x * 0.5 + 0.5)

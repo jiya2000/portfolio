@@ -36,6 +36,7 @@ export class Areas
             [ 'timeMachine', TimeMachineArea ],
         ]
 
+        const unnecessary = [ 'altar', 'bowling', 'circuit', 'cookie', 'toilet' ]
         const model = [...this.game.resources.areasModel.scene.children]
         
         for(const child of model)
@@ -43,7 +44,17 @@ export class Areas
             for(const [ name, AreaClass ] of list)
             {
                 if(child.name.startsWith(name))
+                {
+                    if(unnecessary.includes(name))
+                    {
+                        child.visible = false
+                        child.traverse(c => {
+                            if(c.isMesh) c.visible = false
+                            c.userData.preventAutoAdd = true
+                        })
+                    }
                     this[name] = new AreaClass(child)
+                }
             }
         }
 
