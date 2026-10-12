@@ -16,7 +16,7 @@ export class AR
         this.checkURLHash()
     }
 
-    getARUrl()
+    getVRUrl()
     {
         let origin = window.location.origin
         const hostname = window.location.hostname
@@ -33,36 +33,43 @@ export class AR
         }
 
         const basePath = window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '')
-        return `${origin}${basePath}/ar.html`
+        return `${origin}${basePath}/vr.html`
+    }
+
+    getARUrl()
+    {
+        return this.getVRUrl()
     }
 
     initQR()
     {
-        if(!this.qrContainer)
+        const qrContainers = document.querySelectorAll('.js-vr-qr-container, .js-ar-qr-container')
+        if(!qrContainers || qrContainers.length === 0)
             return
 
-        const url = this.getARUrl()
+        const url = this.getVRUrl()
         const encodedUrl = encodeURIComponent(url)
         
-        this.qrContainer.innerHTML = `
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedUrl}&margin=0" alt="Scan QR Code to view Aditi in AR" class="qr-img">
-        `
+        qrContainers.forEach(container => {
+            container.innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedUrl}&margin=0" alt="Scan QR Code to view Aditi in VR" class="qr-img">
+            `
+        })
 
-        const urlDisplay = document.querySelector('.js-ar-url-display')
-        if(urlDisplay)
-        {
-            urlDisplay.textContent = url
-        }
+        const urlDisplays = document.querySelectorAll('.js-vr-url-display, .js-ar-url-display')
+        urlDisplays.forEach(elem => {
+            elem.textContent = url
+        })
 
-        if(this.copyLinkBtn)
-        {
-            this.copyLinkBtn.addEventListener('click', (e) =>
+        const copyBtns = document.querySelectorAll('.js-vr-copy-link, .js-ar-copy-link')
+        copyBtns.forEach(btn => {
+            btn.addEventListener('click', (e) =>
             {
                 e.preventDefault()
                 if(navigator.clipboard && navigator.clipboard.writeText)
                 {
                     navigator.clipboard.writeText(url).then(() => {
-                        this.showStatus('Copied AR link: ' + url)
+                        this.showStatus('Copied VR link: ' + url)
                     })
                 }
                 else
@@ -70,19 +77,20 @@ export class AR
                     this.showStatus('URL: ' + url)
                 }
             })
-        }
+        })
     }
 
     showStatus(msg)
     {
-        if(!this.statusText)
-            return
-        this.statusText.textContent = msg
-        this.statusText.classList.add('is-active')
-        setTimeout(() => {
-            this.statusText.textContent = ''
-            this.statusText.classList.remove('is-active')
-        }, 3000)
+        const statusElems = document.querySelectorAll('.js-vr-status, .js-ar-status')
+        statusElems.forEach(elem => {
+            elem.textContent = msg
+            elem.classList.add('is-active')
+            setTimeout(() => {
+                elem.textContent = ''
+                elem.classList.remove('is-active')
+            }, 3000)
+        })
     }
 
     initListeners()
@@ -94,19 +102,7 @@ export class AR
                 if(event.detail.status === 'session-started')
                 {
                     if(this.game.notifications)
-                        this.game.notifications.add('Augmented Reality active', 'ar')
-                }
-            })
-        }
-
-        const directLaunchBtn = document.querySelector('.js-ar-direct-launch')
-        if(directLaunchBtn)
-        {
-            directLaunchBtn.addEventListener('click', () =>
-            {
-                if(this.modelViewer && typeof this.modelViewer.activateAR === 'function')
-                {
-                    this.modelViewer.activateAR()
+                        this.game.notifications.add('Virtual Reality active', 'vr')
                 }
             })
         }
@@ -114,7 +110,7 @@ export class AR
 
     checkURLHash()
     {
-        if(window.location.hash.match(/#ar/i))
+        if(window.location.hash.match(/#(vr|ar)/i))
         {
             setTimeout(() => {
                 this.open()
@@ -126,7 +122,10 @@ export class AR
     {
         if(this.game.modals)
         {
-            this.game.modals.open('ar')
+            if(this.game.modals.items.has('vr'))
+                this.game.modals.open('vr')
+            else
+                this.game.modals.open('ar')
         }
     }
 
@@ -140,7 +139,7 @@ export class AR
 
     toggle()
     {
-        if(this.game.modals?.isOpen && this.game.modals?.current?.name === 'ar')
+        if(this.game.modals?.isOpen && (this.game.modals?.current?.name === 'vr' || this.game.modals?.current?.name === 'ar'))
             this.close()
         else
             this.open()

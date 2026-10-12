@@ -48,10 +48,12 @@ export class QuickNav
                     return
                 }
 
-                if(destination === 'ar')
+                if(destination === 'vr' || destination === 'ar')
                 {
                     if(this.game.ar)
                         this.game.ar.toggle()
+                    else if(this.game.modals)
+                        this.game.modals.open('vr')
                     return
                 }
 

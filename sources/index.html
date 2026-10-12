@@ -134,15 +134,15 @@
                 <span class="label">Contact</span>
             </button>
             <div class="nav-divider"></div>
-            <button class="nav-btn is-ar" data-destination="ar" title="View in Augmented Reality (AR)">
+            <button class="nav-btn is-vr" data-destination="vr" title="Immersive VR (Headset & Cardboard Mode)">
                 <span class="icon">
-                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-                        <path d="m3.3 7 8.7 5 8.7-5"/>
-                        <path d="M12 22V12"/>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 10a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4h-2.5a2.5 2.5 0 0 0-2 1l-1 1.5a1 1 0 0 1-1.6 0l-1-1.5a2.5 2.5 0 0 0-2-1H6a4 4 0 0 1-4-4z"/>
+                        <circle cx="7.5" cy="12" r="2.5"/>
+                        <circle cx="16.5" cy="12" r="2.5"/>
                     </svg>
                 </span>
-                <span class="label">AR</span>
+                <span class="label">VR</span>
             </button>
             <button class="nav-btn is-map" data-destination="map" title="Open 3D Map">
                 <span class="icon">
@@ -776,8 +776,8 @@
                 </div>
             </div>
 
-            <!-- AR Experience Modal -->
-            <div class="js-modal modal ar-modal" data-name="ar">
+            <!-- Virtual Reality Experience Modal (Dual-Mode VR) -->
+            <div class="js-modal modal ar-modal vr-modal" data-name="vr">
 
                 <button class="js-close close">
                     <div class="button-inner">
@@ -789,17 +789,13 @@
                 </button>
 
                 <div class="ar-layout">
-                    <!-- 3D Interactive Model Viewer with AR launch -->
+                    <!-- 3D Interactive Model Viewer with Direct VR launch -->
                     <div class="ar-preview-side">
-                        <div class="ar-orbit-hint">Drag to rotate • Pinch to zoom</div>
+                        <div class="ar-orbit-hint">Interactive 3D Avatar • Fully Immersive Virtual Reality</div>
                         <model-viewer
                             id="aditi-ar-viewer"
                             src="ar/aditi-avatar.glb"
-                            ios-src="ar/aditi-avatar.usdz"
-                            alt="Aditi Sharma 3D Avatar in Augmented Reality"
-                            ar
-                            ar-modes="webxr scene-viewer quick-look"
-                            ar-scale="auto"
+                            alt="Aditi Sharma 3D Avatar in Virtual Reality"
                             camera-controls
                             touch-action="pan-y"
                             auto-rotate
@@ -814,59 +810,59 @@
                             exposure="1.0"
                             loading="eager"
                         >
-                            <button slot="ar-button" class="ar-launch-btn js-ar-direct-launch">
+                            <a href="vr.html" class="ar-launch-btn" style="text-decoration:none;">
                                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-                                    <path d="m3.3 7 8.7 5 8.7-5"/>
-                                    <path d="M12 22V12"/>
+                                    <path d="M2 10a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4h-2.5a2.5 2.5 0 0 0-2 1l-1 1.5a1 1 0 0 1-1.6 0l-1-1.5a2.5 2.5 0 0 0-2-1H6a4 4 0 0 1-4-4z"/>
+                                    <circle cx="7.5" cy="12" r="2.5"/>
+                                    <circle cx="16.5" cy="12" r="2.5"/>
                                 </svg>
-                                <span>Place In Your Room (AR)</span>
-                            </button>
+                                <span>Launch Fully Immersive VR</span>
+                            </a>
                         </model-viewer>
                     </div>
 
-                    <!-- AR Information & QR Code Side -->
+                    <!-- Dual-Mode VR Information & Mobile QR Section -->
                     <div class="ar-info-side">
                         <div>
-                            <div class="ar-badge">CAMERA AR MODE</div>
-                            <h2 class="ar-title">Pokemon GO Style Real-World AR</h2>
-                            <p class="ar-desc">Superimpose Aditi's 3D avatar and interactive project orbs directly into your real room using your phone's camera.</p>
+                            <div class="ar-badge" style="background:rgba(168,85,247,0.25); border-color:rgba(192,132,252,0.6); color:#c084fc;">DUAL-MODE VIRTUAL REALITY</div>
+                            <h2 class="ar-title">Fully Immersive & Desktop VR</h2>
+                            <p class="ar-desc">This project demonstrates both paradigms of Virtual Reality: screen-based Non-Immersive Desktop VR and stereoscopic 360° Head-Tracked Immersive VR.</p>
                         </div>
 
                         <div class="ar-features">
                             <div class="feature-row">
-                                <div class="f-icon">📷</div>
+                                <div class="f-icon">🖥️</div>
                                 <div class="f-text">
-                                    <strong>Live Camera Overlay</strong>
-                                    <span>See your actual room, desk, or street with 3D digital objects anchored in place.</span>
+                                    <strong>Mode 1: Non-Immersive Desktop VR</strong>
+                                    <span>Active right now on your screen. Interactive 3D simulation with vehicle physics, dynamic lighting, and spatial audio.</span>
                                 </div>
                             </div>
                             <div class="feature-row">
-                                <div class="f-icon">🔮</div>
+                                <div class="f-icon">🥽</div>
                                 <div class="f-text">
-                                    <strong>Floating Project Orbs</strong>
-                                    <span>Interact with floating cyber capsules in real space to inspect projects & code.</span>
+                                    <strong>Mode 2: Fully Immersive Stereoscopic VR</strong>
+                                    <span>Dual-eye parallax split-screen (Left & Right eye) with 360° Gyroscope head tracking for Google Cardboard, VR Box, or Meta Quest.</span>
                                 </div>
                             </div>
                             <div class="feature-row">
-                                <div class="f-icon">📸</div>
+                                <div class="f-icon">👁️</div>
                                 <div class="f-text">
-                                    <strong>Snap & Save AR Photos</strong>
-                                    <span>Take real-time photos of Aditi in your room and save them directly to your phone.</span>
+                                    <strong>Hands-Free Gaze Dwell Reticle</strong>
+                                    <span>Gaze at any project or milestone for 1.2s in VR to open details hands-free without needing controllers or touch.</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="ar-mobile-qr-section">
-                            <div class="js-ar-qr-container qr-code-display"></div>
+                            <div class="js-vr-qr-container js-ar-qr-container qr-code-display"></div>
                             <div class="qr-instructions">
-                                <div class="qr-title">Scan to Launch Camera AR</div>
-                                <div class="qr-detail">Scan with phone camera or visit: <code class="js-ar-url-display ar-url-code"></code></div>
+                                <div class="qr-title">Scan on Mobile for VR Headset</div>
+                                <div class="qr-detail">Pop phone into any VR Box or Cardboard: <code class="js-vr-url-display js-ar-url-display ar-url-code"></code></div>
                                 <div style="display:flex; gap:8px; margin-top:4px;">
-                                    <button class="js-ar-copy-link copy-btn">Copy AR Link</button>
-                                    <a href="ar.html" class="copy-btn" style="text-decoration:none; display:inline-flex; align-items:center;">Open AR Mode ↗</a>
+                                    <button class="js-vr-copy-link js-ar-copy-link copy-btn">Copy VR Link</button>
+                                    <a href="vr.html" class="copy-btn" style="text-decoration:none; display:inline-flex; align-items:center; background:radial-gradient(circle, #a855f7, #6b21a8);">Open VR Mode 🥽</a>
                                 </div>
-                                <div class="js-ar-status status-msg"></div>
+                                <div class="js-vr-status js-ar-status status-msg"></div>
                             </div>
                         </div>
                     </div>

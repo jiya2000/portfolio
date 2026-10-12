@@ -199,6 +199,7 @@ export class Game
         this.map = new Map()
         this.quickNav = new QuickNav()
         this.ar = new AR()
+        this.vr = this.ar
         this.title = new Title()
         // this.monitoring = new Monitoring()
         this.world.step(1)

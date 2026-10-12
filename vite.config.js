@@ -34,7 +34,7 @@ export default {
     base: './', // Public path (what's after the domain)
     server:
     {
-        // https: true,
+        https: true,
         host: true, // Open to local network and display URL
         open: true // Open in browser
     },
@@ -48,7 +48,8 @@ export default {
             input:
             {
                 main: path.resolve(__dirname, 'sources/index.html'),
-                ar: path.resolve(__dirname, 'sources/ar.html')
+                ar: path.resolve(__dirname, 'sources/ar.html'),
+                vr: path.resolve(__dirname, 'sources/vr.html')
             }
         }
     },
@@ -58,6 +59,6 @@ export default {
         topLevelAwait(),
         restart({ restart: [ '../static/**', ] }), // Restart server on static file change
         nodePolyfills(),
-        // basicSsl()
+        basicSsl()
     ]
 }

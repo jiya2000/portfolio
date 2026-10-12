@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a060d">
+    <title>Aditi Sharma • Immersive Virtual Reality Experience</title>
+
+    <link rel="icon" type="image/png" href="/favicons/favicon-96x96.png" sizes="96x96" />
+    <link rel="stylesheet" href="./style/vrExperience.styl">
+</head>
+<body>
+
+    <!-- Main WebGL 3D Canvas -->
+    <canvas class="vr-canvas js-vr-canvas"></canvas>
+
+    <!-- Stereo Split Divider (Cardboard Mode) -->
+    <div class="stereo-divider js-stereo-divider"></div>
+
+    <!-- Center Gaze Reticle (Mono mode) -->
+    <div class="gaze-reticle js-gaze-reticle">
+        <div class="reticle-ring"></div>
+        <div class="reticle-dot"></div>
+    </div>
+
+    <!-- Dual Reticles (Stereoscopic mode) -->
+    <div class="gaze-reticle-left js-gaze-reticle-left">
+        <div class="reticle-ring"></div>
+        <div class="reticle-dot"></div>
+    </div>
+    <div class="gaze-reticle-right js-gaze-reticle-right">
+        <div class="reticle-ring"></div>
+        <div class="reticle-dot"></div>
+    </div>
+
+    <!-- Gaze Dwell Circular Progress Indicator -->
+    <div class="gaze-progress-container js-gaze-progress">
+        <svg viewBox="0 0 50 50">
+            <circle class="progress-bg" cx="25" cy="25" r="20"></circle>
+            <circle class="progress-bar js-progress-bar" cx="25" cy="25" r="20"></circle>
+        </svg>
+    </div>
+
+    <!-- Interactive VR HUD -->
+    <div class="vr-hud js-vr-hud">
+        <!-- Top Bar -->
+        <header class="hud-top">
+            <div class="brand-badge">
+                <span class="brand-icon">🥽</span>
+                <div>
+                    <div class="brand-title">ADITI SHARMA</div>
+                    <div class="brand-sub js-vr-status">IMMERSIVE VR • STEREOSCOPIC 3D</div>
+                </div>
+            </div>
+
+            <div class="hud-actions">
+                <button class="hud-btn js-btn-sound" title="Toggle Audio Synthesizer">
+                    <span class="sound-icon">🔊</span>
+                </button>
+                <button class="hud-btn js-btn-recenter" title="Recenter Viewpoint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="22" y1="12" x2="18" y2="12"/>
+                        <line x1="6" y1="12" x2="2" y2="12"/>
+                        <line x1="12" y1="6" x2="12" y2="2"/>
+                        <line x1="12" y1="22" x2="12" y2="18"/>
+                    </svg>
+                    <span>Recenter</span>
+                </button>
+                <button class="hud-btn js-btn-fullscreen" title="Fullscreen VR">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    </svg>
+                </button>
+                <a href="./index.html" class="hud-btn is-highlight js-btn-exit" title="Return to Desktop Non-Immersive VR">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"/>
+                        <path d="m6 6 12 12"/>
+                    </svg>
+                    <span>Exit to Desktop</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- VR Mode Switcher -->
+        <nav class="hud-mode-dock">
+            <button class="mode-tab is-active" data-vrmode="stereo">
+                <span>🥽</span>
+                <span>Stereo (Cardboard/VR Box)</span>
+            </button>
+            <button class="mode-tab" data-vrmode="mono">
+                <span>🖥️</span>
+                <span>Mono 360° Gyro</span>
+            </button>
+            <button class="mode-tab js-webxr-btn" data-vrmode="webxr">
+                <span>🚀</span>
+                <span>WebXR Headset</span>
+            </button>
+        </nav>
+
+        <!-- Bottom Viewpoint Dock & Instructions -->
+        <footer class="hud-bottom">
+            <div class="viewpoints-dock">
+                <button class="viewpoint-btn is-active" data-viewpoint="car">
+                    <span>🚗</span>
+                    <span>Cyber Car</span>
+                </button>
+                <button class="viewpoint-btn" data-viewpoint="cockpit">
+                    <span>🏎️</span>
+                    <span>Driver Cockpit</span>
+                </button>
+                <button class="viewpoint-btn" data-viewpoint="projects">
+                    <span>📂</span>
+                    <span>Projects Billboard</span>
+                </button>
+                <button class="viewpoint-btn" data-viewpoint="career">
+                    <span>💼</span>
+                    <span>Career Monoliths</span>
+                </button>
+                <button class="viewpoint-btn" data-viewpoint="bowling">
+                    <span>🎳</span>
+                    <span>Bowling Alley</span>
+                </button>
+            </div>
+            <div class="vr-instructions js-vr-instruction">
+                Gaze at objects or use phone gyroscope to look around in 360° 3D
+            </div>
+        </footer>
+    </div>
+
+    <!-- In-VR Project/Milestone Details Card (Gaze Target) -->
+    <div class="vr-details-card js-vr-details-card">
+        <div class="card-top">
+            <span class="card-category js-detail-category">FEATURED PROJECT</span>
+            <button class="card-close js-detail-close">✕</button>
+        </div>
+        <h3 class="card-title js-detail-title">Autonomous Clinical Trial Analyst</h3>
+        <p class="card-desc js-detail-desc">Enterprise multi-agent AI system synthesizing clinical trial intelligence.</p>
+        <div class="card-tags js-detail-tags">
+            <span>FastAPI</span>
+            <span>Gemini 2.5</span>
+            <span>Docker</span>
+        </div>
+    </div>
+
+    <!-- Motion & Gyroscope Permission Modal (iOS Safari / Mobile) -->
+    <div class="vr-start-modal js-vr-start-modal">
+        <div class="modal-goggles-icon">🥽</div>
+        <h2>Enter Immersive VR</h2>
+        <p>Experience the 3D cyber portfolio in full stereoscopic 360° virtual reality with real-time head tracking.</p>
+        
+        <ul class="features-list">
+            <li><span class="check">✓</span> Stereoscopic Dual-Eye Parallax (Left & Right eye)</li>
+            <li><span class="check">✓</span> 360° Gyroscope Head Tracking (Look in any direction)</li>
+            <li><span class="check">✓</span> Hands-Free Gaze Dwell Interaction Reticle</li>
+            <li><span class="check">✓</span> Compatible with Google Cardboard, VR Box & Quest</li>
+        </ul>
+
+        <button class="enter-btn js-btn-enter-vr">Enable Motion & Enter VR</button>
+        <button class="dismiss-btn js-btn-dismiss-modal">Continue without Gyro (Mouse/Touch Drag)</button>
+    </div>
+
+    <!-- VR Logic Script -->
+    <script type="module" src="./vr.js"></script>
+</body>
+</html>

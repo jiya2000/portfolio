@@ -42,7 +42,7 @@ html, body
     width 100%
     height 100%
     z-index 0
-    background radial-gradient(circle at 50% 40%, #30172c 0%, #110915 80%, #08040a 100%)
+    background radial-gradient(circle at 50% 40%, #2b1428 0%, #110915 80%, #08040a 100%)
     display flex
     flex-direction column
     align-items center
@@ -71,54 +71,59 @@ html, body
     display flex
     flex-direction column
     justify-content space-between
-    padding @css{ env(safe-area-inset-top, 16px) env(safe-area-inset-right, 16px) env(safe-area-inset-bottom, 16px) env(safe-area-inset-left, 16px) }
+    padding @css{ env(safe-area-inset-top, 12px) env(safe-area-inset-right, 12px) env(safe-area-inset-bottom, 12px) env(safe-area-inset-left, 12px) }
 
 /* Top Header Bar */
 .hud-top
     display flex
-    align-items flex-start
+    align-items center
     justify-content space-between
-    gap 12px
+    gap 10px
     pointer-events auto
 
 .character-card
     display flex
     align-items center
-    gap 12px
-    background rgba(23, 14, 25, 0.78)
+    gap 10px
+    background rgba(23, 14, 25, 0.85)
     backdrop-filter blur(14px)
     -webkit-backdrop-filter blur(14px)
     border 1px solid rgba(255, 255, 255, 0.18)
     border-radius 24px
-    padding 8px 16px 8px 10px
+    padding 6px 14px 6px 8px
     box-shadow 0 8px 32px rgba(0, 0, 0, 0.45)
+    cursor pointer
+    transition transform 0.2s ease
+
+    &:active
+        transform scale(0.96)
 
     .avatar-icon
-        width 42px
-        height 42px
+        width 38px
+        height 38px
         border-radius 50%
         background radial-gradient(circle, #e11d48, #881337)
         border 2px solid rgba(255, 255, 255, 0.6)
         display flex
         align-items center
         justify-content center
-        font-size 20px
+        font-size 18px
         box-shadow 0 0 16px rgba(225, 29, 72, 0.6)
 
     .character-info
         display flex
         flex-direction column
-        gap 2px
+        gap 1px
 
         .name-row
             display flex
             align-items center
-            gap 8px
+            gap 6px
 
             .char-name
                 font-family 'Pally-Bold', sans-serif
                 font-weight 700
-                font-size 15px
+                font-size 14px
                 color #ffffff
                 letter-spacing 0.2px
 
@@ -126,26 +131,26 @@ html, body
                 background rgba(225, 29, 72, 0.3)
                 border 1px solid rgba(225, 29, 72, 0.8)
                 color #fecdd3
-                font-size 10px
+                font-size 9.5px
                 font-weight 800
-                padding 1px 6px
+                padding 1px 5px
                 border-radius 10px
                 letter-spacing 0.5px
 
         .char-subtitle
-            font-size 11.5px
+            font-size 11px
             color rgba(255, 255, 255, 0.72)
 
 .top-buttons
     display flex
     align-items center
-    gap 8px
+    gap 6px
 
 .icon-btn
-    width 42px
-    height 42px
+    width 38px
+    height 38px
     border-radius 50%
-    background rgba(23, 14, 25, 0.8)
+    background rgba(23, 14, 25, 0.82)
     backdrop-filter blur(12px)
     -webkit-backdrop-filter blur(12px)
     border 1px solid rgba(255, 255, 255, 0.2)
@@ -156,38 +161,88 @@ html, body
     cursor pointer
     box-shadow 0 6px 20px rgba(0, 0, 0, 0.35)
     transition all 0.2s ease
+    font-size 16px
 
     &:active
-        transform scale(0.92)
+        transform scale(0.9)
         background rgba(225, 29, 72, 0.4)
 
     svg
-        width 20px
-        height 20px
+        width 18px
+        height 18px
+
+/* Mode Navigation Dock (Exact Website Parity) */
+.hud-mode-dock
+    align-self center
+    margin-top 6px
+    background rgba(19, 11, 22, 0.90)
+    backdrop-filter blur(16px)
+    -webkit-backdrop-filter blur(16px)
+    border 1px solid rgba(255, 255, 255, 0.18)
+    border-radius 24px
+    padding 3px 5px
+    display flex
+    align-items center
+    gap 3px
+    max-width 100%
+    overflow-x auto
+    scrollbar-width none
+    pointer-events auto
+    box-shadow 0 8px 24px rgba(0, 0, 0, 0.5)
+
+    &::-webkit-scrollbar
+        display none
+
+.mode-tab
+    background transparent
+    border 1px solid transparent
+    border-radius 16px
+    padding 5px 9px
+    color rgba(255, 255, 255, 0.78)
+    font-size 10.5px
+    font-weight 700
+    display flex
+    align-items center
+    gap 4px
+    cursor pointer
+    white-space nowrap
+    transition all 0.2s cubic-bezier(0.16, 1, 0.3, 1)
+
+    .tab-icon
+        font-size 12px
+
+    &:active
+        transform scale(0.95)
+
+    &.is-active
+        background radial-gradient(circle, #e11d48, #9f1239)
+        border-color rgba(255, 255, 255, 0.4)
+        color #ffffff
+        box-shadow 0 0 14px rgba(225, 29, 72, 0.5)
 
 /* AR Status Pill */
 .hud-status-pill
     align-self center
-    margin-top 8px
-    background rgba(0, 0, 0, 0.55)
+    margin-top 6px
+    background rgba(0, 0, 0, 0.6)
     backdrop-filter blur(10px)
     -webkit-backdrop-filter blur(10px)
-    border 1px solid rgba(255, 255, 255, 0.15)
+    border 1px solid rgba(255, 255, 255, 0.14)
     border-radius 20px
-    padding 5px 14px
+    padding 4px 12px
     display flex
     align-items center
-    gap 8px
-    font-size 12px
-    color rgba(255, 255, 255, 0.88)
+    gap 6px
+    font-size 11px
+    color rgba(255, 255, 255, 0.9)
     pointer-events auto
 
     .live-dot
-        width 8px
-        height 8px
+        width 7px
+        height 7px
         border-radius 50%
         background #22c55e
-        box-shadow 0 0 10px #22c55e
+        box-shadow 0 0 8px #22c55e
         animation pulse 1.8s infinite
 
 @keyframes pulse
@@ -200,6 +255,270 @@ html, body
     100%
         opacity 0.6
         transform scale(0.9)
+
+/* Contextual Controls Drawer */
+.context-drawer
+    align-self center
+    width 100%
+    max-width 480px
+    pointer-events auto
+    margin-top 4px
+
+.drawer-panel
+    display none
+    background rgba(22, 13, 25, 0.88)
+    backdrop-filter blur(16px)
+    -webkit-backdrop-filter blur(16px)
+    border 1px solid rgba(255, 255, 255, 0.16)
+    border-radius 20px
+    padding 10px 14px
+    box-shadow 0 8px 30px rgba(0, 0, 0, 0.5)
+    animation fadeIn 0.25s ease
+
+    &.is-active
+        display flex
+        flex-direction column
+        gap 8px
+
+@keyframes fadeIn
+    from
+        opacity 0
+        transform translateY(-6px)
+    to
+        opacity 1
+        transform translateY(0)
+
+.panel-header
+    display flex
+    align-items center
+    justify-content space-between
+    font-size 11px
+    color rgba(255, 255, 255, 0.65)
+    font-weight 700
+    letter-spacing 0.4px
+
+.panel-tag
+    color #ff6b81
+    text-transform uppercase
+
+.panel-controls
+    display flex
+    align-items center
+    gap 8px
+
+.carousel-btn
+    flex 1
+    background rgba(255, 255, 255, 0.08)
+    border 1px solid rgba(255, 255, 255, 0.16)
+    border-radius 14px
+    padding 7px 10px
+    color #ffffff
+    font-size 11.5px
+    font-weight 700
+    cursor pointer
+    text-align center
+    transition all 0.2s ease
+
+    &:active
+        transform scale(0.95)
+
+    &.is-highlight
+        background radial-gradient(circle, #e11d48, #9f1239)
+        border-color rgba(255, 255, 255, 0.35)
+        box-shadow 0 4px 12px rgba(225, 29, 72, 0.4)
+
+/* Career Chips */
+.career-chips
+    display flex
+    align-items center
+    gap 6px
+    overflow-x auto
+    scrollbar-width none
+    padding 2px 0
+
+    &::-webkit-scrollbar
+        display none
+
+.career-chip
+    flex-shrink 0
+    background rgba(255, 255, 255, 0.08)
+    border 1px solid rgba(255, 255, 255, 0.15)
+    color #ffffff
+    font-size 11px
+    font-weight 600
+    padding 6px 12px
+    border-radius 16px
+    cursor pointer
+    white-space nowrap
+    transition all 0.2s ease
+
+    &:active, &.is-active
+        background radial-gradient(circle, #38bdf8, #0284c7)
+        border-color rgba(255, 255, 255, 0.5)
+        transform scale(1.04)
+
+/* Strike Banner */
+.strike-banner
+    position absolute
+    top 28%
+    left 50%
+    transform translate(-50%, -50%) scale(0.8)
+    background radial-gradient(circle, rgba(225, 29, 72, 0.95), rgba(159, 18, 57, 0.95))
+    border 2px solid #ffffff
+    border-radius 24px
+    padding 16px 32px
+    text-align center
+    z-index 15
+    box-shadow 0 0 40px rgba(225, 29, 72, 0.9), 0 10px 40px rgba(0, 0, 0, 0.8)
+    opacity 0
+    pointer-events none
+    transition all 0.3s cubic-bezier(0.16, 1, 0.3, 1)
+
+    &.is-visible
+        opacity 1
+        transform translate(-50%, -50%) scale(1.1)
+
+    .strike-title
+        font-family 'Pally-Bold', sans-serif
+        font-size 26px
+        font-weight 800
+        color #ffffff
+        letter-spacing 1px
+        text-shadow 0 2px 8px rgba(0, 0, 0, 0.5)
+
+    .strike-sub
+        font-size 12px
+        color #fecdd3
+        font-weight 700
+        margin-top 2px
+
+/* Virtual Mobile Drive Controls */
+.virtual-controls
+    display flex
+    align-items flex-end
+    justify-content space-between
+    width 100%
+    max-width 560px
+    margin 0 auto
+    pointer-events auto
+    padding 0 8px
+    opacity 1
+    transition opacity 0.2s ease
+
+    &.is-hidden
+        opacity 0
+        pointer-events none
+        display none
+
+/* Joystick Zone */
+.joystick-zone
+    display flex
+    flex-direction column
+    align-items center
+    gap 6px
+
+.joystick-base
+    width 110px
+    height 110px
+    border-radius 50%
+    background radial-gradient(circle, rgba(35, 20, 38, 0.82) 0%, rgba(18, 10, 20, 0.85) 100%)
+    backdrop-filter blur(14px)
+    -webkit-backdrop-filter blur(14px)
+    border 2px solid rgba(255, 255, 255, 0.2)
+    position relative
+    box-shadow 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 16px rgba(225, 29, 72, 0.2)
+    touch-action none
+
+.joystick-stick
+    position absolute
+    top 50%
+    left 50%
+    transform translate(-50%, -50%)
+    width 48px
+    height 48px
+    border-radius 50%
+    background radial-gradient(circle at 35% 35%, #e11d48 0%, #9f1239 100%)
+    border 2px solid rgba(255, 255, 255, 0.7)
+    box-shadow 0 0 16px rgba(225, 29, 72, 0.8)
+    pointer-events none
+
+.joystick-hint
+    font-size 9.5px
+    font-weight 700
+    letter-spacing 0.5px
+    color rgba(255, 255, 255, 0.55)
+
+/* Right Drive Pedals */
+.drive-pedals
+    display flex
+    flex-direction column
+    gap 8px
+
+.pedal-row
+    display flex
+    align-items center
+    gap 8px
+
+.pedal-btn
+    border-radius 16px
+    background rgba(28, 16, 32, 0.85)
+    backdrop-filter blur(12px)
+    -webkit-backdrop-filter blur(12px)
+    border 1px solid rgba(255, 255, 255, 0.22)
+    color #ffffff
+    font-family 'Pally-Bold', sans-serif
+    font-size 11.5px
+    font-weight 700
+    cursor pointer
+    display flex
+    flex-direction column
+    align-items center
+    justify-content center
+    box-shadow 0 6px 20px rgba(0, 0, 0, 0.4)
+    transition all 0.15s ease
+
+    &:active
+        transform scale(0.92)
+
+.btn-honk, .btn-boost
+    width 52px
+    height 44px
+    font-size 14px
+
+    .pedal-lbl
+        font-size 8.5px
+        color rgba(255, 255, 255, 0.7)
+        margin-top 1px
+
+.btn-boost:active
+    background radial-gradient(circle, #f59e0b, #d97706)
+    box-shadow 0 0 16px #f59e0b
+
+.btn-honk:active
+    background radial-gradient(circle, #38bdf8, #0284c7)
+    box-shadow 0 0 16px #38bdf8
+
+.btn-gas, .btn-brake
+    width 64px
+    height 54px
+    font-size 11px
+    letter-spacing 0.3px
+
+.btn-gas
+    background radial-gradient(circle at 35% 35%, rgba(34, 197, 94, 0.75), rgba(21, 128, 61, 0.85))
+    border-color rgba(74, 222, 128, 0.6)
+
+    &:active
+        background radial-gradient(circle at 35% 35%, #22c55e, #15803d)
+        box-shadow 0 0 20px rgba(34, 197, 94, 0.8)
+
+.btn-brake
+    background radial-gradient(circle at 35% 35%, rgba(225, 29, 72, 0.75), rgba(159, 18, 57, 0.85))
+    border-color rgba(251, 113, 133, 0.6)
+
+    &:active
+        background radial-gradient(circle at 35% 35%, #e11d48, #9f1239)
+        box-shadow 0 0 20px rgba(225, 29, 72, 0.8)
 
 /* Speech bubble over Aditi */
 .speech-bubble
@@ -236,52 +555,18 @@ html, body
     display flex
     flex-direction column
     align-items center
-    gap 12px
+    gap 8px
     pointer-events auto
     width 100%
     max-width 480px
     margin 0 auto
 
-/* Floating Project Chips Bar */
-.project-chips
-    display flex
-    align-items center
-    gap 8px
-    overflow-x auto
-    max-width 100%
-    padding 4px 6px
-    scrollbar-width none
-    &::-webkit-scrollbar
-        display none
-
-.chip-btn
-    flex-shrink 0
-    background rgba(23, 14, 25, 0.8)
-    backdrop-filter blur(10px)
-    -webkit-backdrop-filter blur(10px)
-    border 1px solid rgba(255, 255, 255, 0.16)
-    color #ffffff
-    font-size 11.5px
-    font-weight 600
-    padding 7px 14px
-    border-radius 18px
-    cursor pointer
-    display flex
-    align-items center
-    gap 6px
-    transition all 0.2s ease
-
-    &:active, &.is-active
-        background radial-gradient(circle, #e11d48, #9f1239)
-        border-color rgba(255, 255, 255, 0.5)
-        transform scale(1.04)
-
-/* Main Pokemon GO Action Wheel */
+/* Main Action Wheel */
 .action-wheel
     display flex
     align-items center
     justify-content center
-    gap 16px
+    gap 14px
     width 100%
 
 .hud-action-btn
@@ -300,23 +585,17 @@ html, body
         transform scale(0.9)
 
 .btn-secondary
-    width 52px
-    height 52px
+    width 48px
+    height 48px
     background rgba(32, 18, 36, 0.85)
     backdrop-filter blur(12px)
     -webkit-backdrop-filter blur(12px)
+    font-size 18px
 
-    svg
-        width 22px
-        height 22px
-
-    .btn-label
-        display none
-
-/* Center Shutter Button (Pokemon GO Pokéball / Camera Shutter style) */
+/* Shutter Button (Pokeball style) */
 .btn-shutter
-    width 72px
-    height 72px
+    width 64px
+    height 64px
     background radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%)
     border 4px solid #e11d48
     box-shadow 0 0 24px rgba(225, 29, 72, 0.55), 0 10px 30px rgba(0, 0, 0, 0.6)
@@ -325,8 +604,8 @@ html, body
     &:before
         content ''
         position absolute
-        width 24px
-        height 24px
+        width 22px
+        height 22px
         border-radius 50%
         background #e11d48
         box-shadow 0 0 12px rgba(225, 29, 72, 0.8)
@@ -346,9 +625,9 @@ html, body
     border 1px solid rgba(225, 29, 72, 0.6)
     color #ffffff
     font-family 'Pally-Bold', sans-serif
-    font-size 12.5px
+    font-size 12px
     letter-spacing 0.3px
-    padding 9px 18px
+    padding 8px 16px
     border-radius 24px
     text-decoration none
     box-shadow 0 4px 18px rgba(225, 29, 72, 0.3)
@@ -363,25 +642,26 @@ html, body
         width 16px
         height 16px
 
-/* Gestures Hint */
 .gesture-hint
-    font-size 11px
+    font-size 10.5px
     color rgba(255, 255, 255, 0.6)
     letter-spacing 0.2px
     text-align center
 
-/* Project Hologram Modal */
+/* Hologram / Project / Career / About Modals */
 .holo-modal
     position absolute
     top 50%
     left 50%
     transform translate(-50%, -50%) scale(0.9)
-    width @css{ min(380px, calc(100vw - 32px)) }
+    width @css{ min(420px, calc(100vw - 28px)) }
+    max-height 85vh
+    overflow-y auto
     background radial-gradient(ellipse at top left, #291629 0%, #150d18 100%)
     border 1px solid rgba(225, 29, 72, 0.5)
-    border-radius 22px
+    border-radius 24px
     padding 22px
-    box-shadow 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(225, 29, 72, 0.3)
+    box-shadow 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(225, 29, 72, 0.35)
     z-index 10
     opacity 0
     pointer-events none
@@ -394,8 +674,8 @@ html, body
 
     .modal-close
         position absolute
-        top 12px
-        right 12px
+        top 14px
+        right 14px
         width 32px
         height 32px
         border-radius 50%
@@ -406,42 +686,78 @@ html, body
         align-items center
         justify-content center
         cursor pointer
+        font-size 13px
 
-    .modal-tag
+    .modal-category
         display inline-block
         background rgba(225, 29, 72, 0.25)
         border 1px solid rgba(225, 29, 72, 0.6)
         color #ff6b81
-        font-size 10.5px
+        font-size 10px
         font-weight 800
         padding 2px 8px
         border-radius 10px
         text-transform uppercase
-        margin-bottom 8px
+        margin-bottom 6px
 
     .modal-title
         font-family 'Pally-Bold', sans-serif
         font-size 20px
         color #ffffff
-        margin-bottom 6px
+        margin-bottom 4px
+
+    .modal-tagline
+        font-size 12.5px
+        color rgba(255, 255, 255, 0.8)
+        font-weight 600
+        margin-bottom 14px
+
+    .modal-section
+        margin-bottom 12px
+
+        .section-title
+            font-size 11px
+            font-weight 800
+            color rgba(255, 255, 255, 0.55)
+            text-transform uppercase
+            letter-spacing 0.5px
+            margin-bottom 4px
 
     .modal-desc
-        font-size 12.5px
-        line-height 1.45
-        color rgba(255, 255, 255, 0.75)
-        margin-bottom 14px
+        font-size 12px
+        line-height 1.48
+        color rgba(255, 255, 255, 0.8)
+
+    .modal-features-list
+        list-style none
+        display flex
+        flex-direction column
+        gap 6px
+
+        li
+            font-size 11.5px
+            line-height 1.4
+            color rgba(255, 255, 255, 0.85)
+            padding-left 14px
+            position relative
+
+            &:before
+                content '•'
+                position absolute
+                left 0
+                color #e11d48
+                font-weight 900
 
     .modal-tags
         display flex
         flex-wrap wrap
         gap 6px
-        margin-bottom 16px
 
         span
             background rgba(255, 255, 255, 0.08)
-            border 1px solid rgba(255, 255, 255, 0.12)
+            border 1px solid rgba(255, 255, 255, 0.14)
             color rgba(255, 255, 255, 0.9)
-            font-size 11px
+            font-size 10.5px
             padding 3px 8px
             border-radius 8px
 
@@ -452,10 +768,55 @@ html, body
         color #ffffff
         font-family 'Pally-Bold', sans-serif
         font-size 13px
-        padding 10px
+        padding 11px
         border-radius 16px
         text-decoration none
         box-shadow 0 6px 20px rgba(225, 29, 72, 0.4)
+        margin-top 14px
+
+/* Contact Links List */
+.contact-links-list
+    display flex
+    flex-direction column
+    gap 8px
+    margin-top 12px
+
+.contact-card
+    display flex
+    align-items center
+    gap 12px
+    background rgba(255, 255, 255, 0.06)
+    border 1px solid rgba(255, 255, 255, 0.12)
+    border-radius 16px
+    padding 12px 14px
+    text-decoration none
+    color #ffffff
+    transition all 0.2s ease
+
+    &:active
+        background rgba(225, 29, 72, 0.3)
+        border-color rgba(225, 29, 72, 0.6)
+        transform scale(0.98)
+
+    .card-icon
+        font-size 22px
+
+    .card-text
+        flex 1
+        display flex
+        flex-direction column
+
+        .card-title
+            font-weight 700
+            font-size 13px
+
+        .card-detail
+            font-size 11px
+            color rgba(255, 255, 255, 0.65)
+
+    .card-arrow
+        font-size 16px
+        color rgba(255, 255, 255, 0.5)
 
 /* Camera Permission Banner */
 .permission-banner
@@ -506,6 +867,21 @@ html, body
         border-radius 20px
         cursor pointer
         box-shadow 0 6px 24px rgba(225, 29, 72, 0.5)
+
+    .skip-btn
+        width 100%
+        background rgba(255, 255, 255, 0.08)
+        border 1px solid rgba(255, 255, 255, 0.2)
+        color rgba(255, 255, 255, 0.85)
+        font-family 'Pally-Bold', sans-serif
+        font-size 12.5px
+        padding 10px
+        border-radius 18px
+        cursor pointer
+        transition all 0.2s ease
+
+        &:active
+            background rgba(255, 255, 255, 0.16)
 
 /* Shutter Flash Animation */
 .shutter-flash
