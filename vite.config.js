@@ -6,6 +6,11 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 function getLocalNetworkIp() {
     const interfaces = os.networkInterfaces()
     for (const name of Object.keys(interfaces)) {
@@ -37,7 +42,15 @@ export default {
     {
         outDir: '../dist', // Output in the dist/ folder
         emptyOutDir: true, // Empty the folder first
-        sourcemap: false // Add sourcemap
+        sourcemap: false, // Add sourcemap
+        rollupOptions:
+        {
+            input:
+            {
+                main: path.resolve(__dirname, 'sources/index.html'),
+                ar: path.resolve(__dirname, 'sources/ar.html')
+            }
+        }
     },
     plugins:
     [

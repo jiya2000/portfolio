@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Aditi Sharma • Real-World AR Experience</title>
+    <meta name="description" content="Pokemon GO style Augmented Reality experience for Aditi Sharma's 3D Portfolio. Place Aditi in your real-world room, explore projects, and snap photos.">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style/arExperience.styl">
+</head>
+<body>
+    <div id="ar-app">
+        <!-- Live Real-World Video Feed -->
+        <video id="ar-camera-feed" class="camera-feed" autoplay playsinline muted webkit-playsinline></video>
+        <div class="camera-fallback"></div>
+
+        <!-- Real-time Transparent Three.js AR Canvas -->
+        <canvas id="ar-canvas" class="ar-canvas"></canvas>
+
+        <!-- Dynamic Speech Bubble -->
+        <div id="ar-speech" class="speech-bubble">Hi, I'm Aditi! 👋</div>
+
+        <!-- Camera Permission Banner (if needed) -->
+        <div id="ar-permission-banner" class="permission-banner">
+            <div class="banner-icon">📱</div>
+            <h2>Pokemon GO Camera AR</h2>
+            <p>See Aditi standing right on your desk, floor, or room using your phone's real camera feed!</p>
+            <button id="btn-start-camera" class="enable-btn">Start Real-World Camera</button>
+        </div>
+
+        <!-- Pokemon GO Style HUD -->
+        <div class="ar-hud">
+            <!-- Top Bar -->
+            <div class="hud-top">
+                <div class="character-card">
+                    <div class="avatar-icon">👩‍💻</div>
+                    <div class="character-info">
+                        <div class="name-row">
+                            <span class="char-name">Aditi Sharma</span>
+                            <span class="cp-badge">CP 2500</span>
+                        </div>
+                        <span class="char-subtitle">Full-Stack & Security Engineer</span>
+                    </div>
+                </div>
+
+                <div class="top-buttons">
+                    <button id="btn-flip-cam" class="icon-btn" title="Flip Camera" aria-label="Flip Camera">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 1.956.702 3.748 1.874 5.132L4 18"/>
+                            <path d="M4 14c0 4.418 3.582 8 8 8s8-3.582 8-8c0-1.956-.702-3.748-1.874-5.132L20 6"/>
+                            <path d="M4 10h4V6"/>
+                            <path d="M20 14h-4v4"/>
+                        </svg>
+                    </button>
+                    <a href="index.html" class="icon-btn" title="Back to 3D World" aria-label="Back to 3D World">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18"/>
+                            <path d="m6 6 12 12"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- AR Status Pill -->
+            <div class="hud-status-pill">
+                <span class="live-dot"></span>
+                <span id="ar-status-text">AR: REAL-WORLD CAMERA</span>
+            </div>
+
+            <!-- Bottom Action Wheel & Projects -->
+            <div class="hud-bottom">
+                <!-- Floating Project Badges -->
+                <div class="project-chips">
+                    <button class="chip-btn" data-project="0">🛡️ MalGuard</button>
+                    <button class="chip-btn" data-project="1">⚡ Folio 2025</button>
+                    <button class="chip-btn" data-project="2">🌐 NetSec Labs</button>
+                </div>
+
+                <!-- Main Action Wheel -->
+                <div class="action-wheel">
+                    <!-- Pose / Dance Button -->
+                    <button id="btn-pose" class="hud-action-btn btn-secondary" title="Interact" aria-label="Interact">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Snapshot / Capture Button (Pokéball Style) -->
+                    <button id="btn-snapshot" class="hud-action-btn btn-shutter" title="Take AR Photo" aria-label="Take AR Photo"></button>
+
+                    <!-- Toss Item Button -->
+                    <button id="btn-toss" class="hud-action-btn btn-secondary" title="Toss Cyber Disc" aria-label="Toss Cyber Disc">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Apple Quick Look Native AR (iPhone LiDAR / Plane detection) -->
+                <a id="btn-apple-quicklook" rel="ar" href="ar/aditi-avatar.usdz" class="apple-ar-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                        <path d="m3.3 7 8.7 5 8.7-5"/>
+                        <path d="M12 22V12"/>
+                    </svg>
+                    <span>Launch Native Apple AR (iOS QuickLook)</span>
+                </a>
+
+                <div class="gesture-hint">Drag to move • Pinch to resize • Rotate with 2 fingers</div>
+            </div>
+        </div>
+
+        <!-- Hologram Project Card Modal -->
+        <div id="holo-modal" class="holo-modal">
+            <button id="btn-modal-close" class="modal-close">✕</button>
+            <div id="modal-tag" class="modal-tag">FEATURED PROJECT</div>
+            <h3 id="modal-title" class="modal-title">MalGuard</h3>
+            <p id="modal-desc" class="modal-desc">ML-powered portable executable malware classifier detecting malicious payloads in real-time.</p>
+            <div id="modal-tags" class="modal-tags"></div>
+            <a id="modal-link" class="modal-link" href="#" target="_blank" rel="noopener">View Repository →</a>
+        </div>
+
+        <!-- Shutter Flash -->
+        <div id="shutter-flash" class="shutter-flash"></div>
+    </div>
+
+    <script type="module" src="ar.js"></script>
+</body>
+</html>

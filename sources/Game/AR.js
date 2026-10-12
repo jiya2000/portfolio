@@ -32,7 +32,8 @@ export class AR
             origin = `${window.location.protocol}//${devIp}${port}`
         }
 
-        return `${origin}${window.location.pathname}#ar`
+        const basePath = window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '')
+        return `${origin}${basePath}/ar.html`
     }
 
     initQR()
