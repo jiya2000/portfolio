@@ -27,7 +27,7 @@ export class AR
         {
             const devIp = (typeof __DEV_NETWORK_IP__ !== 'undefined' && __DEV_NETWORK_IP__ && __DEV_NETWORK_IP__ !== 'localhost') 
                 ? __DEV_NETWORK_IP__ 
-                : '172.16.143.202'
+                : '172.20.10.3'
             const port = window.location.port ? `:${window.location.port}` : ''
             origin = `${window.location.protocol}//${devIp}${port}`
         }
