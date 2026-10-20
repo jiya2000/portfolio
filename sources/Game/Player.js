@@ -571,7 +571,32 @@ export class Player
                 this.steering *= -1
             }
         }
+
+        /**
+         * AR Hand Controller (Vision-Based Spatial Teleoperation)
+         */
+        if(this.game.arHandController && this.game.arHandController.active)
+        {
+            if(this.game.arHandController.braking)
+            {
+                this.accelerating = 0
+                this.braking = 1
+                this.steering = 0
+            }
+            else
+            {
+                if(this.game.arHandController.accelerating !== 0)
+                    this.accelerating = this.game.arHandController.accelerating
+
+                if(this.game.arHandController.steering !== 0)
+                    this.steering = this.game.arHandController.steering
+
+                if(this.game.arHandController.boosting)
+                    this.boosting = 1
+            }
+        }
     }
+
 
     updatePostPhysics()
     {

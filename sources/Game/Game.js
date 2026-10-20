@@ -51,6 +51,8 @@ import { Map } from './Map.js'
 import { QuickNav } from './QuickNav.js'
 import { AR } from './AR.js'
 import { ARGestureRating } from './ARGestureRating.js'
+import { ARHandController } from './ARHandController.js'
+
 
 export class Game
 {
@@ -202,6 +204,8 @@ export class Game
         this.ar = new AR()
         this.vr = this.ar
         this.arGestureRating = new ARGestureRating()
+        this.arHandController = new ARHandController()
+
         this.title = new Title()
         // this.monitoring = new Monitoring()
         this.world.step(1)
