@@ -577,6 +577,8 @@ export class Player
          */
         if(this.game.arHandController && this.game.arHandController.active)
         {
+            this.game.view.focusPoint.isTracking = true
+
             if(this.game.arHandController.braking)
             {
                 this.accelerating = 0
@@ -606,6 +608,24 @@ export class Player
         
         // View > Focus point
         this.game.view.focusPoint.trackedPosition.copy(this.position)
+
+        // Keep camera centered on player during AR Hand Driving
+        if(this.game.arHandController && this.game.arHandController.active)
+        {
+            this.game.view.focusPoint.isTracking = true
+            const dist = Math.hypot(
+                this.game.view.focusPoint.position.x - this.position.x,
+                this.game.view.focusPoint.position.z - this.position.z
+            )
+            if(dist > 10)
+            {
+                this.game.view.focusPoint.position.x = this.position.x
+                this.game.view.focusPoint.position.z = this.position.z
+                this.game.view.focusPoint.smoothedPosition.x = this.position.x
+                this.game.view.focusPoint.smoothedPosition.z = this.position.z
+            }
+        }
+
 
         // View > Speed lines
         if(this.boosting && this.accelerating && this.game.physicalVehicle.speed > 15)

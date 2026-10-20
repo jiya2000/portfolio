@@ -591,7 +591,12 @@ export class View
         {
             if(this.mode === View.MODE_DEFAULT)
             {
+                // When AR hand controller is active, keep camera firmly locked on the girl
+                if(this.game.arHandController && this.game.arHandController.active)
+                    return
+
                 // Focus point
+
                 if(action.active)
                 {
                     // Map
@@ -633,6 +638,11 @@ export class View
         }
         
         // Focus point
+        if(this.game.arHandController && this.game.arHandController.active)
+        {
+            this.focusPoint.isTracking = true
+        }
+
         if(this.focusPoint.isTracking)
         {
             this.focusPoint.position.x = this.focusPoint.trackedPosition.x

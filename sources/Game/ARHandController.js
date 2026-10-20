@@ -63,8 +63,13 @@ export class ARHandController
                     <span class="hud-live-beacon"></span>
                     AR TELEOP • HAND DRIVE
                 </div>
-                <button class="hud-close-btn js-ar-hand-close" title="Stop AR Hand Drive">✕</button>
+                <div class="hud-top-actions">
+                    <button class="hud-action-btn js-ar-locate" title="Center camera on girl">🎯 Locate</button>
+                    <button class="hud-action-btn js-ar-respawn" title="Respawn girl to plaza if stuck">🔄 Respawn</button>
+                    <button class="hud-close-btn js-ar-hand-close" title="Stop AR Hand Drive">✕</button>
+                </div>
             </div>
+
 
             <div class="hud-viewport">
                 <video class="js-hand-webcam hand-webcam" playsinline muted autoplay></video>
@@ -108,6 +113,28 @@ export class ARHandController
             else this.start();
         });
 
+        // Locate button
+        const locateBtn = this.hud.querySelector('.js-ar-locate');
+        if(locateBtn)
+        {
+            locateBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.recenterCamera();
+                this.playTone(659.25, 0.1);
+            });
+        }
+
+        // Respawn button
+        const respawnBtn = this.hud.querySelector('.js-ar-respawn');
+        if(respawnBtn)
+        {
+            respawnBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.respawnPlayer();
+                this.playTone(440, 0.15);
+            });
+        }
+
         // Close button
         const closeBtn = this.hud.querySelector('.js-ar-hand-close');
         if(closeBtn)
@@ -118,12 +145,42 @@ export class ARHandController
         }
     }
 
+    recenterCamera()
+    {
+        const game = window.game;
+        if(game && game.player && game.view && game.view.focusPoint)
+        {
+            game.view.focusPoint.isTracking = true;
+            game.view.focusPoint.position.x = game.player.position.x;
+            game.view.focusPoint.position.z = game.player.position.z;
+            game.view.focusPoint.smoothedPosition.x = game.player.position.x;
+            game.view.focusPoint.smoothedPosition.z = game.player.position.z;
+        }
+    }
+
+    respawnPlayer()
+    {
+        const game = window.game;
+        if(game && game.player)
+        {
+            game.player.respawn(null, () => {
+                this.recenterCamera();
+            });
+            this.recenterCamera();
+        }
+    }
+
+
     async start()
     {
         if(this.active) return;
         this.active = true;
         this.triggerBtn.classList.add('is-active');
         this.hud.classList.remove('is-hidden');
+
+        // Immediately lock and recenter camera on player
+        this.recenterCamera();
+
 
         try
         {
