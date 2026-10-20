@@ -50,6 +50,7 @@ import gsap from 'gsap'
 import { Map } from './Map.js'
 import { QuickNav } from './QuickNav.js'
 import { AR } from './AR.js'
+import { ARGestureRating } from './ARGestureRating.js'
 
 export class Game
 {
@@ -200,6 +201,7 @@ export class Game
         this.quickNav = new QuickNav()
         this.ar = new AR()
         this.vr = this.ar
+        this.arGestureRating = new ARGestureRating()
         this.title = new Title()
         // this.monitoring = new Monitoring()
         this.world.step(1)

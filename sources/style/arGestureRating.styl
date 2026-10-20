@@ -1,0 +1,523 @@
+// -------------------------------------------------------------
+// ✌️ AR GESTURE RATING STYLES
+// -------------------------------------------------------------
+
+.ar-gesture-trigger-pill
+    position fixed
+    bottom 24px
+    right 24px
+    z-index 999
+    display flex
+    align-items center
+    gap 10px
+    padding 10px 18px 10px 14px
+    background radial-gradient(circle at top left, rgba(236, 72, 153, 0.35), rgba(88, 28, 135, 0.8))
+    backdrop-filter blur(16px)
+    -webkit-backdrop-filter blur(16px)
+    border 1px solid rgba(244, 114, 182, 0.5)
+    border-radius 999px
+    color #ffffff
+    cursor pointer
+    box-shadow 0 8px 28px rgba(236, 72, 153, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)
+    transition all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    user-select none
+
+    &:hover
+        transform translateY(-3px) scale(1.04)
+        border-color rgba(255, 255, 255, 0.8)
+        box-shadow 0 12px 36px rgba(236, 72, 153, 0.6), 0 0 20px rgba(168, 85, 247, 0.5)
+
+    &:active
+        transform translateY(1px) scale(0.98)
+
+    .pill-pulse
+        position absolute
+        inset -3px
+        border-radius 999px
+        border 2px solid rgba(236, 72, 153, 0.6)
+        animation arPillPulse 2.4s infinite cubic-bezier(0.4, 0, 0.2, 1)
+        pointer-events none
+
+    .pill-icon
+        font-size 22px
+        line-height 1
+        filter drop-shadow(0 0 8px rgba(251, 191, 36, 0.8))
+
+    .pill-text-wrap
+        display flex
+        flex-direction column
+        align-items flex-start
+        gap 1px
+
+    .pill-tag
+        font-size 9px
+        font-weight 800
+        letter-spacing 1px
+        color #f472b6
+        text-transform uppercase
+
+    .pill-title
+        font-size 13px
+        font-weight 700
+        color #ffffff
+        letter-spacing 0.3px
+
+@keyframes arPillPulse
+    0%
+        transform scale(0.98)
+        opacity 0.8
+    50%
+        transform scale(1.08)
+        opacity 0
+    100%
+        transform scale(0.98)
+        opacity 0
+
+// -------------------------------------------------------------
+// AR MODAL & VIEWPORT
+// -------------------------------------------------------------
+
+.ar-gesture-modal
+    position fixed
+    inset 0
+    z-index 10000
+    display flex
+    align-items center
+    justify-content center
+    padding 20px
+    box-sizing border-box
+    transition opacity 0.3s ease, visibility 0.3s ease
+
+    &.is-hidden
+        opacity 0
+        visibility hidden
+        pointer-events none
+
+    .ar-gesture-backdrop
+        position absolute
+        inset 0
+        background rgba(11, 7, 16, 0.85)
+        backdrop-filter blur(14px)
+        -webkit-backdrop-filter blur(14px)
+
+    .ar-gesture-dialog
+        position relative
+        z-index 10
+        width @css{ min(740px, 100%) }
+        max-height 92vh
+        background radial-gradient(ellipse at top, #241427 0%, #120d18 100%)
+        border 1px solid rgba(244, 114, 182, 0.35)
+        border-radius 24px
+        box-shadow 0 24px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(236, 72, 153, 0.25)
+        display flex
+        flex-direction column
+        overflow hidden
+
+    .ar-dialog-header
+        display flex
+        align-items center
+        justify-content space-between
+        padding 14px 20px
+        background rgba(255, 255, 255, 0.03)
+        border-bottom 1px solid rgba(255, 255, 255, 0.08)
+
+    .ar-dialog-badge
+        display inline-flex
+        align-items center
+        gap 8px
+        font-size 11px
+        font-weight 800
+        letter-spacing 1.2px
+        color #c084fc
+        text-transform uppercase
+
+    .ar-live-dot
+        width 8px
+        height 8px
+        background #ef4444
+        border-radius 50%
+        box-shadow 0 0 8px #ef4444
+        animation arBlink 1.2s infinite
+
+    .ar-dialog-close
+        width 32px
+        height 32px
+        border-radius 50%
+        background rgba(255, 255, 255, 0.08)
+        border 1px solid rgba(255, 255, 255, 0.2)
+        color #ffffff
+        font-size 14px
+        cursor pointer
+        display flex
+        align-items center
+        justify-content center
+        transition all 0.2s ease
+
+        &:hover
+            background rgba(239, 68, 68, 0.4)
+            border-color #ef4444
+            transform scale(1.1)
+
+    .ar-dialog-content
+        padding 20px
+        display flex
+        flex-direction column
+        gap 18px
+        overflow-y auto
+
+    // Camera Viewport
+    .ar-camera-stage
+        position relative
+        width 100%
+        height 380px
+        background #000000
+        border-radius 16px
+        overflow hidden
+        border 1px solid rgba(255, 255, 255, 0.12)
+        box-shadow inset 0 0 40px rgba(0, 0, 0, 0.8)
+
+        @media (max-width: 600px)
+            height 300px
+
+    .ar-webcam
+        width 100%
+        height 100%
+        object-fit cover
+        transform scaleX(-1) // Mirror front-facing camera for natural interaction
+
+    .ar-overlay-canvas
+        position absolute
+        inset 0
+        width 100%
+        height 100%
+        object-fit cover
+        pointer-events none
+
+    // Cyber Brackets
+    .ar-bracket
+        position absolute
+        width 20px
+        height 20px
+        border-color #ec4899
+        border-style solid
+        pointer-events none
+        box-shadow 0 0 10px #ec4899
+
+        &.tl
+            top 14px
+            left 14px
+            border-width 2px 0 0 2px
+        &.tr
+            top 14px
+            right 14px
+            border-width 2px 2px 0 0
+        &.bl
+            bottom 14px
+            left 14px
+            border-width 0 0 2px 2px
+        &.br
+            bottom 14px
+            right 14px
+            border-width 0 2px 2px 0
+
+    .ar-reticle-crosshair
+        position absolute
+        top 50%
+        left 50%
+        width 60px
+        height 60px
+        transform translate(-50%, -50%)
+        border 1px dashed rgba(244, 114, 182, 0.35)
+        border-radius 50%
+        pointer-events none
+
+    .ar-laser-scanner
+        position absolute
+        left 0
+        right 0
+        height 2px
+        background linear-gradient(90deg, transparent, #ec4899, #f59e0b, transparent)
+        box-shadow 0 0 12px #ec4899
+        animation arScanLaser 3s infinite linear
+        pointer-events none
+
+    // Instruction Banner
+    .ar-instruction
+        position absolute
+        top 16px
+        left 50%
+        transform translateX(-50%)
+        background rgba(23, 15, 29, 0.85)
+        backdrop-filter blur(10px)
+        border 1px solid rgba(244, 114, 182, 0.4)
+        border-radius 999px
+        padding 6px 16px 6px 12px
+        display flex
+        align-items center
+        gap 10px
+        box-shadow 0 4px 20px rgba(0, 0, 0, 0.6)
+        pointer-events none
+        transition opacity 0.3s ease
+
+        &.is-hidden
+            opacity 0
+
+        .instruction-symbol
+            font-size 18px
+
+        .instruction-title
+            font-size 13px
+            font-weight 700
+            color #ffffff
+
+        .instruction-subtitle
+            font-size 11px
+            color rgba(255, 255, 255, 0.7)
+            display none
+
+            @media (min-width: 650px)
+                display inline
+
+    // Charge Meter
+    .ar-meter-wrap
+        position absolute
+        bottom 14px
+        left 16px
+        right 16px
+        background rgba(15, 10, 20, 0.8)
+        backdrop-filter blur(8px)
+        border 1px solid rgba(255, 255, 255, 0.15)
+        border-radius 999px
+        height 28px
+        display flex
+        align-items center
+        justify-content center
+        overflow hidden
+        box-shadow 0 4px 16px rgba(0, 0, 0, 0.6)
+
+    .ar-meter-bar
+        position absolute
+        left 0
+        top 0
+        bottom 0
+        width 0%
+        background linear-gradient(90deg, #38bdf8, #818cf8)
+        transition width 0.08s ease, background 0.3s ease
+
+    .ar-meter-label
+        position relative
+        z-index 2
+        font-size 10px
+        font-weight 800
+        letter-spacing 1px
+        color #ffffff
+        text-shadow 0 1px 3px rgba(0, 0, 0, 0.9)
+        text-transform uppercase
+
+    // Feedback Rating Card
+    .ar-feedback-card
+        position relative
+        background radial-gradient(ellipse at top left, rgba(88, 28, 135, 0.35), rgba(23, 14, 28, 0.95))
+        border 1px solid rgba(244, 114, 182, 0.4)
+        border-radius 18px
+        padding 22px
+        display flex
+        flex-direction column
+        gap 14px
+        box-shadow 0 8px 32px rgba(0, 0, 0, 0.6)
+        animation arSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)
+
+        &.is-hidden
+            display none
+
+    .feedback-badge
+        align-self flex-start
+        font-size 10px
+        font-weight 800
+        letter-spacing 1.2px
+        color #fbbf24
+        background rgba(245, 158, 11, 0.15)
+        border 1px solid rgba(251, 191, 36, 0.4)
+        border-radius 999px
+        padding 4px 10px
+
+    .feedback-title
+        font-size 18px
+        font-weight 700
+        color #ffffff
+        margin 0
+
+    .feedback-sub
+        font-size 12px
+        color rgba(255, 255, 255, 0.7)
+        margin -6px 0 0 0
+
+    // Stars
+    .star-rating-row
+        display flex
+        gap 8px
+        justify-content center
+        padding 6px 0
+
+    .star-btn
+        background none
+        border none
+        font-size 32px
+        color rgba(255, 255, 255, 0.2)
+        cursor pointer
+        transition all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        padding 0 2px
+
+        &:hover
+            transform scale(1.25)
+            color #fbbf24
+
+        &.is-active
+            color #f59e0b
+            text-shadow 0 0 14px rgba(245, 158, 11, 0.8)
+
+    // Tag Chips
+    .feedback-tags-row
+        display flex
+        flex-wrap wrap
+        gap 8px
+
+    .chip-tag
+        font-size 11px
+        font-weight 600
+        padding 6px 12px
+        border-radius 999px
+        background rgba(255, 255, 255, 0.06)
+        border 1px solid rgba(255, 255, 255, 0.15)
+        color rgba(255, 255, 255, 0.8)
+        cursor pointer
+        transition all 0.2s ease
+        user-select none
+
+        &:hover
+            background rgba(255, 255, 255, 0.15)
+            border-color rgba(255, 255, 255, 0.3)
+
+        &.is-selected
+            background linear-gradient(135deg, rgba(236, 72, 153, 0.4), rgba(168, 85, 247, 0.5))
+            border-color #f472b6
+            color #ffffff
+            box-shadow 0 0 12px rgba(236, 72, 153, 0.4)
+
+    .feedback-textarea
+        width 100%
+        box-sizing border-box
+        background rgba(14, 10, 18, 0.7)
+        border 1px solid rgba(255, 255, 255, 0.15)
+        border-radius 12px
+        padding 10px 14px
+        font-size 13px
+        color #ffffff
+        font-family inherit
+        resize none
+        outline none
+        transition border-color 0.2s ease
+
+        &:focus
+            border-color #ec4899
+            box-shadow 0 0 12px rgba(236, 72, 153, 0.3)
+
+    .feedback-btn-row
+        display flex
+        gap 10px
+
+    .btn-submit-review
+        flex 1
+        padding 12px 20px
+        background linear-gradient(135deg, #ec4899, #9333ea)
+        border 1px solid rgba(255, 255, 255, 0.3)
+        border-radius 12px
+        color #ffffff
+        font-size 14px
+        font-weight 700
+        cursor pointer
+        box-shadow 0 4px 18px rgba(236, 72, 153, 0.4)
+        transition all 0.2s ease
+
+        &:hover
+            transform translateY(-2px)
+            box-shadow 0 8px 24px rgba(236, 72, 153, 0.6)
+
+        &:active
+            transform translateY(0)
+
+    .btn-scan-again
+        padding 12px 18px
+        background rgba(255, 255, 255, 0.08)
+        border 1px solid rgba(255, 255, 255, 0.2)
+        border-radius 12px
+        color #ffffff
+        font-size 13px
+        font-weight 600
+        cursor pointer
+        transition all 0.2s ease
+
+        &:hover
+            background rgba(255, 255, 255, 0.16)
+
+    // Success Confirmation
+    .feedback-success-view
+        text-align center
+        padding 18px 0
+        display flex
+        flex-direction column
+        align-items center
+        gap 8px
+        animation arSlideUp 0.4s ease
+
+        &.is-hidden
+            display none
+
+        .success-icon
+            font-size 38px
+            line-height 1
+
+        h4
+            font-size 18px
+            font-weight 700
+            color #ffffff
+            margin 0
+
+        p
+            font-size 13px
+            color rgba(255, 255, 255, 0.8)
+            margin 0
+
+        .btn-done
+            margin-top 10px
+            padding 10px 24px
+            background rgba(168, 85, 247, 0.3)
+            border 1px solid #c084fc
+            border-radius 999px
+            color #ffffff
+            font-size 13px
+            font-weight 700
+            cursor pointer
+
+            &:hover
+                background rgba(168, 85, 247, 0.6)
+
+@keyframes arBlink
+    0%, 100%
+        opacity 1
+    50%
+        opacity 0.2
+
+@keyframes arScanLaser
+    0%
+        top 0%
+    100%
+        top 100%
+
+@keyframes arSlideUp
+    from
+        opacity 0
+        transform translateY(15px)
+    to
+        opacity 1
+        transform translateY(0)
