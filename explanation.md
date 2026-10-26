@@ -9,44 +9,50 @@
 
 ## 🚀 1. The 30-Second "Elevator Pitch"
 
-> *"This project is an interactive 3D WebGL portfolio that combines **Virtual Reality (VR)** and **Augmented Reality (AR)** directly in the web browser with zero app installation.*  
-> *Inside the 3D virtual world, you control a customized avatar (Aditi) exploring real-world AI, Cloud, and Rocketry projects, career milestones, and interactive physics games.*  
-> *Through your webcam, it uses **real-time Computer Vision (MediaPipe)** to track your hand with 21 landmarks: you can **steer and drive the 3D character using hand gestures in physical space**, and **rate the portfolio by holding up 1 to 5 fingers**, which renders 3D rotating holographic stars and electric laser beams directly anchored onto your physical fingertips!"*
+🗣️ **What to say to your professor:**
+> *"Professor, this project is a complete Web-based Spatial Computing platform that brings together both **Virtual Reality (VR)** and **Augmented Reality (AR)** in a standard web browser with zero installation.*  
+> *In the **VR mode**, the user explores an interactive 3D world with real physics, controlling a custom 3D avatar (Aditi) through engineering projects, career milestones, and games.*  
+> *In the **AR mode**, the system uses the webcam and AI computer vision to track the user's hand in real time with 21 skeletal joints. This allows two features: first, you can **drive and steer the 3D character in virtual space using hand movements in front of your camera**; second, you can **rate the portfolio by holding up 1 to 5 fingers**, which renders 3D rotating holographic stars and electrical laser beams anchored directly onto your real fingertips!"*
 
 ---
 
 ## 🎯 2. What Problem Does This Solve? (The "Why")
 
-Traditional developer portfolios are flat, static, 2D web pages (just scrolling text and cards).  
-This project transforms a portfolio into a **living Spatial Computing showcase**:
-1. **Interactive Experience:** Instead of reading a PDF resume, visitors physically explore a 3D cyber plaza.
-2. **Academic AR/VR Demonstration:** It proves mastery over the complete **Milgram Reality-Virtuality Continuum**:
-   - **Pure Virtual Reality:** 100% synthetic 3D world with rigid-body physics.
-   - **Real-World Augmented Reality:** Superimposing digital 3D holograms onto live physical video.
-   - **Cross-Reality (XR) coupling:** Physical hand motions driving virtual world physics.
-3. **Frictionless Web Delivery:** It runs anywhere (Mac, PC, iPhone, Android, VR headsets) via standard web technologies (WebGL/WebGPU, WebAssembly, HTML5) without requiring Unity, Unreal Engine, or app-store downloads.
+Traditional developer portfolios are just flat, 2D scrolling pages with text and links.  
+This project transforms a portfolio into an **interactive Spatial Computing application**:
+
+1. **Practical Application of Course Theory:** It demonstrates the complete **Milgram Reality-Virtuality Continuum** (blending the real physical world with digital graphics and pure virtual worlds).
+2. **Natural User Interface (NUI):** Instead of just typing on a keyboard or clicking a mouse, the user can interact naturally using hand gestures captured by standard webcams.
+3. **Cross-Reality (XR) Interaction:** Physical human motions in the real room directly control dynamic physical forces inside a 3D virtual environment.
+4. **Frictionless Web Delivery:** Runs on any modern browser (Chrome, Safari, Edge) on Mac, Windows, iOS, and Android without requiring app-store downloads, Unity plugins, or heavy installs.
 
 ---
 
 ## 🌐 3. The Big Picture: Milgram's Reality-Virtuality Continuum
 
-One of the most important concepts in AR/VR is **Milgram's Continuum**:
+A core theoretical concept in the AR/VR curriculum is **Paul Milgram's Reality-Virtuality Continuum**.  
+Think of it as a spectrum from **100% Real World** to **100% Virtual World**:
 
 ```
 [Real Physical World] <======================> [Augmented Reality (AR)] <======================> [Virtual Reality (VR)]
         │                                                 ▲                                                 ▲
-   Webcam Video                                 Webcam Feed + Digital Stars                       100% Synthetic 3D World
-  (Your physical room)                         & Directional HUD Vectors                        (Three.js + Rapier3D physics)
+   Webcam Feed                                  Live Video + Digital Stars                        100% Synthetic 3D World
+(Your physical room)                            & Cockpit Steering HUD Vectors                  (Three.js + Rapier3D physics)
 ```
 
-In this project, both ends and the middle are fully realized:
-- **VR Side (`sources/Game/World/`):** The 3D world is 100% computer-generated geometry, lighting, materials, and physics.
-- **AR Side (`sources/Game/ARGestureRating.js` & `sources/Game/ARHandController.js`):** The webcam feed captures physical reality, and the browser superimposes 3D rotating stars, electric energy arcs, cockpit crosshairs, and steering vectors anchored to your actual body.
-- **Cross-Reality (XR) Coupling (`sources/Game/Player.js`):** Real-world hand displacement vectors directly translate into virtual engine thrust and steering torque.
+🗣️ **How to explain this to the professor:**
+- **On the VR side (Virtual Reality):** The 3D world is 100% synthetically generated inside the computer using Three.js and the Rapier3D physics engine. There is no real-world video involved.  
+  📁 *Performing Files:* [`sources/Game/World/`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/) & [`sources/Game/Physics/`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Physics/)
+- **In the middle (Augmented Reality):** The webcam captures your real physical room, and the computer superimposes 3D digital elements (rotating golden stars, electric laser arcs, and navigation crosshairs) anchored directly to your physical hand.  
+  📁 *Performing Files:* [`sources/Game/ARGestureRating.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARGestureRating.js) & [`sources/Game/ARHandController.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARHandController.js)
+- **The Cross-Reality (XR) Bridge:** The physical motion of your hand in the real world is converted into mathematical force vectors that drive the character in the virtual world.  
+  📁 *Performing File:* [`sources/Game/Player.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Player.js) (Lines 575–600)
 
 ---
 
 ## 🕹️ 4. The 3 Core Experiences & Their Performing Files
+
+Here is a clear summary of the three main experiences and where the code lives:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -56,11 +62,11 @@ In this project, both ends and the middle are fully realized:
 ├──────────────────────────────┼──────────────────────────────────┼────────────────────────────────┤
 │ • Full 3D Cyber Plaza        │ • Webcam Cockpit Flight HUD      │ • 1 to 5 extended fingers      │
 │ • Custom Aditi Avatar        │ • Palm Center Tracking           │ • 3D Stars on each fingertip   │
-│ • Rapier3D Physics Engine    │ • 8% Neutral Deadzone            │ • Laser energy arcs            │
-│ • 7 Real Engineering Proj    │ • Hand Up = Drive Forward        │ • 850ms Dwell Lock-in          │
+│ • Rapier3D Physics Engine    │ • 8% Neutral Deadzone            │ • Electric laser energy arcs   │
+│ • 7 Real Engineering Projects│ • Hand Up = Drive Forward        │ • 850ms Dwell Lock-in          │
 │ • Elevating Career Track     │ • Hand Down = Reverse            │ • Celebratory Confetti & Audio │
 │ • Knockable Bowling Alley    │ • Fist = Handbrake               │ • Modal Feedback Review        │
-│ • Day/Night & Weather        │ • Open Palm = Nitro Boost        │                                │
+│ • Day/Night & Dynamic Weather│ • Open Palm = Nitro Boost        │                                │
 ├──────────────────────────────┼──────────────────────────────────┼────────────────────────────────┤
 │ 📁 PERFORMING FILES:         │ 📁 PERFORMING FILES:             │ 📁 PERFORMING FILES:           │
 │ • sources/Game/Game.js       │ • sources/Game/ARHandController  │ • sources/Game/ARGestureRating │
@@ -75,77 +81,78 @@ In this project, both ends and the middle are fully realized:
 
 ## 🖐️ 5. Deep Dive: AR Feature 1 — Hand-Drive Teleoperation
 
-- 📁 **Primary File:** [`sources/Game/ARHandController.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARHandController.js) (Class: `ARHandController`)
-- 📁 **Physics/Input Bridge:** [`sources/Game/Player.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Player.js) (Lines 575–600 in `updatePrePhysics()`)
+- 📁 **Primary Controller File:** [`sources/Game/ARHandController.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARHandController.js) (`class ARHandController`)
+- 📁 **Input & Physics Bridge:** [`sources/Game/Player.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Player.js) (Lines 575–600 in `updatePrePhysics()`)
 - 📁 **Camera Tracking Logic:** [`sources/Game/View.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/View.js) (Lines 590–625 in focus point updates)
-- 📁 **Styling & HUD CSS:** [`sources/style/arHandController.styl`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/style/arHandController.styl)
+- 📁 **HUD Styling & Overlay:** [`sources/style/arHandController.styl`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/style/arHandController.styl)
 
 ### How to use it:
-Click the glowing cyan button in the bottom right: **`🖐️ AR Hand Drive`** (created in `ARHandController.initDOM()`).  
-A sleek **Picture-in-Picture Cockpit Flight HUD** opens in the bottom-left corner with your live webcam stream.
+Click the glowing cyan button in the bottom right corner: **`🖐️ AR Hand Drive`**.  
+A Picture-in-Picture cockpit window opens in the bottom-left corner with your live webcam stream.
 
-### How it works technically:
-1. **Camera Stream & MediaPipe Pipeline:**
-   - Handled in `ARHandController.start()` and `ARHandController.initHands()`.
-   - Google MediaPipe Hands evaluates the webcam video frame-by-frame inside WebAssembly, returning 21 three-dimensional coordinate landmarks $(x, y, z)$ on the user's hand at 30–60 FPS.
-2. **Palm Center Coordinate Calculation:**
-   - Handled in `ARHandController.processHand()`:
-   $$\mathbf{P}_{\text{palm}} = \frac{\mathbf{P}_0 (\text{Wrist}) + \mathbf{P}_5 (\text{Index MCP}) + \mathbf{P}_9 (\text{Middle MCP}) + \mathbf{P}_{17} (\text{Pinky MCP})}{4}$$
-3. **The 8% Radial Deadzone (Prevents Hand Tremor):**
-   - Configured via `this.deadzoneRadius = 0.08` at screen center $(0.5, 0.5)$.
-   - If the palm is within $8\%$ of the screen center, the controller remains in neutral (`accelerating = 0`, `steering = 0`), preventing natural resting hand tremors from causing accidental vehicle drift.
-4. **Directional Vector Steering:**
-   - Handled in `ARHandController.processHand()`:
-   - **Hand Raised Above Center ($\Delta y < -r$):** Generates positive forward throttle `accelerating = min(1.0, ...)`.
-   - **Hand Lowered Below Center ($\Delta y > +r$):** Generates reverse / braking torque `accelerating = -min(1.0, ...)`.
-   - **Hand Moved Left / Right ($\Delta x$):** Computes smooth analog steering angle `this.steering`.
-5. **Special Hand Poses:**
-   - **Open Palm 🖐️ (All 5 fingers extended):** `this.boosting = 1` activates Nitro Turbo Boost and triggers high-speed Three.js motion warp lines (handled in `sources/Game/View.js`).
-   - **Clenched Fist ✊ (All fingers curled):** `this.braking = 1` stops vehicle momentum immediately.
-6. **Cross-Reality (XR) Bridge to the 3D World:**
-   - In [`sources/Game/Player.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Player.js), the game loop reads `this.game.arHandController` on every tick and applies the hand telemetry directly to the Rapier3D vehicle chassis forces.
-7. **Smart Camera Tracking & Fail-Safes:**
-   - In [`sources/Game/View.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/View.js), the camera automatically stays locked onto the girl character while driving with gestures.
-   - **🎯 Locate Button:** In `ARHandController.js`, clicking "Locate" snaps the 3D camera back to the character.
-   - **🔄 Respawn Button:** In `ARHandController.js`, clicking "Respawn" teleports the character safely back to the landing plaza if you drive into deep obstacles.
+### How it works (In Plain English):
+
+1. **Reading the Hand (21 Landmarks):**
+   - In `ARHandController.initHands()`, we load Google MediaPipe Hands running locally in WebAssembly.
+   - It identifies 21 specific points on your hand (wrist, knuckles, joints, fingertips) at 30 to 60 frames per second.
+2. **Finding the Palm Center:**
+   - In `ARHandController.processHand()`, instead of just tracking one finger, we take the average position of the 4 base knuckles and the wrist. This gives a steady, reliable center point for the hand.
+3. **The 8% Deadzone (Like a Game Controller):**
+   - *Analogy:* Just like a PlayStation or Xbox controller has a deadzone in the center so your character doesn't wander off when your thumb twitches, we create an 8% circular deadzone in the center of the camera.
+   - While your hand is inside this neutral ring, the character stays still.
+4. **Steering and Speed:**
+   - **Hand Moved Up (above center):** The character accelerates forward. The higher you hold your hand, the faster it goes.
+   - **Hand Moved Down (below center):** The character drives in reverse or brakes.
+   - **Hand Moved Left or Right:** The character steers smoothly left or right.
+5. **Special Gestures:**
+   - **Open Palm 🖐️ (All 5 fingers spread wide):** Activates **Nitro Boost** with anime-style speed lines across the screen.
+   - **Clenched Fist ✊ (Fingers closed):** Engages the **Emergency Handbrake**, stopping all movement instantly.
+6. **Camera Lock & Fail-Safes:**
+   - In `View.js`, the camera automatically tracks the avatar so you never lose sight of her while driving.
+   - If you ever drive into an obstacle or off-road, the Cockpit HUD has two safety buttons:
+     - **🎯 Locate:** Snaps the camera directly back to the character.
+     - **🔄 Respawn:** Instantly teleports the character back to the central plaza.
+
+🗣️ **How to explain this to the professor:**
+> *"Here we are demonstrating **Cross-Reality Teleoperation**. The webcam detects my hand using 21 skeletal landmarks. When I raise my hand above the central deadzone, the system calculates a 3D directional vector that applies forward engine force to the character in the virtual world. If I spread all five fingers, it detects an open palm and triggers nitro boost; if I make a fist, it brakes. The camera automatically tracks the avatar so the user maintains visual feedback at all times."*
 
 ---
 
 ## ⭐ 6. Deep Dive: AR Feature 2 — Dynamic Finger-Count Rating
 
-- 📁 **Primary File:** [`sources/Game/ARGestureRating.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARGestureRating.js) (Class: `ARGestureRating`)
+- 📁 **Primary Rating File:** [`sources/Game/ARGestureRating.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARGestureRating.js) (`class ARGestureRating`)
 - 📁 **Styling & Particle CSS:** [`sources/style/arGestureRating.styl`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/style/arGestureRating.styl)
-- 📁 **Instantiated in:** [`sources/Game/Game.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Game.js) (Line 206: `this.arGestureRating = new ARGestureRating()`)
+- 📁 **Instantiated in:** [`sources/Game/Game.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Game.js) (Line 206)
 
 ### How to use it:
-Click the magenta floating button in the bottom right: **`✌️ Rate with Gestures`** or **`🖐️ Rate with Fingers (1–5 ⭐)`**.  
-Show 1, 2, 3, 4, or 5 fingers to your webcam!
+Click the magenta button in the bottom right corner: **`✌️ Rate with Gestures`** or **`🖐️ Rate with Fingers (1–5 ⭐)`**.  
+Hold up 1, 2, 3, 4, or 5 fingers in front of your camera!
 
-### How it works technically:
-1. **Real-Time Finger Extension Algorithm:**
+### How it works (In Plain English):
+
+1. **How the Computer Knows Which Fingers Are Extended:**
    - Handled in `ARGestureRating.countExtendedFingers()`:
-   - For Index, Middle, Ring, and Pinky fingers, it calculates the Euclidean distance from the fingertip ($P_{\text{tip}}$) to the wrist ($P_0$) and compares it to the PIP joint distance:
-     $$\text{Extended} \iff \text{dist}(P_{\text{tip}}, P_0) > 1.12 \times \text{dist}(P_{\text{pip}}, P_0) \quad \text{and} \quad y_{\text{tip}} < y_{\text{pip}}$$
-   - For the Thumb, it measures lateral displacement away from the base of the pinky ($P_{17}$).
-2. **Dynamic 1-to-5 Star Rating Mapping:**
-   - The number of active extended fingers directly sets the star rating in real time:
+   - For the index, middle, ring, and pinky fingers, the code compares the distance between the fingertip and the wrist against the distance between the middle joint and the wrist. If the tip is farther and higher than the knuckle, that finger is counted as **extended**.
+   - For the thumb, it measures how far outward it is pointing compared to the base of the pinky.
+2. **Counting Fingers to Stars:**
+   - The number of extended fingers directly sets the rating in real time:
      - 1 Finger = 1 Star ⭐
-     - 2 Fingers = 2 Stars ⭐⭐ (Victory / Peace symbol)
+     - 2 Fingers = 2 Stars ⭐⭐ (Victory / Peace sign!)
      - 3 Fingers = 3 Stars ⭐⭐⭐
      - 4 Fingers = 4 Stars ⭐⭐⭐⭐
-     - 5 Fingers = 5 Stars ⭐⭐⭐⭐⭐ (Full open palm)
-3. **Spatial 3D Augmentation (The Core AR Experience):**
+     - 5 Fingers = 5 Stars ⭐⭐⭐⭐⭐ (Full open hand)
+3. **The AR Element (Anchoring Digital Objects to the Real World):**
    - Handled in `ARGestureRating.drawHandAugmentations()`:
-   - **Multi-Fingertip 3D Rotating Stars:** A golden, rotating 3D holographic star is spatially rendered and anchored onto **every single extended fingertip** in real-time camera space!
-   - **Electric Laser Arc:** High-frequency electrical energy beams dynamically connect all active extended fingertips together.
-   - **Floating Holographic HUD:** A glowing badge floats directly above your hand displaying real-time feedback (e.g., `⭐⭐⭐⭐⭐ (5 STARS)`).
-4. **850ms Temporal Dwell Lock-in:**
-   - Handled in `ARGestureRating.update()` via `this.holdTimer`:
-   - To ensure intentional rating rather than a passing motion, the user must hold their finger count steady for **850 milliseconds**.
-   - Upon confirmation:
-     - Pitch-tuned musical chords play via Web Audio API (`ARGestureRating.playStarChime()`).
-     - Celebratory 3D confetti particles explode across the screen (`ARGestureRating.spawnConfetti()`).
-     - An interactive review modal opens with pre-selected tags and feedback comments.
+   - **3D Rotating Holographic Stars:** A golden, spinning 3D star is drawn directly over **every active fingertip** on the video feed.
+   - **Electric Laser Arc:** An animated glowing beam connects all open fingertips together.
+   - **Floating HUD Badge:** A cybernetic rating tag floats directly above your hand in 3D camera space.
+4. **The 850-Millisecond Dwell Timer (Preventing False Triggers):**
+   - Handled via `this.holdTimer` in `ARGestureRating.update()`:
+   - If someone briefly flashes a hand, it won't submit by accident. The user must hold their rating steady for **850 ms** to confirm their intent.
+   - Once confirmed, celebratory 3D confetti bursts on the screen, a musical chord plays, and an interactive review modal opens with pre-selected positive feedback tags.
+
+🗣️ **How to explain this to the professor:**
+> *"This is a classic **Video See-Through Augmented Reality** feature. The system counts how many fingers are extended in front of the camera and maps them to a 1-to-5 star rating. What makes this true AR—and not just computer vision—is that we are anchoring digital 3D objects (rotating golden stars and electrical arcs) directly onto the physical fingertips in the live video stream. We use an 850ms dwell timer to ensure intentional submission."*
 
 ---
 
@@ -155,34 +162,33 @@ Show 1, 2, 3, 4, or 5 fingers to your webcam!
 - 📁 **HTML Entry Point:** [`sources/index.html`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/index.html)
 - 📁 **JS Bootstrap:** [`sources/index.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/index.js)
 
-When you open the website, you are placed into a living 3D synthetic universe:
+When the webpage loads, you enter a living 3D synthetic universe:
 
 ### 1. The Avatar (Aditi Sharma)
-- 📁 **Mesh & Visuals:** [`sources/Game/World/VisualVehicle.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/VisualVehicle.js) (Method: `createCharacter()`, Lines 58–320)
-- 📁 **Kinematics & Control:** [`sources/Game/Player.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Player.js)
-- Replaces a generic car or static model with a custom 3D stylized character representing Aditi Sharma.
-- Engineered with custom Three.js mesh geometry: expressive eyes with specular highlights, natural warm skin tones, stylish jacket, boots, and flowing espresso brunette hair.
-- Features procedural walking animations, idle breathing cycles, and physics-driven turn-tilting.
+- 📁 **Visual Mesh & Geometry:** [`sources/Game/World/VisualVehicle.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/VisualVehicle.js) (Method: `createCharacter()`)
+- 📁 **Kinematics & Movement:** [`sources/Game/Player.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Player.js)
+- Rather than a plain car or generic cube, the user controls a custom 3D stylized character representing Aditi Sharma.
+- Features expressive facial modeling, natural skin tones, dark amber eyes, stylish clothing, boots, and flowing espresso brunette hair.
+- Includes procedural walk cycle animations, natural breathing idle motions, and lean angles when turning.
 
 ### 2. Rapier3D Physics Engine (WebAssembly)
-- 📁 **Physics Core:** [`sources/Game/Physics/Physics.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Physics/Physics.js)
-- 📁 **Vehicle Raycast Chassis:** [`sources/Game/Physics/PhysicalVehicle.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Physics/PhysicalVehicle.js)
-- 📁 **Library Dependency:** `@dimforge/rapier3d` in [`package.json`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/package.json)
-- Runs deterministic 60 Hz physics in WebAssembly (WASM).
-- 4 downward raycasts compute real-time suspension spring compression, tire friction, and Ackerman steering.
-- Handles dynamic momentum transfer and rigid-body collisions with benches, bricks, and bowling pins.
+- 📁 **Physics Engine Core:** [`sources/Game/Physics/Physics.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Physics/Physics.js)
+- 📁 **Vehicle Raycast Suspension:** [`sources/Game/Physics/PhysicalVehicle.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Physics/PhysicalVehicle.js)
+- 📁 **Dependency:** `@dimforge/rapier3d` in [`package.json`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/package.json)
+- The movement isn't fake or hardcoded; it uses a real physics engine written in Rust and compiled to WebAssembly.
+- 4 downward raycasts act as wheels and suspension springs. It simulates inertia, drifting, acceleration, and real collisions.
 
 ### 3. Key Zones in the Cyber Plaza:
 
 #### A. Landing Area (Entrance Plaza)
 - 📁 **Source File:** [`sources/Game/World/Areas/LandingArea.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Areas/LandingArea.js)
-- Renders giant 3D chrome metallic letters spelling **`ADITI SHARMA`** directly into the scene.
-- Welcomes the visitor with interactive audio and click-to-start controls.
+- Features giant 3D chrome metallic letters spelling **`ADITI SHARMA`** in the center of the world.
+- Serves as the starting hub with interactive audio.
 
 #### B. Projects Billboard Area
 - 📁 **Source File:** [`sources/Game/World/Areas/ProjectsArea.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Areas/ProjectsArea.js)
-- 📁 **Project Data Source:** [`sources/data/projects.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/data/projects.js)
-- A massive 3D electronic blackboard/screen rendering real engineering projects directly on the 3D surface:
+- 📁 **Data File:** [`sources/data/projects.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/data/projects.js)
+- A massive 3D electronic screen that renders project details, technical stacks, and GitHub links directly in the 3D scene:
   1. *Autonomous Clinical Trial Analyst* (Agentic AI with LangGraph, FastAPI, Qdrant)
   2. *Enterprise Cloud Operations Platform* (HCLTech Azure & Kubernetes multi-agent triage)
   3. *Ground Control Visualization Platform* (ISRO CanSat & suborbital rocket telemetry)
@@ -190,11 +196,10 @@ When you open the website, you are placed into a living 3D synthetic universe:
   5. *ZoneLock AI Road Guardian* (Edge AI Computer Vision with YOLOv8 & DeepSORT)
   6. *Risk Scoring & Prioritization Platform* (Predictive ML decision engine)
   7. *Customer Retention Analytics* (Olist 100k+ order RFM segmentation & CLV)
-- Includes live GitHub repository links and interactive 3D pagination.
 
 #### C. Career Milestones Track
 - 📁 **Source File:** [`sources/Game/World/Areas/CareerArea.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Areas/CareerArea.js)
-- 6 interactive stone pillars that physically elevate out of the ground when the avatar approaches or drives over them:
+- Six stone slabs that physically rise out of the ground when the character walks near them, highlighting:
   - *VIT Vellore:* Integrated M.Tech CSE, 9.65 CGPA (Rank 3)
   - *St. Joseph's Convent:* 95.4% School Topper
   - *NDA 149 Merit List:* AIR 417 (Girls Rank 53)
@@ -204,93 +209,89 @@ When you open the website, you are placed into a living 3D synthetic universe:
 
 #### D. Arcade Bowling Alley
 - 📁 **Source File:** [`sources/Game/World/Areas/BowlingArea.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Areas/BowlingArea.js)
-- A fully simulated 3D bowling lane with Rapier3D rigid-body pins.
-- Driving into the pins transfers kinetic energy, knocking them over, tracking score, and displaying celebratory strike banners.
+- A physical bowling lane with 10 rigid-body pins. Driving into them uses momentum transfer to knock them down with sound effects and strike notifications.
 
 #### E. Atmospheric & Audio Systems
-- 📁 **Audio Synthesizer:** [`sources/Game/Audio.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Audio.js) (Web Audio API & Howler.js)
-- 📁 **Day/Night Lighting Cycles:** [`sources/Game/World/DayCycles.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/DayCycles.js) & [`sources/Game/Ligthing.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Ligthing.js)
-- 📁 **Weather & Particles:** [`sources/Game/World/Weather.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Weather.js), [`sources/Game/World/Leaves.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Leaves.js), [`sources/Game/World/RainLines.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/RainLines.js), [`sources/Game/World/Snow.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Snow.js)
+- 📁 **Audio Synthesizer:** [`sources/Game/Audio.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Audio.js) (Web Audio API & Howler)
+- 📁 **Lighting & Sun Cycles:** [`sources/Game/World/DayCycles.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/DayCycles.js) & [`sources/Game/Ligthing.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Ligthing.js)
+- 📁 **Weather Effects:** [`sources/Game/World/Weather.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/Weather.js) (Simulates rain, snow, blowing leaves, and wind)
 
 #### F. Quick Navigation Arcade HUD
 - 📁 **Source File:** [`sources/Game/QuickNav.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/QuickNav.js)
-- 📁 **HTML Structure:** [`sources/index.html`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/index.html) (Nav buttons with `.js-quick-nav`)
-- Arcade HUD bar anchored to the top of the screen allowing instant one-click teleportation to Projects, Career, Bowling, Lab, and About sections.
+- An arcade-style navigation bar at the top of the screen that lets the user instantly teleport to Projects, Career, Bowling, and other areas.
 
 ---
 
 ## 📱 8. Dedicated Mobile AR & WebXR VR Modes
 
-In addition to the in-browser webcam AR on the desktop:
+In addition to desktop webcam interaction, the project includes dedicated mobile experiences:
 
 ### 1. Dedicated Mobile Pass-Through AR
 - 📁 **HTML Template:** [`sources/ar.html`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/ar.html)
-- 📁 **Logic & Tracking:** [`sources/ar.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/ar.js)
+- 📁 **Logic & Sensors:** [`sources/ar.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/ar.js)
 - 📁 **Styling:** [`sources/style/arExperience.styl`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/style/arExperience.styl)
-- **Features:**
-  - Designed for mobile phones (iPhone / Android) using the rear camera stream.
-  - Transparent Three.js WebGL canvas overlays the 3D car and project orbs directly into your real room (Pokemon GO style).
-  - Uses device orientation sensors and gyroscope for full 360° motion tracking.
-  - Native iOS QuickLook integration via USDZ 3D models.
+- **What it does:**
+  - Designed for smartphones (iPhone or Android) using the rear camera.
+  - Places the 3D car, avatar, and project orbs directly on your physical floor or table (similar to Pokemon GO).
+  - Uses the phone's internal gyroscope and motion sensors to track orientation in 360 degrees.
+  - Supports Apple QuickLook USDZ files for native iOS AR.
 
 ### 2. Dedicated Stereoscopic & WebXR VR
 - 📁 **HTML Template:** [`sources/vr.html`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/vr.html)
 - 📁 **Logic & Gaze Tracking:** [`sources/vr.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/vr.js)
 - 📁 **Styling:** [`sources/style/vrExperience.styl`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/style/vrExperience.styl)
-- **Features:**
-  - **Dual-Mode VR Architecture:**
-    1. *WebXR Immersive Mode:* For Meta Quest 2/3/Pro, HTC Vive, and Apple Vision Pro.
-    2. *Stereoscopic Split-Screen Mode:* Dual-viewport side-by-side rendering with barrel distortion for Google Cardboard and mobile VR phone clips.
-  - **Hands-Free Gaze Reticle:** Dwells on 3D interactive points for 1.5 seconds to trigger selections without needing physical handheld controllers.
+- **What it does:**
+  - **Stereoscopic Split-Screen Mode:** Splits the screen into left-eye and right-eye views for Google Cardboard or mobile VR phone headsets.
+  - **WebXR Mode:** Connects natively to Meta Quest 2/3 and Apple Vision Pro.
+  - **Hands-Free Gaze Reticle:** You don't need a controller. Looking at an object for 1.5 seconds automatically activates it.
 
-### 3. AR/VR Network QR Code Launcher
+### 3. Wi-Fi QR Code Launcher
 - 📁 **Source File:** [`sources/Game/AR.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/AR.js)
-- Generates a dynamic QR code encoded with your local Wi-Fi IP address so smartphones on the same network can scan and launch the mobile AR/VR experience instantly.
+- Automatically displays a QR code with your local Wi-Fi IP address so you can scan it with your phone and immediately launch the mobile AR/VR modes.
 
 ---
 
 ## 🛠️ 9. Technology Stack & Why Each Tool Was Chosen
 
-| Technology | Role | Where Used in Code | Why It Was Chosen Over Alternatives |
+| Technology | Role | Where Used in Code | Why It Was Chosen (Simple Explanation) |
 | :--- | :--- | :--- | :--- |
-| **Three.js (r183+)** | 3D Graphics & Rendering | All files in `sources/Game/` | Industry standard for WebGL/WebGPU. Delivers 60 FPS in any browser without plugins. |
-| **MediaPipe Hands (Google)** | 21-Landmark Vision Tracking | `ARHandController.js`, `ARGestureRating.js` | Runs client-side in WebAssembly/WebGL. Super fast (30–60 FPS) with zero server latency or cloud API costs. |
-| **Rapier3D** | Physics Simulation | `Physics.js`, `PhysicalVehicle.js` | Written in Rust and compiled to WebAssembly. Much faster and more deterministic than legacy Cannon.js or Ammo.js. |
-| **TSL (Three Shading Language)** | Custom Shaders | `VisualVehicle.js`, `Materials/` | Next-gen shader pipeline that compiles seamlessly to both WebGPU and WebGL 2.0. |
-| **Web Audio API & Howler** | Sound Design | `Audio.js`, `ARGestureRating.js` | Synthesizes interactive pitch-tuned audio tones and spatial 3D positional audio. |
-| **Vite 7** | Build Tool & Dev Server | `vite.config.js`, `package.json` | Ultra-fast Hot Module Replacement (HMR) with built-in basic-ssl for secure HTTPS webcam access. |
-| **GSAP** | Motion & Tweens | `ProjectsArea.js`, `CareerArea.js`, `View.js` | Smooth cinematic camera transitions, HUD animations, and UI easing. |
+| **Three.js (r183+)** | 3D Graphics Engine | All files in `sources/Game/` | Runs smooth 60 FPS 3D graphics in any web browser without needing any plugins. |
+| **Google MediaPipe Hands** | Hand Landmark Tracking | `ARHandController.js`, `ARGestureRating.js` | Runs client-side in WebAssembly. Extremely fast (30–60 FPS) with zero server latency or cloud costs. |
+| **Rapier3D** | Physics Simulation | `Physics.js`, `PhysicalVehicle.js` | Written in Rust and compiled to WebAssembly. Much faster and more stable than older JavaScript physics engines. |
+| **TSL (Three Shading Language)** | Custom Visual Shaders | `VisualVehicle.js`, `Materials/` | Next-generation shader language that works across both WebGPU and WebGL 2.0. |
+| **Web Audio API & Howler** | Sound Synthesizer | `Audio.js`, `ARGestureRating.js` | Plays positional 3D sound effects and synthesizes musical chords when you rate the site. |
+| **Vite 7** | Build & Dev Server | `vite.config.js`, `package.json` | Instant hot reloading with built-in HTTPS SSL certificates (required by browsers for webcam access). |
+| **GSAP** | Animation Tweens | `ProjectsArea.js`, `CareerArea.js`, `View.js` | Industry-standard library for smooth camera transitions and UI animations. |
 
 ---
 
 ## 🏃 10. How to Run, Test, and Verify the Project
 
 ### 1. Prerequisites
-Ensure [Node.js](https://nodejs.org) is installed on your computer.
+Make sure [Node.js](https://nodejs.org) is installed on your computer.
 
 ### 2. Run the Development Server
 - 📁 **Configuration:** [`vite.config.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/vite.config.js)
 - 📁 **Dependencies & Scripts:** [`package.json`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/package.json)
 
-Open your terminal inside the project directory:
+Open your terminal inside the project folder:
 ```bash
 cd "/Users/aditisharma/Downloads/sem 7/portfolio/folio-2025"
 
-# Install dependencies (if not already installed)
+# Install packages
 npm install --force
 
-# Launch secure development server
+# Start secure local server
 npm run dev
 ```
 
 ### 3. Open in Browser
-- **On Your Computer:** Open `https://localhost:5173/` (or the port shown in terminal).  
-  *(Accept the local self-signed SSL certificate in your browser to grant webcam access).*
-- **On Your Smartphone (Same Wi-Fi):**
-  Open the network URL shown in the terminal (e.g., `https://192.168.x.x:5173/ar.html`).
+- **On Your Computer:** Open `https://localhost:5173/` (or the port shown in your terminal).  
+  *(Accept the local self-signed SSL certificate so your browser allows webcam access).*
+- **On Your Phone (Same Wi-Fi):**  
+  Open the network IP shown in the terminal (e.g., `https://192.168.x.x:5173/ar.html`).
 
-### 4. Verify Git Status & Push
-To check if your local code is up-to-date and synced with GitHub:
+### 4. Check Git Status
 ```bash
 git status
 git log --oneline -5
@@ -300,31 +301,31 @@ git log --oneline -5
 
 ## 🎓 11. Professor Viva & Presentation Q&A Cheat Sheet
 
-Here are the exact questions professors love to ask during AR/VR project evaluations, along with the ideal academic answers and the exact code files to reference:
+Here are the 5 most common questions professors ask, written in simple, clear language that you can speak with confidence:
 
-### Q1: *"How does this project prove both AR and VR?"*
+### Q1: *"How does this project demonstrate both AR and VR?"*
 > **Answer:**  
-> *"It demonstrates both sides of Milgram's Reality-Virtuality Continuum:  
-> 1. **Virtual Reality:** The 3D cyber plaza is a complete synthetic virtual environment with continuous 3D spatial agency, perspective projection, motion parallax, and Rapier3D rigid-body physics ([`sources/Game/World/`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/)).  
-> 2. **Augmented Reality:** The camera viewport superimposes digital 3D holographic stars, energy arcs, deadzone rings, and directional vectors directly onto the user's physical body in real time based on 21-landmark optical tracking ([`sources/Game/ARGestureRating.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARGestureRating.js) & [`sources/Game/ARHandController.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARHandController.js))."*
+> *"It demonstrates both ends of Milgram's Reality-Virtuality Continuum:  
+> 1. **VR:** The 3D world is 100% synthetically created with Three.js and Rapier3D physics. The user has full spatial freedom to navigate around the plaza in 3D Cartesian coordinates ([`sources/Game/World/`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/World/)).  
+> 2. **AR:** The system captures the user's physical room through the webcam and superimposes digital 3D objects (rotating golden stars, electric arcs, and navigation vectors) directly anchored to the user's physical fingertips and palm ([`sources/Game/ARGestureRating.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARGestureRating.js))."*
 
 ### Q2: *"Is hand tracking just Computer Vision, or is it true Augmented Reality?"*
 > **Answer:**  
-> *"Computer Vision is the **input detection layer** (MediaPipe calculating the 21 coordinate points of the hand). Augmented Reality is the **spatial output layer**: anchoring synthetic 3D geometry (rotating holographic stars, electric energy arcs, cockpit HUDs) onto real-world coordinates in the live video stream (implemented in `ARGestureRating.drawHandAugmentations()`)."*
+> *"Computer Vision is only the **input step** (MediaPipe calculating the 21 coordinate points of the hand). Augmented Reality is the **spatial visualization step**: anchoring computer-generated 3D geometry (spinning holographic stars and laser arcs) onto real-world body coordinates inside the live camera feed."*
 
-### Q3: *"How does controlling the 3D avatar with hand gestures qualify as AR/VR?"*
+### Q3: *"How does controlling the 3D character with hand gestures qualify under AR/VR?"*
 > **Answer:**  
-> *"In spatial computing literature, this is classified as **Cross-Reality (XR) Teleoperation and Video See-Through (VST) Augmented Reality**. The physical webcam feed is augmented with dynamic 3D directional vectors, deadzone calibration rings, and telemetry overlays, directly bridging physical human kinematics into the synthetic 3D virtual environment ([`sources/Game/ARHandController.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARHandController.js) and [`sources/Game/Player.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/Player.js))."*
+> *"In spatial computing literature, this is called **Cross-Reality (XR) Teleoperation**. The webcam feed is augmented with dynamic 3D directional vectors, deadzone rings, and telemetry overlays. Moving the physical hand creates mathematical kinematic vectors that directly drive the physics engine in the virtual world ([`sources/Game/ARHandController.js`](file:///Users/aditisharma/Downloads/sem%207/portfolio/folio-2025/sources/Game/ARHandController.js))."*
 
-### Q4: *"How do you prevent hand jitter from causing vehicle drift or false ratings?"*
+### Q4: *"How do you prevent natural hand tremor from causing unintended movement or false ratings?"*
 > **Answer:**  
-> *"Through a dual-filter architecture:  
-> 1. **Radial Deadzone Filter:** In Hand Drive mode, an 8% circular neutral zone around screen center ignores natural hand tremor (`this.deadzoneRadius = 0.08` in `ARHandController.js`).  
-> 2. **Temporal Dwell Accumulator:** In rating mode, the user must hold the finger gesture steady for 850 milliseconds before triggering submission, eliminating accidental flashes (`this.holdThreshold = 850` in `ARGestureRating.js`)."*
+> *"We use two specific filtering mechanisms:  
+> 1. **Radial Deadzone Filter:** In Hand Drive mode, an 8% neutral circle in the center of the screen ignores resting hand jitter (`this.deadzoneRadius = 0.08` in `ARHandController.js`).  
+> 2. **Temporal Dwell Accumulator:** In rating mode, the user must hold their finger gesture steady for 850 milliseconds before it registers (`this.holdThreshold = 850` in `ARGestureRating.js`)."*
 
-### Q5: *"Why did you use WebGL/Three.js instead of Unity or Unreal?"*
+### Q5: *"Why did you build this in WebGL/Three.js instead of Unity or Unreal?"*
 > **Answer:**  
-> *"Web-based spatial computing provides **zero-friction universal accessibility**. Any user on any device can open a single URL and experience full 3D physics and computer vision without downloading multi-gigabyte apps or requiring proprietary hardware."*
+> *"Web-based spatial computing provides **frictionless universal access**. Anyone on any computer or phone can simply click a link and experience full 3D graphics, physics, and computer vision without downloading multi-gigabyte apps or special software."*
 
 ---
 
