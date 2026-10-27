@@ -445,13 +445,22 @@ export class PhysicsVehicle
 
     moveTo(position, rotation = 0)
     {
+        this.activate()
+
         const quaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotation)
-        this.chassis.physical.body.setTranslation(position)
-        this.chassis.physical.body.setRotation(quaternion)
-        this.chassis.physical.body.setLinvel({ x: 0, y: 0, z: 0 })
-        this.chassis.physical.body.setAngvel({ x: 0, y: 0, z: 0 })
+        this.chassis.physical.body.setTranslation(position, true)
+        this.chassis.physical.body.setRotation(quaternion, true)
+        this.chassis.physical.body.setLinvel({ x: 0, y: 0, z: 0 }, true)
+        this.chassis.physical.body.setAngvel({ x: 0, y: 0, z: 0 }, true)
 
         this.position.copy(position)
+        this.quaternion.copy(quaternion)
+        this.velocity.set(0, 0, 0)
+        this.speed = 0
+        this.xzSpeed = 0
+        this.forward.set(1, 0, 0).applyQuaternion(quaternion)
+        this.sideward.set(0, 0, 1).applyQuaternion(quaternion)
+        this.upward.set(0, 1, 0).applyQuaternion(quaternion)
     }
 
     updatePrePhysics()
@@ -598,9 +607,11 @@ export class PhysicsVehicle
 
     activate()
     {
-        this.chassis.physical.body.setLinvel({ x: 0, y: 0, z: 0 })
-        this.chassis.physical.body.setAngvel({ x: 0, y: 0, z: 0 })
         this.chassis.physical.body.setEnabled(true)
+        if(typeof this.chassis.physical.body.wakeUp === 'function')
+            this.chassis.physical.body.wakeUp()
+        this.chassis.physical.body.setLinvel({ x: 0, y: 0, z: 0 }, true)
+        this.chassis.physical.body.setAngvel({ x: 0, y: 0, z: 0 }, true)
     }
 
     deactivate()

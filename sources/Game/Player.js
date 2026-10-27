@@ -441,6 +441,101 @@ export class Player
         }, 1000)
     }
 
+    teleport(destinationName, callback = null)
+    {
+        // 1. Close any open areas cleanly
+        if(this.game.world?.areas?.projects && this.game.world.areas.projects.state !== 5)
+        {
+            this.game.world.areas.projects.close()
+        }
+        if(this.game.world?.areas?.lab && this.game.world.areas.lab.state !== 5)
+        {
+            this.game.world.areas.lab.close()
+        }
+
+        // Close any modals or menus
+        if(this.game.modals?.isOpen)
+            this.game.modals.close()
+        if(this.game.menu?.state === 2)
+            this.game.menu.close()
+
+        // 2. Clear cinematic view and reset input filters
+        if(this.game.view?.cinematic)
+        {
+            this.game.view.cinematic.active = false
+            this.game.view.cinematic.progress = 0
+            if(this.game.rendering?.cheapDOFPass)
+                this.game.rendering.cheapDOFPass.strength.value = 1.5
+        }
+        this.game.inputs.filters.delete('cinematic')
+        this.game.inputs.filters.add('wandering')
+
+        // 3. Find target respawn
+        let respawn = this.game.respawns.getByName(destinationName)
+        if(!respawn)
+            respawn = this.game.respawns.getDefault()
+        if(!respawn)
+            return
+
+        // 4. Force activate physics vehicle and move to target
+        this.game.physicalVehicle.activate()
+        this.game.physicalVehicle.moveTo(respawn.position, respawn.rotation)
+
+        // 5. Instantly synchronize player coordinates & orientation
+        this.position.copy(respawn.position)
+        this.position2.set(respawn.position.x, respawn.position.z)
+        this.rotationY = respawn.rotation
+        this.state = Player.STATE_DEFAULT
+
+        // 6. Instantly position Aditi girl avatar
+        if(this.game.world?.visualVehicle)
+        {
+            this.game.world.visualVehicle.facingAngle = respawn.rotation
+            if(this.game.world.visualVehicle.girl?.root)
+            {
+                this.game.world.visualVehicle.girl.root.position.set(
+                    respawn.position.x,
+                    respawn.position.y - 0.45,
+                    respawn.position.z
+                )
+                this.game.world.visualVehicle.girl.root.rotation.y = respawn.rotation
+
+                // Reset limbs to natural idle pose
+                if(this.game.world.visualVehicle.girl.leftLeg)
+                    this.game.world.visualVehicle.girl.leftLeg.rotation.x = 0
+                if(this.game.world.visualVehicle.girl.rightLeg)
+                    this.game.world.visualVehicle.girl.rightLeg.rotation.x = 0
+                if(this.game.world.visualVehicle.girl.leftArm)
+                    this.game.world.visualVehicle.girl.leftArm.rotation.x = 0
+                if(this.game.world.visualVehicle.girl.rightArm)
+                    this.game.world.visualVehicle.girl.rightArm.rotation.x = 0
+            }
+            if(this.game.world.visualVehicle.parts?.chassis)
+            {
+                this.game.world.visualVehicle.parts.chassis.position.copy(respawn.position)
+            }
+            if(typeof this.game.world.visualVehicle.pulseBeacon === 'function')
+            {
+                this.game.world.visualVehicle.pulseBeacon()
+            }
+        }
+
+        // 7. Center camera and lock focus immediately on character
+        if(this.game.view?.focusPoint)
+        {
+            this.game.view.focusPoint.isTracking = true
+            this.game.view.focusPoint.trackedPosition.set(respawn.position.x, 0, respawn.position.z)
+            this.game.view.focusPoint.position.set(respawn.position.x, 0, respawn.position.z)
+            this.game.view.focusPoint.smoothedPosition.set(respawn.position.x, 0, respawn.position.z)
+        }
+
+        // 8. Focus canvas for immediate input response
+        this.game.domElement.querySelector('.js-canvas')?.focus()
+
+        if(typeof callback === 'function')
+            callback()
+    }
+
     respawn(respawnName = null, callback = null)
     {
         this.game.overlay.show(() =>
@@ -451,12 +546,50 @@ export class Player
             // Find respawn
             let respawn = respawnName ? this.game.respawns.getByName(respawnName) : this.game.respawns.getClosest(this.position)
 
+            if(!respawn)
+                respawn = this.game.respawns.getDefault()
+
             // Update physical vehicle
+            this.game.physicalVehicle.activate()
             this.game.physicalVehicle.moveTo(
                 respawn.position,
                 respawn.rotation
             )
             
+            this.position.copy(respawn.position)
+            this.position2.set(respawn.position.x, respawn.position.z)
+            this.rotationY = respawn.rotation
+
+            if(this.game.world?.visualVehicle)
+            {
+                this.game.world.visualVehicle.facingAngle = respawn.rotation
+                if(this.game.world.visualVehicle.girl?.root)
+                {
+                    this.game.world.visualVehicle.girl.root.position.set(
+                        respawn.position.x,
+                        respawn.position.y - 0.45,
+                        respawn.position.z
+                    )
+                    this.game.world.visualVehicle.girl.root.rotation.y = respawn.rotation
+                }
+                if(this.game.world.visualVehicle.parts?.chassis)
+                {
+                    this.game.world.visualVehicle.parts.chassis.position.copy(respawn.position)
+                }
+                if(typeof this.game.world.visualVehicle.pulseBeacon === 'function')
+                {
+                    this.game.world.visualVehicle.pulseBeacon()
+                }
+            }
+
+            if(this.game.view?.focusPoint)
+            {
+                this.game.view.focusPoint.isTracking = true
+                this.game.view.focusPoint.trackedPosition.set(respawn.position.x, 0, respawn.position.z)
+                this.game.view.focusPoint.position.set(respawn.position.x, 0, respawn.position.z)
+                this.game.view.focusPoint.smoothedPosition.set(respawn.position.x, 0, respawn.position.z)
+            }
+
             this.state = Player.STATE_DEFAULT
             this.game.overlay.hide()
         })

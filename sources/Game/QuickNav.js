@@ -70,16 +70,10 @@ export class QuickNav
                     clearTimeout(this.manualLockTimer)
                 this.manualLockTimer = setTimeout(() => { this.manualLock = false }, 3500)
 
-                // Teleport / Respawn player
-                this.game.player.respawn(destination, () =>
+                // Teleport player and camera to destination
+                this.game.player.teleport(destination, () =>
                 {
-                    // Focus canvas / inputs
                     this.game.domElement.querySelector('.js-canvas')?.focus()
-
-                    if(destination === 'projects' && this.game.world.areas?.projects)
-                    {
-                        this.game.world.areas.projects.open()
-                    }
                 })
             })
         }

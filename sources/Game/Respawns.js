@@ -23,11 +23,13 @@ export class Respawns
 
             name = name.charAt(0).toLowerCase() + name.slice(1)
 
+            const elevation = typeof child.position.y === 'number' ? child.position.y + 0.55 : 1.05
+
             const item = {
                 name: name,
                 position: new THREE.Vector3(
                     child.position.x,
-                    4,
+                    elevation,
                     child.position.z
                 ),
                 rotation: child.rotation.y

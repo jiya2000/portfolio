@@ -73,7 +73,7 @@ export class Map
 
             element.addEventListener('click', () =>
             {
-                this.game.player.respawn(item.respawnName, () =>
+                this.game.player.teleport(item.respawnName, () =>
                 {
                     this.game.view.focusPoint.isTracking = true
                 })

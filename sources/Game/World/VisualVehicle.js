@@ -41,6 +41,9 @@ export class VisualVehicle
         if(this.girl && this.girl.root)
             this.girl.root.removeFromParent()
 
+        if(this.beaconMesh)
+            this.beaconMesh.removeFromParent()
+
         for(let partName in this.parts)
         {
             const part = this.parts[partName]
@@ -806,5 +809,58 @@ export class VisualVehicle
 
         this.screenPosition.x = (vector.x * 0.5 + 0.5)
         this.screenPosition.y = (vector.y * -0.5 + 0.5)
+    }
+
+    pulseBeacon()
+    {
+        if(!this.beaconMesh)
+        {
+            const ringGeo = new THREE.RingGeometry(0.3, 0.45, 32)
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: 0x38bdf8,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.9,
+                depthWrite: false
+            })
+            this.beaconMesh = new THREE.Mesh(ringGeo, ringMat)
+            this.beaconMesh.rotation.x = -Math.PI / 2
+            this.beaconMesh.visible = false
+            this.game.scene.add(this.beaconMesh)
+        }
+
+        if(this.girl?.root)
+        {
+            this.beaconMesh.position.set(
+                this.girl.root.position.x,
+                this.girl.root.position.y + 0.05,
+                this.girl.root.position.z
+            )
+            this.beaconMesh.scale.set(0.6, 0.6, 0.6)
+            this.beaconMesh.material.opacity = 0.95
+            this.beaconMesh.visible = true
+
+            if(this.beaconTween)
+                this.beaconTween.kill()
+
+            this.beaconTween = gsap.timeline({
+                onComplete: () =>
+                {
+                    this.beaconMesh.visible = false
+                }
+            })
+            this.beaconTween.to(this.beaconMesh.scale, {
+                x: 3.2,
+                y: 3.2,
+                z: 3.2,
+                duration: 0.85,
+                ease: 'power2.out'
+            }, 0)
+            this.beaconTween.to(this.beaconMesh.material, {
+                opacity: 0,
+                duration: 0.85,
+                ease: 'power2.out'
+            }, 0)
+        }
     }
 }
