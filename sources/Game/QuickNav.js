@@ -41,7 +41,7 @@ export class QuickNav
 
                 if(destination === 'map')
                 {
-                    if(this.game.modals.isOpen && this.game.modals.current?.name === 'map')
+                    if(this.game.modals.current?.isOpen && this.game.modals.current?.name === 'map')
                         this.game.modals.close()
                     else
                         this.game.modals.open('map')
@@ -58,9 +58,9 @@ export class QuickNav
                 }
 
                 // Close any open modals/menus
-                if(this.game.modals?.isOpen)
+                if(this.game.modals?.current?.isOpen)
                     this.game.modals.close()
-                if(this.game.menu?.state === 2) // Menu.OPEN
+                if(this.game.menu?.current?.isOpen)
                     this.game.menu.close()
 
                 // Highlight active button immediately and lock for 3s
@@ -82,7 +82,7 @@ export class QuickNav
         let lastCheck = 0
         this.game.ticker.events.on('tick', () =>
         {
-            if(this.manualLock || this.game.modals?.isOpen)
+            if(this.manualLock || this.game.modals?.current?.isOpen)
                 return
 
             if(this.game.ticker.elapsed - lastCheck < 0.4)

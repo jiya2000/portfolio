@@ -17,7 +17,7 @@ const text = `
 ╔═ Contact & Socials ═══╗
 ║ Mail           ⇒ aditisharma20004@gmail.com
 ║ GitHub         ⇒ https://github.com/jiya2000
-║ LinkedIn       ⇒ https://www.linkedin.com/in/aditi-sharma/
+║ LinkedIn       ⇒ https://www.linkedin.com/in/aditi-sharma-b2083a28b/
 ║ Repositories   ⇒ https://github.com/jiya2000?tab=repositories
 ╚═══════════════════════╝
 

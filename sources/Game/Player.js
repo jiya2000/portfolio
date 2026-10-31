@@ -454,18 +454,22 @@ export class Player
         }
 
         // Close any modals or menus
-        if(this.game.modals?.isOpen)
+        if(this.game.modals?.current?.isOpen)
             this.game.modals.close()
-        if(this.game.menu?.state === 2)
+        if(this.game.menu?.current?.isOpen)
             this.game.menu.close()
 
         // 2. Clear cinematic view and reset input filters
         if(this.game.view?.cinematic)
         {
+            gsap.killTweensOf(this.game.view.cinematic)
             this.game.view.cinematic.active = false
             this.game.view.cinematic.progress = 0
             if(this.game.rendering?.cheapDOFPass)
-                this.game.rendering.cheapDOFPass.strength.value = 1.5
+            {
+                gsap.killTweensOf(this.game.rendering.cheapDOFPass.amount)
+                this.game.rendering.cheapDOFPass.amount.value = 0.003
+            }
         }
         this.game.inputs.filters.delete('cinematic')
         this.game.inputs.filters.add('wandering')
