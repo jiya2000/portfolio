@@ -3,7 +3,7 @@
 Live 3D interactive portfolio built with Three.js (WebGPU & TSL) and Rapier physics engine.
 Showcasing Agentic AI, Cloud Ops, Rocket Telemetry, Machine Learning, and Web projects.
 
-![image info](./static/social/share-image.png)
+
 
 ## Setup
 
