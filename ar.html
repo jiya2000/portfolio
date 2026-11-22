@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Aditi Sharma • Real-World AR 3D Portfolio</title>
+    <meta name="description" content="Augmented Reality experience for Aditi Sharma's 3D Portfolio. Drive the cyber car in your real room, explore the 3D projects billboard, career milestones, and arcade bowling.">
+    <link rel="icon" type="image/png" href="favicon.png">
+  <script type="module" crossorigin src="./assets/ar-BZOpSN2f.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/projects-DEZFQUrs.js">
+  <link rel="modulepreload" crossorigin href="./assets/GLTFLoader-AzqANSg3.js">
+  <link rel="stylesheet" crossorigin href="./assets/ar-CSO8iIfr.css">
+</head>
+<body>
+    <div id="ar-app">
+        <!-- Live Real-World Video Feed -->
+        <video id="ar-camera-feed" class="camera-feed" autoplay playsinline muted webkit-playsinline></video>
+        <div class="camera-fallback"></div>
+
+        <!-- Real-time Transparent Three.js AR Canvas -->
+        <canvas id="ar-canvas" class="ar-canvas"></canvas>
+
+        <!-- Dynamic Speech Bubble over Aditi -->
+        <div id="ar-speech" class="speech-bubble">Hi, I'm Aditi! Welcome to my AR Portfolio! 🚗✨</div>
+
+        <!-- Strike Celebration Popup -->
+        <div id="strike-banner" class="strike-banner">
+            <div class="strike-title">🎳 STRIKE! 💥</div>
+            <div class="strike-sub">All pins knocked down!</div>
+        </div>
+
+        <!-- Camera Permission Banner (if permission needed) -->
+        <div id="ar-permission-banner" class="permission-banner is-hidden">
+            <div class="banner-icon">📱</div>
+            <h2>Augmented Reality Portfolio</h2>
+            <p>See Aditi, the drivable Cyber Car, and the 3D Projects Showcase right on your desk, floor, or room using your phone's camera!</p>
+            <button id="btn-start-camera" class="enable-btn">Start Real-World Camera</button>
+            <button id="btn-skip-camera" class="skip-btn">Explore 3D Scene (Without Camera)</button>
+        </div>
+
+        <!-- Full Augmented Reality HUD -->
+        <div class="ar-hud">
+            <!-- Top Bar -->
+            <div class="hud-top">
+                <div class="character-card" id="btn-profile-card">
+                    <div class="avatar-icon">👩‍💻</div>
+                    <div class="character-info">
+                        <div class="name-row">
+                            <span class="char-name">Aditi Sharma</span>
+                            <span class="cp-badge">CP 2500</span>
+                        </div>
+                        <span class="char-subtitle">Full-Stack & Security Engineer</span>
+                    </div>
+                </div>
+
+                <div class="top-buttons">
+                    <button id="btn-sound" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
+                        <span id="sound-icon">🔊</span>
+                    </button>
+                    <button id="btn-recenter" class="icon-btn" title="Recenter 3D World" aria-label="Recenter 3D World">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"/>
+                            <line x1="12" y1="3" x2="12" y2="7"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                            <line x1="3" y1="12" x2="7" y2="12"/>
+                            <line x1="17" y1="12" x2="21" y2="12"/>
+                        </svg>
+                    </button>
+                    <button id="btn-flip-cam" class="icon-btn" title="Flip Camera" aria-label="Flip Camera">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 1.956.702 3.748 1.874 5.132L4 18"/>
+                            <path d="M4 14c0 4.418 3.582 8 8 8s8-3.582 8-8c0-1.956-.702-3.748-1.874-5.132L20 6"/>
+                            <path d="M4 10h4V6"/>
+                            <path d="M20 14h-4v4"/>
+                        </svg>
+                    </button>
+                    <a href="index.html" class="icon-btn" title="Exit AR to Desktop 3D" aria-label="Exit AR to Desktop 3D">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18"/>
+                            <path d="m6 6 12 12"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Portfolio Mode Navigation Bar (Exact Website Parity) -->
+            <div class="hud-mode-dock">
+                <button class="mode-tab is-active" data-mode="drive">
+                    <span class="tab-icon">🚗</span>
+                    <span class="tab-label">Drive Car</span>
+                </button>
+                <button class="mode-tab" data-mode="projects">
+                    <span class="tab-icon">📂</span>
+                    <span class="tab-label">Projects</span>
+                </button>
+                <button class="mode-tab" data-mode="career">
+                    <span class="tab-icon">💼</span>
+                    <span class="tab-label">Career</span>
+                </button>
+                <button class="mode-tab" data-mode="arcade">
+                    <span class="tab-icon">🎳</span>
+                    <span class="tab-label">Bowling</span>
+                </button>
+                <button class="mode-tab" data-mode="about">
+                    <span class="tab-icon">ℹ️</span>
+                    <span class="tab-label">About</span>
+                </button>
+                <button class="mode-tab" data-mode="contact">
+                    <span class="tab-icon">📬</span>
+                    <span class="tab-label">Contact</span>
+                </button>
+            </div>
+
+            <!-- Live Status & Camera Info Pill -->
+            <div class="hud-status-pill">
+                <span class="live-dot"></span>
+                <span id="ar-status-text">AR: LIVE ROOM OVERLAY • DRIVE MODE</span>
+            </div>
+
+            <!-- Contextual Controls Drawer -->
+            <div class="context-drawer" id="context-drawer">
+                <!-- 1. Projects Carousel HUD Controls -->
+                <div class="drawer-panel" id="panel-projects">
+                    <div class="panel-header">
+                        <span class="panel-tag">3D BILLBOARD SHOWCASE</span>
+                        <span id="proj-counter" class="proj-counter">1 / 13</span>
+                    </div>
+                    <div class="panel-controls">
+                        <button id="btn-proj-prev" class="carousel-btn">◀ Prev</button>
+                        <button id="btn-proj-inspect" class="carousel-btn is-highlight">🔎 View Full Project</button>
+                        <button id="btn-proj-next" class="carousel-btn">Next ▶</button>
+                    </div>
+                </div>
+
+                <!-- 2. Career Milestones Chips -->
+                <div class="drawer-panel" id="panel-career">
+                    <div class="panel-header">
+                        <span class="panel-tag">INTERACTIVE CAREER STONES</span>
+                        <span class="panel-hint">Tap a milestone to inspect</span>
+                    </div>
+                    <div class="career-chips">
+                        <button class="career-chip" data-career="0">🎓 VIT Vellore</button>
+                        <button class="career-chip" data-career="1">💼 HCLTech</button>
+                        <button class="career-chip" data-career="2">🚀 Team Sammard</button>
+                        <button class="career-chip" data-career="3">🎖️ NDA 149 Merit</button>
+                        <button class="career-chip" data-career="4">🏛️ Student Council</button>
+                        <button class="career-chip" data-career="5">⭐ St. Joseph's</button>
+                    </div>
+                </div>
+
+                <!-- 3. Bowling Alley Controls -->
+                <div class="drawer-panel" id="panel-arcade">
+                    <div class="panel-header">
+                        <span class="panel-tag">ARCADE BOWLING ALLEY</span>
+                        <span id="bowling-score" class="panel-hint">Drive car into pins! 🎳</span>
+                    </div>
+                    <div class="panel-controls">
+                        <button id="btn-reset-pins" class="carousel-btn is-highlight">🎳 Reset All Pins</button>
+                        <button id="btn-aim-bowling" class="carousel-btn">🎯 Focus Bowling</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Virtual On-Screen Mobile Drive Controls -->
+            <div class="virtual-controls" id="virtual-controls">
+                <!-- Left Touch Joystick Area -->
+                <div class="joystick-zone" id="joystick-zone">
+                    <div class="joystick-base" id="joystick-base">
+                        <div class="joystick-stick" id="joystick-stick"></div>
+                    </div>
+                    <span class="joystick-hint">STEER & GAS</span>
+                </div>
+
+                <!-- Right Action Pedals & Horn -->
+                <div class="drive-pedals">
+                    <div class="pedal-row">
+                        <button id="btn-honk" class="pedal-btn btn-honk" title="Honk Horn" aria-label="Honk Horn">
+                            <span>📢</span>
+                            <span class="pedal-lbl">HONK</span>
+                        </button>
+                        <button id="btn-boost" class="pedal-btn btn-boost" title="Turbo Boost" aria-label="Turbo Boost">
+                            <span>⚡</span>
+                            <span class="pedal-lbl">BOOST</span>
+                        </button>
+                    </div>
+                    <div class="pedal-row">
+                        <button id="btn-reverse" class="pedal-btn btn-brake" title="Reverse / Brake" aria-label="Reverse">
+                            <span>REVERSE</span>
+                        </button>
+                        <button id="btn-gas" class="pedal-btn btn-gas" title="Drive Forward" aria-label="Drive">
+                            <span>DRIVE</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Floating Action Bar -->
+            <div class="hud-bottom">
+                <div class="action-wheel">
+                    <!-- Toggle Avatar / Vehicle Focus -->
+                    <button id="btn-toggle-avatar" class="hud-action-btn btn-secondary" title="Focus Avatar / Car" aria-label="Focus Avatar">
+                        <span id="actor-toggle-icon">🚶</span>
+                    </button>
+
+                    <!-- Snapshot / Capture Button (Pokéball Style) -->
+                    <button id="btn-snapshot" class="hud-action-btn btn-shutter" title="Take AR Photo" aria-label="Take AR Photo"></button>
+
+                    <!-- Wave / Interact Button -->
+                    <button id="btn-pose" class="hud-action-btn btn-secondary" title="Cheer & Wave" aria-label="Cheer">
+                        <span>👋</span>
+                    </button>
+                </div>
+
+                <!-- Apple Quick Look Native AR (iPhone LiDAR / Plane detection) -->
+                <a id="btn-apple-quicklook" rel="ar" href="ar/aditi-avatar.usdz" class="apple-ar-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                        <path d="m3.3 7 8.7 5 8.7-5"/>
+                        <path d="M12 22V12"/>
+                    </svg>
+                    <span>Launch Native Apple QuickLook AR</span>
+                </a>
+
+                <div class="gesture-hint">Drag 1 finger to move world • 2-finger pinch to scale • 2-finger twist to rotate</div>
+            </div>
+        </div>
+
+        <!-- Comprehensive Project Modal -->
+        <div id="holo-modal" class="holo-modal">
+            <button id="btn-modal-close" class="modal-close" aria-label="Close Modal">✕</button>
+            <div id="modal-category" class="modal-category">PROJECT CATEGORY</div>
+            <h3 id="modal-title" class="modal-title">Project Title</h3>
+            <div id="modal-tagline" class="modal-tagline">Tagline subtitle goes here</div>
+            
+            <div class="modal-section">
+                <div class="section-title">Overview</div>
+                <p id="modal-desc" class="modal-desc"></p>
+            </div>
+
+            <div class="modal-section" id="section-problem">
+                <div class="section-title">Problem Solved</div>
+                <p id="modal-problem" class="modal-desc"></p>
+            </div>
+
+            <div class="modal-section" id="section-features">
+                <div class="section-title">Key Engineering Highlights</div>
+                <ul id="modal-features" class="modal-features-list"></ul>
+            </div>
+
+            <div class="modal-section">
+                <div class="section-title">Tech Stack</div>
+                <div id="modal-tags" class="modal-tags"></div>
+            </div>
+
+            <a id="modal-link" class="modal-link" href="#" target="_blank" rel="noopener">Open Repository / Live Demo ↗</a>
+        </div>
+
+        <!-- Career Milestone Details Modal -->
+        <div id="career-modal" class="holo-modal career-modal">
+            <button id="btn-career-close" class="modal-close" aria-label="Close Career Modal">✕</button>
+            <div id="career-category" class="modal-category">CAREER MILESTONE</div>
+            <h3 id="career-title" class="modal-title">VIT Vellore</h3>
+            <div id="career-role" class="modal-tagline">Integrated M.Tech Computer Science</div>
+            <div class="modal-section">
+                <div class="section-title">Key Achievements</div>
+                <p id="career-desc" class="modal-desc"></p>
+            </div>
+            <div class="modal-section">
+                <div class="section-title">Skills & Focus</div>
+                <div id="career-tags" class="modal-tags"></div>
+            </div>
+        </div>
+
+        <!-- About Me Modal -->
+        <div id="about-modal" class="holo-modal about-modal">
+            <button id="btn-about-close" class="modal-close" aria-label="Close About Modal">✕</button>
+            <div class="modal-category">ENGINEER PROFILE</div>
+            <h3 class="modal-title">Aditi Sharma</h3>
+            <div class="modal-tagline">Full-Stack Engineer & AI / Cybersecurity Researcher</div>
+            
+            <div class="modal-section">
+                <div class="section-title">About Me</div>
+                <p class="modal-desc">
+                    Integrated M.Tech student in Computer Science & Engineering at VIT Vellore (9.65 CGPA, Rank 3). Experienced in building production AI agents (LangGraph, Azure, Qdrant), enterprise cloud observability pipelines, suborbital rocket telemetry systems, and interactive 3D WebGPU graphics.
+                </p>
+            </div>
+
+            <div class="modal-section">
+                <div class="section-title">Core Competencies</div>
+                <div class="modal-tags">
+                    <span>Multi-Agent AI (LangGraph)</span>
+                    <span>FastAPI & Python</span>
+                    <span>Cybersecurity & AppSec</span>
+                    <span>Azure & Kubernetes</span>
+                    <span>Three.js & WebGPU</span>
+                    <span>PySpark & Delta Lake</span>
+                    <span>Computer Vision (YOLO)</span>
+                    <span>React & JavaScript</span>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="section-title">Key Distinctions</div>
+                <ul class="modal-features-list">
+                    <li>Rank 3 in Department with 9.65 CGPA at VIT Vellore</li>
+                    <li>Software & AI Intern at HCLTech (Autonomous Cloud Operations)</li>
+                    <li>CS Senior Core Lead for Team Sammard (ISRO CanSat Rocketry)</li>
+                    <li>National Defence Academy 149 Merit: AIR 417 (Girls Rank 53)</li>
+                    <li>School Topper at St. Joseph's Convent (95.4%)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Contact Modal -->
+        <div id="contact-modal" class="holo-modal contact-modal">
+            <button id="btn-contact-close" class="modal-close" aria-label="Close Contact Modal">✕</button>
+            <div class="modal-category">LET'S CONNECT</div>
+            <h3 class="modal-title">Get In Touch</h3>
+            <div class="modal-tagline">Available for Full-Time Roles & High-Impact Opportunities</div>
+            
+            <div class="contact-links-list">
+                <a class="contact-card" href="mailto:aditisharma20004@gmail.com">
+                    <span class="card-icon">✉️</span>
+                    <div class="card-text">
+                        <span class="card-title">Email</span>
+                        <span class="card-detail">aditisharma20004@gmail.com</span>
+                    </div>
+                    <span class="card-arrow">↗</span>
+                </a>
+                <a class="contact-card" href="https://github.com/jiya2000" target="_blank" rel="noopener">
+                    <span class="card-icon">🐙</span>
+                    <div class="card-text">
+                        <span class="card-title">GitHub</span>
+                        <span class="card-detail">github.com/jiya2000</span>
+                    </div>
+                    <span class="card-arrow">↗</span>
+                </a>
+                <a class="contact-card" href="https://www.linkedin.com/in/aditi-sharma-b2083a28b/" target="_blank" rel="noopener">
+                    <span class="card-icon">💼</span>
+                    <div class="card-text">
+                        <span class="card-title">LinkedIn</span>
+                        <span class="card-detail">linkedin.com/in/aditi-sharma-b2083a28b/</span>
+                    </div>
+                    <span class="card-arrow">↗</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Shutter Flash -->
+        <div id="shutter-flash" class="shutter-flash"></div>
+    </div>
+
+</body>
+</html>
